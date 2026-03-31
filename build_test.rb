@@ -4,164 +4,133 @@ require "minitest/autorun"
 require "tmpdir"
 require_relative "build"
 
-class ParseInlineTest < Minitest::Test
-  def test_bold
-    assert_equal "<strong>hello</strong>", parse_inline("**hello**")
+class BuildArtifactTest < Minitest::Test
+  private
+
+  def build_html(markdown)
+    Dir.mktmpdir do |dir|
+      md = File.join(dir, "test.md")
+      html_path = File.join(dir, "test.html")
+
+      File.write(md, markdown)
+      build(md, html_path)
+      File.read(html_path)
+    end
   end
 
-  def test_italic
-    assert_equal "<em>hello</em>", parse_inline("*hello*")
+  public
+
+  def test_renders_inline_formatting
+    html = build_html(<<~MD)
+      **hello**
+
+      *world*
+
+      `foo`
+
+      [click](http://x.com)
+
+      see https://example.com ok
+    MD
+
+    assert_includes html, "<strong>hello</strong>"
+    assert_includes html, "<em>world</em>"
+    assert_includes html, "<code>foo</code>"
+    assert_includes html, '<a href="http://x.com">click</a>'
+    assert_includes html, '<a href="https://example.com">https://example.com</a>'
   end
 
-  def test_inline_code
-    assert_equal "<code>foo</code>", parse_inline("`foo`")
+  def test_escapes_html
+    html = build_html("<script>")
+    assert_includes html, "&lt;script&gt;"
   end
 
-  def test_link
-    assert_equal '<a href="http://x.com">click</a>', parse_inline("[click](http://x.com)")
+  def test_renders_headings
+    html = build_html(<<~MD)
+      # Title
+
+      ## Subtitle
+
+      ### Small
+    MD
+
+    assert_includes html, "<h1>Title</h1>"
+    assert_includes html, "<h2>Subtitle</h2>"
+    assert_includes html, "<h3>Small</h3>"
   end
 
-  def test_bare_url
-    assert_includes parse_inline("see https://example.com ok"), '<a href="https://example.com">https://example.com</a>'
-  end
+  def test_renders_lists
+    html = build_html(<<~MD)
+      - one
+      - **two**
 
-  def test_html_escaping
-    assert_includes parse_inline("<script>"), "&lt;script&gt;"
-  end
+      1. first
+      2. second
+    MD
 
-  def test_bold_and_italic_combined
-    result = parse_inline("**bold** and *italic*")
-    assert_includes result, "<strong>bold</strong>"
-    assert_includes result, "<em>italic</em>"
-  end
-end
-
-class RenderSlideTest < Minitest::Test
-  def test_h1
-    assert_equal "<h1>Title</h1>", render_slide(["# Title"])
-  end
-
-  def test_h2
-    assert_equal "<h2>Sub</h2>", render_slide(["## Sub"])
-  end
-
-  def test_h3
-    assert_equal "<h3>Small</h3>", render_slide(["### Small"])
-  end
-
-  def test_unordered_list
-    html = render_slide(["- one", "- two"])
     assert_includes html, "<ul>"
     assert_includes html, "<li>one</li>"
-    assert_includes html, "<li>two</li>"
-  end
-
-  def test_ordered_list
-    html = render_slide(["1. first", "2. second"])
+    assert_includes html, "<li><strong>two</strong></li>"
     assert_includes html, "<ol>"
     assert_includes html, "<li>first</li>"
     assert_includes html, "<li>second</li>"
   end
 
-  def test_paragraph
-    html = render_slide(["hello world"])
-    assert_equal "<p>hello world</p>", html
-  end
+  def test_renders_paragraphs_and_blank_lines
+    html = build_html(<<~MD)
+      # Title
 
-  def test_multiline_paragraph
-    html = render_slide(["line one", "line two"])
-    assert_includes html, "line one<br>"
-    assert_includes html, "line two"
-  end
+      line one
+      line two
+    MD
 
-  def test_blank_lines_ignored
-    html = render_slide(["# Title", "", "text"])
     assert_includes html, "<h1>Title</h1>"
-    assert_includes html, "<p>text</p>"
+    assert_includes html, "<p>line one<br>\nline two</p>"
   end
 
-  def test_inline_formatting_in_list
-    html = render_slide(["- **bold item**"])
-    assert_includes html, "<strong>bold item</strong>"
-  end
-end
-
-class BuildTest < Minitest::Test
   def test_builds_correct_slide_count
-    Dir.mktmpdir do |dir|
-      md = File.join(dir, "test.md")
-      html_path = File.join(dir, "test.html")
+    html = build_html(<<~MD)
+      # Slide 1
 
-      File.write(md, <<~MD)
-        # Slide 1
+      ---
 
-        ---
+      # Slide 2
 
-        # Slide 2
+      ---
 
-        ---
+      # Slide 3
+    MD
 
-        # Slide 3
-      MD
-
-      build(md, html_path)
-      html = File.read(html_path)
-
-      assert_equal 3, html.scan(/class="slide"/).length
-    end
+    assert_equal 3, html.scan(/class="slide"/).length
   end
 
-  def test_empty_separators_skipped
-    Dir.mktmpdir do |dir|
-      md = File.join(dir, "test.md")
-      html_path = File.join(dir, "test.html")
+  def test_empty_separators_are_skipped
+    html = build_html(<<~MD)
+      ---
 
-      File.write(md, <<~MD)
-        ---
+      # Only slide
 
-        # Only slide
+      ---
+    MD
 
-        ---
-      MD
-
-      build(md, html_path)
-      html = File.read(html_path)
-
-      assert_equal 1, html.scan(/class="slide"/).length
-    end
+    assert_equal 1, html.scan(/class="slide"/).length
   end
 
-  def test_output_is_valid_html_structure
-    Dir.mktmpdir do |dir|
-      md = File.join(dir, "test.md")
-      html_path = File.join(dir, "test.html")
+  def test_output_has_expected_html_structure
+    html = build_html("# Hello")
 
-      File.write(md, "# Hello")
-
-      build(md, html_path)
-      html = File.read(html_path)
-
-      assert_includes html, "<!DOCTYPE html>"
-      assert_includes html, "<title>Presentation</title>"
-      assert_includes html, "Palatino Linotype"
-      assert_includes html, 'var total = 1'
-      assert_includes html, 'class="progress"'
-    end
+    assert_includes html, "<!DOCTYPE html>"
+    assert_includes html, "<title>Presentation</title>"
+    assert_includes html, "Palatino Linotype"
+    assert_includes html, "var total = 1"
+    assert_includes html, 'class="progress"'
   end
 
   def test_slide_ids_are_sequential
-    Dir.mktmpdir do |dir|
-      md = File.join(dir, "test.md")
-      html_path = File.join(dir, "test.html")
+    html = build_html("# A\n\n---\n\n# B\n\n---\n\n# C")
 
-      File.write(md, "# A\n\n---\n\n# B\n\n---\n\n# C")
-
-      build(md, html_path)
-      html = File.read(html_path)
-
-      assert_includes html, 'id="slide-0"'
-      assert_includes html, 'id="slide-1"'
-      assert_includes html, 'id="slide-2"'
-    end
+    assert_includes html, 'id="slide-0"'
+    assert_includes html, 'id="slide-1"'
+    assert_includes html, 'id="slide-2"'
   end
 end

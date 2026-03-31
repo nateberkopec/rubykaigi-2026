@@ -3,6 +3,7 @@
 
 require "cgi"
 require "erb"
+require "fileutils"
 
 INLINE = [
   [/\*\*(.+?)\*\*/, '<strong>\1</strong>'],
@@ -90,8 +91,10 @@ end
 def build(input_path, output_path)
   slides = parse_slides(File.read(input_path))
   html = slides.each_with_index.map { |lines, i| slide_html(i, lines) }.join
+
+  FileUtils.mkdir_p(File.dirname(output_path))
   File.write(output_path, page_html(slides.length, html))
   puts "Built #{slides.length} slides -> #{output_path}"
 end
 
-build(ARGV[0] || "presentation.md", ARGV[1] || "presentation.html") if __FILE__ == $PROGRAM_NAME
+build(ARGV[0] || "presentation.md", ARGV[1] || "dist/presentation.html") if __FILE__ == $PROGRAM_NAME

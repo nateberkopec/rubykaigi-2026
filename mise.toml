@@ -2,13 +2,17 @@
 ruby = "3"
 
 [tasks.build]
-description = "Build presentation.md into presentation.html"
+description = "Build presentation.md into dist/presentation.html"
 run = "ruby build.rb"
+
+[tasks.clean]
+description = "Remove dist artifacts"
+run = "rm -rf dist"
 
 [tasks.serve]
 description = "Build and open the presentation in the browser"
 depends = ["build"]
-run = "open presentation.html"
+run = "open dist/presentation.html"
 
 [tasks.test]
 description = "Run tests"
