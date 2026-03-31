@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presentation</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #fff;
+  color: #000;
+  font-family: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+}
+.slide {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  padding: 8vw;
+}
+.slide.active {
+  display: flex;
+}
+.slide-content {
+  max-width: 900px;
+  width: 100%;
+}
+h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 0.6em;
+  line-height: 1.2;
+}
+h2 {
+  font-size: 2.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5em;
+  line-height: 1.2;
+}
+h3 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 0.4em;
+}
+p {
+  font-size: 1.5rem;
+  line-height: 1.6;
+  margin-bottom: 0.8em;
+}
+ul, ol {
+  font-size: 1.5rem;
+  line-height: 1.8;
+  margin-left: 1.5em;
+  margin-bottom: 0.8em;
+}
+li {
+  margin-bottom: 0.3em;
+}
+strong {
+  font-weight: 700;
+}
+code {
+  font-family: "SF Mono", Menlo, monospace;
+  background: #f0f0f0;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+a {
+  color: #000;
+  text-decoration: underline;
+}
+.progress {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: #000;
+  transition: width 0.3s ease;
+}
+</style>
+</head>
+<body><%= slides %><div class="progress" id="progress"></div><script>(function(){var current=0;var total = <%= total %>;var slides=document.querySelectorAll(".slide");var progress=document.getElementById("progress");function show(n){if(n<0||n>=total)return;slides[current].classList.remove("active");current=n;slides[current].classList.add("active");progress.style.width=((current+1)/total*100)+"%"}function next(){show(current+1)}function prev(){show(current-1)}document.addEventListener("click",function(e){if(e.clientX<window.innerWidth*.15){prev()}else{next()}});document.addEventListener("keydown",function(e){if(e.key==="ArrowRight"||e.key===" "||e.key==="Enter"){e.preventDefault();next()}else if(e.key==="ArrowLeft"||e.key==="Backspace"){e.preventDefault();prev()}else if(e.key==="Home"){e.preventDefault();show(0)}else if(e.key==="End"){e.preventDefault();show(total-1)}});show(0)})();</script></body>
+</html>
