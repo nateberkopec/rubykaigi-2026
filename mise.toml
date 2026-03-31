@@ -1,0 +1,19 @@
+[tools]
+ruby = "3"
+
+[tasks.build]
+description = "Build presentation.md into presentation.html"
+run = "ruby build.rb"
+
+[tasks.serve]
+description = "Build and open the presentation in the browser"
+depends = ["build"]
+run = "open presentation.html"
+
+[tasks.test]
+description = "Run tests"
+run = "ruby build_test.rb"
+
+[tasks.count]
+description = "Show slide count from presentation.md"
+run = "ruby -e 'c = File.read(\"presentation.md\").split(/^\\s*---\\s*$/).count { |s| !s.strip.empty? }; puts \"#{c} slides\"'"

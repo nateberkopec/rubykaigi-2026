@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presentation</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #fff;
+  color: #000;
+  font-family: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+}
+.slide {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  padding: 8vw;
+}
+.slide.active {
+  display: flex;
+}
+.slide-content {
+  max-width: 900px;
+  width: 100%;
+}
+h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 0.6em;
+  line-height: 1.2;
+}
+h2 {
+  font-size: 2.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5em;
+  line-height: 1.2;
+}
+h3 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 0.4em;
+}
+p {
+  font-size: 1.5rem;
+  line-height: 1.6;
+  margin-bottom: 0.8em;
+}
+ul, ol {
+  font-size: 1.5rem;
+  line-height: 1.8;
+  margin-left: 1.5em;
+  margin-bottom: 0.8em;
+}
+li {
+  margin-bottom: 0.3em;
+}
+strong {
+  font-weight: 700;
+}
+code {
+  font-family: "SF Mono", Menlo, monospace;
+  background: #f0f0f0;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+a {
+  color: #000;
+  text-decoration: underline;
+}
+.progress {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: #000;
+  transition: width 0.3s ease;
+}
+</style>
+</head>
+<body>
+
+<div class="slide" id="slide-0">
+  <div class="slide-content">
+<h1>Autoresearch: LLM-Powered Performance Engineering for Ruby</h1>
+<p><strong>Nate Berkopec</strong> — RubyKaigi 2026</p>
+  </div>
+</div>
+
+<div class="slide" id="slide-1">
+  <div class="slide-content">
+<h1>The Hook</h1>
+<p>Karpathy sets the world on fire: <strong>&quot;autoresearch&quot;</strong></p>
+  </div>
+</div>
+
+<div class="slide" id="slide-2">
+  <div class="slide-content">
+<h1>What Was Accomplished</h1>
+<ul>
+  <li>A tweet that coined a term and launched a movement</li>
+  <li>Automated research loops producing real results</li>
+  <li>Developer anxiety: FOMO, job fears</li>
+  <li>Is this the singularity? The take-off?</li>
+</ul>
+  </div>
+</div>
+
+<div class="slide" id="slide-3">
+  <div class="slide-content">
+<h1>Who Am I?</h1>
+<p><strong>Nate Berkopec</strong></p>
+<ul>
+  <li>CGRP, Puma, Speedshop, Threadpilot</li>
+  <li>I&#39;ve taught performance workshops for years</li>
+  <li>I consider myself a &quot;maker&quot; rather than a programmer</li>
+</ul>
+  </div>
+</div>
+
+<div class="slide" id="slide-4">
+  <div class="slide-content">
+<h1>My Journey</h1>
+<ul>
+  <li>LLMs didn&#39;t threaten me the way I saw others react</li>
+  <li>My git commit count <strong>exploded</strong></li>
+  <li>The entire dev job description has changed</li>
+  <li>Opus 4.5 / Codex 5 was a turning point in December</li>
+</ul>
+  </div>
+</div>
+
+<div class="slide" id="slide-5">
+  <div class="slide-content">
+<h1>Still a Rubyist?</h1>
+<ul>
+  <li>In some ways, I no longer consider myself a Rubyist</li>
+  <li>But I want to continue as a hobby — it&#39;s still nicer to read!</li>
+  <li>What I want: <strong>automate the drudgery, do the fun &quot;software engineering&quot;</strong></li>
+</ul>
+  </div>
+</div>
+
+<div class="slide" id="slide-6">
+  <div class="slide-content">
+<h1>Today&#39;s Roadmap</h1>
+<ol>
+  <li>Performance engineering fundamentals</li>
+  <li>General principles of LLM-powered development</li>
+  <li>Autoresearch design</li>
+  <li>What LLMs don&#39;t change</li>
+  <li>The Ruby autoresearch harness</li>
+  <li>Real-world applications</li>
+</ol>
+  </div>
+</div>
+
+<div class="slide" id="slide-7">
+  <div class="slide-content">
+<h1>Performance Engineering</h1>
+<p>How does performance engineering work, in the abstract?</p>
+<p><strong>Engineering:</strong> meeting requirements within constraints</p>
+  </div>
+</div>
+
+<div class="slide" id="slide-8">
+  <div class="slide-content">
+<h1>Tool 1: Benchmarking</h1>
+<p>What still matters:</p>
+<ul>
+  <li>Warmup</li>
+  <li>Noise</li>
+  <li>Insufficient samples</li>
+  <li>GC interference</li>
+</ul>
+  </div>
+</div>
+
+<div class="slide" id="slide-9">
+  <div class="slide-content">
+<h1>Tool 2: Profiling</h1>
+<ul>
+  <li>Sample size is important</li>
+  <li>Resolution matters</li>
+</ul>
+  </div>
+</div>
+
+<div class="slide" id="slide-10">
+  <div class="slide-content">
+<h1>Tool 3: RUM and APM</h1>
+<ul>
+  <li>Real User Monitoring</li>
+  <li>Application Performance Monitoring</li>
+  <li>What pre-LLM perf workflows looked like</li>
+</ul>
+  </div>
+</div>
+
+<div class="slide" id="slide-11">
+  <div class="slide-content">
+<h1>General Principles of LLM-Powered Development</h1>
+<ul>
+  <li>I use Pi, Codex, and Claude (see dotfiles)</li>
+  <li>I don&#39;t just ask — I ask it to come with a benchmark or test</li>
+  <li>Review the test, come back in 10 minutes</li>
+</ul>
+  </div>
+</div>
+
+<div class="slide" id="slide-12">
+  <div class="slide-content">
+<h1>The Software Factory</h1>
+<ul>
+  <li>Verify, <strong>never trust</strong></li>
+  <li>LLMs tend to want to write MORE — not always correct</li>
+  <li>Onerous linting is actually encouraged</li>
+  <li>LLM judges are not really useful</li>
+</ul>
+  </div>
+</div>
+
+<div class="slide" id="slide-13">
+  <div class="slide-content">
+<h1>The Bitter Lesson</h1>
+<p>Loops allow us to apply the bitter lesson</p>
+<p>Best when used against a <strong>deterministic standard</strong></p>
+  </div>
+</div>
+
+<div class="slide" id="slide-14">
+  <div class="slide-content">
+<h1>Autoresearch Design: Creating Evals</h1>
+<ul>
+  <li>Software is not single-variable</li>
+  <li>Even performance is not single-variable</li>
+  <li>Autoresearch is fundamentally about making the problem <strong>brute-forceable</strong></li>
+</ul>
+  </div>
+</div>
+
+<div class="slide" id="slide-15">
+  <div class="slide-content">
+<h1>Autoresearch Constraints</h1>
+<ul>
+  <li>We can&#39;t break software in pursuit of optimizing a single variable</li>
+  <li>We can&#39;t make other parts slow</li>
+  <li>We can&#39;t exceed memory usage constraints</li>
+</ul>
+  </div>
+</div>
+
+<div class="slide" id="slide-16">
+  <div class="slide-content">
+<h1>What LLMs Don&#39;t Change</h1>
+<ul>
+  <li>We can&#39;t ship slop</li>
+  <li>No thousand-line diffs</li>
+  <li>All of software engineering still applies</li>
+</ul>
+  </div>
+</div>
+
+<div class="slide" id="slide-17">
+  <div class="slide-content">
+<h1>LLMs Are Amplifiers, Not Gods</h1>
+<p>They autocomplete and amplify what already exists.</p>
+<p>If you have slop, it will amplify slop.</p>
+  </div>
+</div>
+
+<div class="slide" id="slide-18">
+  <div class="slide-content">
+<h1>The &quot;Why Don&#39;t You Just&quot; Problem</h1>
+<p>Weaponized nerd-sniping</p>
+<p>You could make Claude split that into 12 PRs of 100 lines or less.</p>
+  </div>
+</div>
+
+<div class="slide" id="slide-19">
+  <div class="slide-content">
+<h1>Autoresearch Ruby History</h1>
+<ul>
+  <li>Tobi</li>
+  <li>Bundler / Eileen</li>
+  <li>Stan Lo</li>
+</ul>
+  </div>
+</div>
+
+<div class="slide" id="slide-20">
+  <div class="slide-content">
+<h1>The Ruby Autoresearch Harness</h1>
+<ul>
+  <li><strong>Skills</strong></li>
+  <li><strong>Tools</strong></li>
+  <li><strong>MCPs</strong></li>
+  <li><strong>Prompts</strong></li>
+  <li>Sandboxes, remotes, and security</li>
+  <li>Knowing when to stop</li>
+</ul>
+  </div>
+</div>
+
+<div class="slide" id="slide-21">
+  <div class="slide-content">
+<h1>Real-World Applications</h1>
+<p>Let&#39;s apply to:</p>
+<ul>
+  <li><strong>Puma</strong></li>
+  <li><strong>Threadpilot</strong></li>
+  <li><strong>Sidekiq</strong></li>
+  <li><strong>Rails</strong></li>
+</ul>
+  </div>
+</div>
+
+<div class="slide" id="slide-22">
+  <div class="slide-content">
+<h1>How to Be a Good OSS Contributor</h1>
+<ul>
+  <li>How to make useful issue reports</li>
+  <li>Why you shouldn&#39;t just open PRs you don&#39;t understand and can&#39;t verify</li>
+</ul>
+  </div>
+</div>
+
+<div class="slide" id="slide-23">
+  <div class="slide-content">
+<h1>Takeaways</h1>
+<ol>
+  <li>...</li>
+  <li>...</li>
+  <li>...</li>
+</ol>
+<p>Find more resources here: <em>(link)</em></p>
+  </div>
+</div>
+
+<div class="slide" id="slide-24">
+  <div class="slide-content">
+<h1>Thank You!</h1>
+<p><strong>Nate Berkopec</strong></p>
+<p>RubyKaigi 2026</p>
+  </div>
+</div>
+
+
+<div class="progress" id="progress"></div>
+
+<script>
+(function() {
+  var current = 0;
+  var total = 25;
+  var slides = document.querySelectorAll(".slide");
+  var progress = document.getElementById("progress");
+
+  function show(n) {
+    if (n < 0 || n >= total) return;
+    slides[current].classList.remove("active");
+    current = n;
+    slides[current].classList.add("active");
+    progress.style.width = ((current + 1) / total * 100) + "%";
+  }
+
+  function next() { show(current + 1); }
+  function prev() { show(current - 1); }
+
+  document.addEventListener("click", function(e) {
+    if (e.clientX < window.innerWidth * 0.15) {
+      prev();
+    } else {
+      next();
+    }
+  });
+
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      next();
+    } else if (e.key === "ArrowLeft" || e.key === "Backspace") {
+      e.preventDefault();
+      prev();
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      show(0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      show(total - 1);
+    }
+  });
+
+  show(0);
+})();
+</script>
+</body>
+</html>
