@@ -8,4 +8,6 @@ This presentation is about how to apply that concept to all kinds of performance
 
 This presentation is compiled for and by Nate Berkopec, the maintainer of Puma and owner of Speedshop, a Rails performance consultancy.
 
+Nate's favorite speakers are: Seth Godin, Justin Searls, Bret Victor, Nicholas Means, LEMMiNO, and Nexpo.
+
 
