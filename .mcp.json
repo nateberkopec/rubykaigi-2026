@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "mise",
+      "args": [
+        "x",
+        "node@22",
+        "--",
+        "npx",
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--no-usage-statistics"
+      ]
+    }
+  }
+}

@@ -1,5 +1,6 @@
 [tools]
 ruby = "3"
+node = "22"
 hk = "latest"
 watchexec = "latest"
 
