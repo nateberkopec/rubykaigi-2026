@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: jdx/mise-action@v2
+
+      - name: Lint
+        run: mise run lint
+
+      - name: Test
+        run: mise run test
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: jdx/mise-action@v2
+
+      - name: Build slides
+        run: mise run build
