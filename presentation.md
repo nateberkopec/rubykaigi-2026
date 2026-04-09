@@ -2,213 +2,438 @@
 
 # [fit] Autoresearching Ruby Performance with LLMs
 
-**Nate Berkopec** from **[speedshop.co](https://speedshop.co)**
+**Nate Berkopec**
 
 RubyKaigi 2026
 
 ---
 
-# The Hook
+# THE HOOK
 
-Karpathy sets the world on fire: **"autoresearch"**
-
----
-
-# What Was Accomplished
-
-- A tweet that coined a term and launched a movement
-- Automated research loops producing real results
-- Developer anxiety: FOMO, job fears
-- Is this the singularity? The take-off?
+Karpathy sets the world on fire: the coining of "autoresearch"
 
 ---
 
-# Who Am I?
+# THE HOOK
 
-**Nate Berkopec**
-
-- CGRP, Puma, Speedshop, Threadpilot
-- I've taught performance workshops for years
-- I consider myself a "maker" rather than a programmer
+## Explain the tweet
 
 ---
 
-# My Journey
+# THE HOOK
 
-- LLMs didn't threaten me the way I saw others react
-- My git commit count **exploded**
-- The entire dev job description has changed
-- Opus 4.5 / Codex 5 was a turning point in December
+## Explain what was accomplished
 
 ---
 
-# Still a Rubyist?
+# THE HOOK
 
-- In some ways, I no longer consider myself a Rubyist
-- But I want to continue as a hobby — it's still nicer to read!
-- What I want: **automate the drudgery, do the fun "software engineering"**
+## Developer anxiety: FOMO, job fears
 
 ---
 
-# Today's Roadmap
+# THE HOOK
 
-1. Performance engineering fundamentals
-2. General principles of LLM-powered development
-3. Autoresearch design
-4. What LLMs don't change
-5. The Ruby autoresearch harness
-6. Real-world applications
+## Is this the singularity? The take-off?
 
 ---
 
-# Performance Engineering
+# BIG IDEA
 
-How does performance engineering work, in the abstract?
-
-**Engineering:** meeting requirements within constraints
+All of our work, including performance, is changing from building the thing, to building the thing that builds the thing. What is a "performance factory" and how do we build one?
 
 ---
 
-# Tool 1: Benchmarking
+# WHO AM I
 
-What still matters:
-
-- Warmup
-- Noise
-- Insufficient samples
-- GC interference
+I'm Nate Berkopec!
 
 ---
 
-# Tool 2: Profiling
+# WHO AM I
 
-- Sample size is important
-- Resolution matters
-
----
-
-# Tool 3: RUM and APM
-
-- Real User Monitoring
-- Application Performance Monitoring
-- What pre-LLM perf workflows looked like
+## CGRP, Puma, Speedshop, Threadpilot
 
 ---
 
-# General Principles of LLM-Powered Development
+# WHO AM I
 
-- I use Pi, Codex, and Claude (see dotfiles)
-- I don't just ask — I ask it to come with a benchmark or test
-- Review the test, come back in 10 minutes
+## Retainer revenue chart w/o the y-axis
 
 ---
 
-# The Software Factory
+# WHO AM I
 
-- Verify, **never trust**
-- LLMs tend to want to write MORE — not always correct
-- Onerous linting is actually encouraged
-- LLM judges are not really useful
+## I've taught workshops on these topics for years, how difficult it was to teach
 
 ---
 
-# The Bitter Lesson
+# WHO AM I
 
-Loops allow us to apply the bitter lesson
-
-Best when used against a **deterministic standard**
+## I consider myself primarily a "maker" rather than a programmer, so LLMs didn't threaten me in the way I saw others react
 
 ---
 
-# Autoresearch Design: Creating Evals
+# WHO AM I
 
-- Software is not single-variable
-- Even performance is not single-variable
-- Autoresearch is fundamentally about making the problem **brute-forceable**
+## My git commit count exploded. I think the entire dev job description has changed.
 
 ---
 
-# Autoresearch Constraints
+# WHO AM I
 
-- We can't break software in pursuit of optimizing a single variable
-- We can't make other parts slow
-- We can't exceed memory usage constraints
+## Opus 4.5/Codex 5 was a turning point in December
 
 ---
 
-# What LLMs Don't Change
+# WHO AM I
 
-- We can't ship slop
-- No thousand-line diffs
-- All of software engineering still applies
+## In some ways, I no longer consider myself a Rubyist
 
 ---
 
-# LLMs Are Amplifiers, Not Gods
+# WHO AM I
 
-They autocomplete and amplify what already exists.
-
-If you have slop, it will amplify slop.
+## However, I want to continue to be a Rubyist as a hobby. And it's still nicer to read!
 
 ---
 
-# The "Why Don't You Just" Problem
+# WHO AM I
 
-Weaponized nerd-sniping
-
-You could make Claude split that into 12 PRs of 100 lines or less.
+## What I want: automate the drudgery, do the fun "software engineering"
 
 ---
 
-# Autoresearch Ruby History
+# WHO AM I
 
-- Tobi
-- Bundler / Eileen
-- Stan Lo
+## Overview of where we're going to go today
 
 ---
 
-# The Ruby Autoresearch Harness
+# PERF ENGINEERING
 
-- **Skills**
-- **Tools**
-- **MCPs**
-- **Prompts**
-- Sandboxes, remotes, and security
-- Knowing when to stop
+So, in the abstract, how does performance engineering work?
 
 ---
 
-# Real-World Applications
+# PERF ENGINEERING
 
-Let's apply to:
-
-- **Puma**
-- **Threadpilot**
-- **Sidekiq**
-- **Rails**
+## Engineering: meeting requirements within constraints
 
 ---
 
-# How to Be a Good OSS Contributor
+# PERF ENGINEERING
 
-- How to make useful issue reports
-- Why you shouldn't just open PRs you don't understand and can't verify
+## What requirements do we usually have?
+
+---
+
+# PERF ENGINEERING
+
+## What requirements do we usually have?
+
+### Latency
+
+---
+
+# PERF ENGINEERING
+
+## What requirements do we usually have?
+
+### Resource efficiency
+
+---
+
+# PERF ENGINEERING
+
+## What requirements do we usually have?
+
+### Robustness
+
+---
+
+# PERF ENGINEERING
+
+## Tool 1: benchmarking
+
+---
+
+# PERF ENGINEERING
+
+## Tool 1: benchmarking
+
+### What still matters: warmup, noise, insufficient samples, GC
+
+---
+
+# PERF ENGINEERING
+
+## Tool 2: profiling
+
+---
+
+# PERF ENGINEERING
+
+## Tool 2: profiling
+
+### Sample size is important, resolution
+
+---
+
+# PERF ENGINEERING
+
+## Tool 3: RUM and APM
+
+---
+
+# PERF ENGINEERING
+
+## What pre-LLM perf workflows looked like with these three tools put together
+
+---
+
+# GENERAL PRINCIPLES OF LLM POWERED SOFTWARE DEVELOPMENT
+
+---
+
+# GENERAL PRINCIPLES OF LLM POWERED SOFTWARE DEVELOPMENT
+
+## Briefly: I use pi, codex and claude. see dotfiles.
+
+---
+
+# GENERAL PRINCIPLES OF LLM POWERED SOFTWARE DEVELOPMENT
+
+## I don't just ask. I ask it to come with a benchmark or a test that would demonstrate what is true, review the test, then come back in 10 minutes when it's demonstrated what is true conclusively.
+
+---
+
+# GENERAL PRINCIPLES OF LLM POWERED SOFTWARE DEVELOPMENT
+
+## Software factory
+
+---
+
+# GENERAL PRINCIPLES OF LLM POWERED SOFTWARE DEVELOPMENT
+
+## Verify, never trust
+
+---
+
+# GENERAL PRINCIPLES OF LLM POWERED SOFTWARE DEVELOPMENT
+
+## LLMs tend to want to write MORE, which is not always the correct solution
+
+---
+
+# GENERAL PRINCIPLES OF LLM POWERED SOFTWARE DEVELOPMENT
+
+## Onerous linting is actually encouraged
+
+---
+
+# GENERAL PRINCIPLES OF LLM POWERED SOFTWARE DEVELOPMENT
+
+## LLM judges are not really useful
+
+---
+
+# GENERAL PRINCIPLES OF LLM POWERED SOFTWARE DEVELOPMENT
+
+## Loops allow us to apply the bitter lesson, but are best when used against a deterministic standard
+
+---
+
+# AUTORESEARCH DESIGN
+
+Creating evals
+
+---
+
+# AUTORESEARCH DESIGN
+
+## How "Ralphing" becomes "Autoresearch"
+
+---
+
+# AUTORESEARCH DESIGN
+
+## Software is not single-variable
+
+---
+
+# AUTORESEARCH DESIGN
+
+## Even performance is not single-variable
+
+---
+
+# AUTORESEARCH DESIGN
+
+## Looping is fundamentally about making the problem brute-forceable
+
+---
+
+# AUTORESEARCH DESIGN
+
+## Autoresearch design principles:
+
+---
+
+# WHAT LLMS DONT CHANGE
+
+---
+
+# WHAT LLMS DONT CHANGE
+
+## We can't break software (or make other parts of it slow, or exceed memory usage constraints) in pursuit of optimizing a single variable. THIS IS IS THE HARD PART.
+
+---
+
+# WHAT LLMS DONT CHANGE
+
+## We can't ship slop.
+
+---
+
+# WHAT LLMS DONT CHANGE
+
+## You could make claude split that into 12 PRs of 100 lines or less.
+
+---
+
+# WHAT LLMS DONT CHANGE
+
+## No thousand line diffs.
+
+---
+
+# WHAT LLMS DONT CHANGE
+
+## Weaponized "why don't you just" nerd sniping
+
+---
+
+# WHAT LLMS DONT CHANGE
+
+## All of software engineering and development still applies
+
+---
+
+# WHAT LLMS DONT CHANGE
+
+## LLMs are amplifiers, not gods. They autocopmlete and amplify what already exists. If you have slop, it will amplify slop.
+
+---
+
+# AUTORESEARCH RUBY HISTORY
+
+---
+
+# AUTORESEARCH RUBY HISTORY
+
+## Tobi
+
+---
+
+# AUTORESEARCH RUBY HISTORY
+
+## Bundler/Eileen
+
+---
+
+# AUTORESEARCH RUBY HISTORY
+
+## Stan Lo
+
+---
+
+# THE RUBY AUTORESEARCH HARNESS
+
+---
+
+# THE RUBY AUTORESEARCH HARNESS
+
+## Skills:
+
+---
+
+# THE RUBY AUTORESEARCH HARNESS
+
+## Tools:
+
+---
+
+# THE RUBY AUTORESEARCH HARNESS
+
+## MCPs:
+
+---
+
+# THE RUBY AUTORESEARCH HARNESS
+
+## Prompts:
+
+---
+
+# THE RUBY AUTORESEARCH HARNESS
+
+## Sandboxes, remotes and security
+
+---
+
+# THE RUBY AUTORESEARCH HARNESS
+
+## Overview of harnesses and models
+
+---
+
+# THE RUBY AUTORESEARCH HARNESS
+
+## Knowing when to stop
+
+---
+
+# [fit] Let's apply to **Puma**, **Threadpilot**, **Sidekiq** and **Ruby**.
+
+---
+
+# HOW TO BE A GOOD OSS CONTRIBUTOR
+
+---
+
+# HOW TO BE A GOOD OSS CONTRIBUTOR
+
+## How to make useful issue reports for open source repositories
+
+---
+
+# HOW TO BE A GOOD OSS CONTRIBUTOR
+
+## Why you shouldn't just open PRs you don't understand and can't verify
 
 ---
 
 # Takeaways
 
-1. ...
-2. ...
-3. ...
+---
 
-Find more resources here: *(link)*
+# Takeaways
+
+## 1: Research without verification is waste.
 
 ---
 
-# Thank You!
+# Takeaways
 
-**Nate Berkopec**
+## 2: De-risk what you can
 
-RubyKaigi 2026
+---
+
+# Takeaways
+
+## 3: Use my toolkit:
+
+---
+
+# Thank you!

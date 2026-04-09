@@ -3,9 +3,16 @@ ruby = "3"
 hk = "latest"
 watchexec = "latest"
 
+[tasks.generate-slides]
+description = "Generate presentation.md from OUTLINE.md"
+sources = ["OUTLINE.md", "lib/generate_slides.rb"]
+outputs = ["presentation.md"]
+run = "ruby lib/generate_slides.rb"
+
 [tasks.build]
-description = "Build presentation.md into dist/presentation.html and dist/reading-mode.html"
-sources = ["presentation.md", "lib/build.rb", "src/page.html.erb", "src/reading_mode.html.erb", "src/slides.js.erb"]
+description = "Generate slides and build dist/presentation.html and dist/reading-mode.html"
+depends = ["generate-slides"]
+sources = ["OUTLINE.md", "presentation.md", "lib/generate_slides.rb", "lib/build.rb", "src/page.html.erb", "src/reading_mode.html.erb", "src/slides.js.erb"]
 outputs = ["dist/presentation.html", "dist/reading-mode.html"]
 run = "ruby lib/build.rb"
 
@@ -24,7 +31,7 @@ run = "ruby build_test.rb"
 
 [tasks.lint]
 description = "Check Ruby syntax"
-run = "ruby -wc lib/build.rb build_test.rb"
+run = "ruby -wc lib/build.rb build_test.rb lib/generate_slides.rb"
 
 [tasks.count]
 description = "Show slide count from presentation.md"

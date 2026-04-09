@@ -144,125 +144,81 @@ a {
 }
 </style>
 </head>
-<body><div class="deck"><div class="slide" id="slide-0" data-advance-ms="60000"><div class="slide-content"><h1 class="fit-heading">Autoresearching Ruby Performance with LLMs</h1>
-<p><strong>Nate Berkopec</strong> from <strong><a href="https://speedshop.co">speedshop.co</a></strong></p>
-<p>RubyKaigi 2026</p></div></div><div class="slide" id="slide-1" data-advance-ms="60000"><div class="slide-content"><h1>The Hook</h1>
-<p>Karpathy sets the world on fire: <strong>&quot;autoresearch&quot;</strong></p></div></div><div class="slide" id="slide-2" data-advance-ms="60000"><div class="slide-content"><h1>What Was Accomplished</h1>
-<ul>
-  <li>A tweet that coined a term and launched a movement</li>
-  <li>Automated research loops producing real results</li>
-  <li>Developer anxiety: FOMO, job fears</li>
-  <li>Is this the singularity? The take-off?</li>
-</ul></div></div><div class="slide" id="slide-3" data-advance-ms="60000"><div class="slide-content"><h1>Who Am I?</h1>
+<body><div class="deck"><div class="slide" id="slide-0" data-advance-ms="20270"><div class="slide-content"><h1 class="fit-heading">Autoresearching Ruby Performance with LLMs</h1>
 <p><strong>Nate Berkopec</strong></p>
-<ul>
-  <li>CGRP, Puma, Speedshop, Threadpilot</li>
-  <li>I&#39;ve taught performance workshops for years</li>
-  <li>I consider myself a &quot;maker&quot; rather than a programmer</li>
-</ul></div></div><div class="slide" id="slide-4" data-advance-ms="60000"><div class="slide-content"><h1>My Journey</h1>
-<ul>
-  <li>LLMs didn&#39;t threaten me the way I saw others react</li>
-  <li>My git commit count <strong>exploded</strong></li>
-  <li>The entire dev job description has changed</li>
-  <li>Opus 4.5 / Codex 5 was a turning point in December</li>
-</ul></div></div><div class="slide" id="slide-5" data-advance-ms="60000"><div class="slide-content"><h1>Still a Rubyist?</h1>
-<ul>
-  <li>In some ways, I no longer consider myself a Rubyist</li>
-  <li>But I want to continue as a hobby — it&#39;s still nicer to read!</li>
-  <li>What I want: <strong>automate the drudgery, do the fun &quot;software engineering&quot;</strong></li>
-</ul></div></div><div class="slide" id="slide-6" data-advance-ms="60000"><div class="slide-content"><h1>Today&#39;s Roadmap</h1>
-<ol>
-  <li>Performance engineering fundamentals</li>
-  <li>General principles of LLM-powered development</li>
-  <li>Autoresearch design</li>
-  <li>What LLMs don&#39;t change</li>
-  <li>The Ruby autoresearch harness</li>
-  <li>Real-world applications</li>
-</ol></div></div><div class="slide" id="slide-7" data-advance-ms="60000"><div class="slide-content"><h1>Performance Engineering</h1>
-<p>How does performance engineering work, in the abstract?</p>
-<p><strong>Engineering:</strong> meeting requirements within constraints</p></div></div><div class="slide" id="slide-8" data-advance-ms="60000"><div class="slide-content"><h1>Tool 1: Benchmarking</h1>
-<p>What still matters:</p>
-<ul>
-  <li>Warmup</li>
-  <li>Noise</li>
-  <li>Insufficient samples</li>
-  <li>GC interference</li>
-</ul></div></div><div class="slide" id="slide-9" data-advance-ms="60000"><div class="slide-content"><h1>Tool 2: Profiling</h1>
-<ul>
-  <li>Sample size is important</li>
-  <li>Resolution matters</li>
-</ul></div></div><div class="slide" id="slide-10" data-advance-ms="60000"><div class="slide-content"><h1>Tool 3: RUM and APM</h1>
-<ul>
-  <li>Real User Monitoring</li>
-  <li>Application Performance Monitoring</li>
-  <li>What pre-LLM perf workflows looked like</li>
-</ul></div></div><div class="slide" id="slide-11" data-advance-ms="60000"><div class="slide-content"><h1>General Principles of LLM-Powered Development</h1>
-<ul>
-  <li>I use Pi, Codex, and Claude (see dotfiles)</li>
-  <li>I don&#39;t just ask — I ask it to come with a benchmark or test</li>
-  <li>Review the test, come back in 10 minutes</li>
-</ul></div></div><div class="slide" id="slide-12" data-advance-ms="60000"><div class="slide-content"><h1>The Software Factory</h1>
-<ul>
-  <li>Verify, <strong>never trust</strong></li>
-  <li>LLMs tend to want to write MORE — not always correct</li>
-  <li>Onerous linting is actually encouraged</li>
-  <li>LLM judges are not really useful</li>
-</ul></div></div><div class="slide" id="slide-13" data-advance-ms="60000"><div class="slide-content"><h1>The Bitter Lesson</h1>
-<p>Loops allow us to apply the bitter lesson</p>
-<p>Best when used against a <strong>deterministic standard</strong></p></div></div><div class="slide" id="slide-14" data-advance-ms="60000"><div class="slide-content"><h1>Autoresearch Design: Creating Evals</h1>
-<ul>
-  <li>Software is not single-variable</li>
-  <li>Even performance is not single-variable</li>
-  <li>Autoresearch is fundamentally about making the problem <strong>brute-forceable</strong></li>
-</ul></div></div><div class="slide" id="slide-15" data-advance-ms="60000"><div class="slide-content"><h1>Autoresearch Constraints</h1>
-<ul>
-  <li>We can&#39;t break software in pursuit of optimizing a single variable</li>
-  <li>We can&#39;t make other parts slow</li>
-  <li>We can&#39;t exceed memory usage constraints</li>
-</ul></div></div><div class="slide" id="slide-16" data-advance-ms="60000"><div class="slide-content"><h1>What LLMs Don&#39;t Change</h1>
-<ul>
-  <li>We can&#39;t ship slop</li>
-  <li>No thousand-line diffs</li>
-  <li>All of software engineering still applies</li>
-</ul></div></div><div class="slide" id="slide-17" data-advance-ms="60000"><div class="slide-content"><h1>LLMs Are Amplifiers, Not Gods</h1>
-<p>They autocomplete and amplify what already exists.</p>
-<p>If you have slop, it will amplify slop.</p></div></div><div class="slide" id="slide-18" data-advance-ms="60000"><div class="slide-content"><h1>The &quot;Why Don&#39;t You Just&quot; Problem</h1>
-<p>Weaponized nerd-sniping</p>
-<p>You could make Claude split that into 12 PRs of 100 lines or less.</p></div></div><div class="slide" id="slide-19" data-advance-ms="60000"><div class="slide-content"><h1>Autoresearch Ruby History</h1>
-<ul>
-  <li>Tobi</li>
-  <li>Bundler / Eileen</li>
-  <li>Stan Lo</li>
-</ul></div></div><div class="slide" id="slide-20" data-advance-ms="60000"><div class="slide-content"><h1>The Ruby Autoresearch Harness</h1>
-<ul>
-  <li><strong>Skills</strong></li>
-  <li><strong>Tools</strong></li>
-  <li><strong>MCPs</strong></li>
-  <li><strong>Prompts</strong></li>
-  <li>Sandboxes, remotes, and security</li>
-  <li>Knowing when to stop</li>
-</ul></div></div><div class="slide" id="slide-21" data-advance-ms="60000"><div class="slide-content"><h1>Real-World Applications</h1>
-<p>Let&#39;s apply to:</p>
-<ul>
-  <li><strong>Puma</strong></li>
-  <li><strong>Threadpilot</strong></li>
-  <li><strong>Sidekiq</strong></li>
-  <li><strong>Rails</strong></li>
-</ul></div></div><div class="slide" id="slide-22" data-advance-ms="60000"><div class="slide-content"><h1>How to Be a Good OSS Contributor</h1>
-<ul>
-  <li>How to make useful issue reports</li>
-  <li>Why you shouldn&#39;t just open PRs you don&#39;t understand and can&#39;t verify</li>
-</ul></div></div><div class="slide" id="slide-23" data-advance-ms="60000"><div class="slide-content"><h1>Takeaways</h1>
-<ol>
-  <li>...</li>
-  <li>...</li>
-  <li>...</li>
-</ol>
-<p>Find more resources here: <em>(link)</em></p></div></div><div class="slide" id="slide-24" data-advance-ms="60000"><div class="slide-content"><h1>Thank You!</h1>
-<p><strong>Nate Berkopec</strong></p>
-<p>RubyKaigi 2026</p></div></div></div><script>(function () {
+<p>RubyKaigi 2026</p></div></div><div class="slide" id="slide-1" data-advance-ms="20270"><div class="slide-content"><h1>THE HOOK</h1>
+<p>Karpathy sets the world on fire: the coining of &quot;autoresearch&quot;</p></div></div><div class="slide" id="slide-2" data-advance-ms="20270"><div class="slide-content"><h1>THE HOOK</h1>
+<h2>Explain the tweet</h2></div></div><div class="slide" id="slide-3" data-advance-ms="20271"><div class="slide-content"><h1>THE HOOK</h1>
+<h2>Explain what was accomplished</h2></div></div><div class="slide" id="slide-4" data-advance-ms="20270"><div class="slide-content"><h1>THE HOOK</h1>
+<h2>Developer anxiety: FOMO, job fears</h2></div></div><div class="slide" id="slide-5" data-advance-ms="20270"><div class="slide-content"><h1>THE HOOK</h1>
+<h2>Is this the singularity? The take-off?</h2></div></div><div class="slide" id="slide-6" data-advance-ms="20270"><div class="slide-content"><h1>BIG IDEA</h1>
+<p>All of our work, including performance, is changing from building the thing, to building the thing that builds the thing. What is a &quot;performance factory&quot; and how do we build one?</p></div></div><div class="slide" id="slide-7" data-advance-ms="20271"><div class="slide-content"><h1>WHO AM I</h1>
+<p>I&#39;m Nate Berkopec!</p></div></div><div class="slide" id="slide-8" data-advance-ms="20270"><div class="slide-content"><h1>WHO AM I</h1>
+<h2>CGRP, Puma, Speedshop, Threadpilot</h2></div></div><div class="slide" id="slide-9" data-advance-ms="20270"><div class="slide-content"><h1>WHO AM I</h1>
+<h2>Retainer revenue chart w/o the y-axis</h2></div></div><div class="slide" id="slide-10" data-advance-ms="20270"><div class="slide-content"><h1>WHO AM I</h1>
+<h2>I&#39;ve taught workshops on these topics for years, how difficult it was to teach</h2></div></div><div class="slide" id="slide-11" data-advance-ms="20271"><div class="slide-content"><h1>WHO AM I</h1>
+<h2>I consider myself primarily a &quot;maker&quot; rather than a programmer, so LLMs didn&#39;t threaten me in the way I saw others react</h2></div></div><div class="slide" id="slide-12" data-advance-ms="20270"><div class="slide-content"><h1>WHO AM I</h1>
+<h2>My git commit count exploded. I think the entire dev job description has changed.</h2></div></div><div class="slide" id="slide-13" data-advance-ms="20270"><div class="slide-content"><h1>WHO AM I</h1>
+<h2>Opus 4.5/Codex 5 was a turning point in December</h2></div></div><div class="slide" id="slide-14" data-advance-ms="20271"><div class="slide-content"><h1>WHO AM I</h1>
+<h2>In some ways, I no longer consider myself a Rubyist</h2></div></div><div class="slide" id="slide-15" data-advance-ms="20270"><div class="slide-content"><h1>WHO AM I</h1>
+<h2>However, I want to continue to be a Rubyist as a hobby. And it&#39;s still nicer to read!</h2></div></div><div class="slide" id="slide-16" data-advance-ms="20270"><div class="slide-content"><h1>WHO AM I</h1>
+<h2>What I want: automate the drudgery, do the fun &quot;software engineering&quot;</h2></div></div><div class="slide" id="slide-17" data-advance-ms="20270"><div class="slide-content"><h1>WHO AM I</h1>
+<h2>Overview of where we&#39;re going to go today</h2></div></div><div class="slide" id="slide-18" data-advance-ms="20271"><div class="slide-content"><h1>PERF ENGINEERING</h1>
+<p>So, in the abstract, how does performance engineering work?</p></div></div><div class="slide" id="slide-19" data-advance-ms="20270"><div class="slide-content"><h1>PERF ENGINEERING</h1>
+<h2>Engineering: meeting requirements within constraints</h2></div></div><div class="slide" id="slide-20" data-advance-ms="20270"><div class="slide-content"><h1>PERF ENGINEERING</h1>
+<h2>What requirements do we usually have?</h2></div></div><div class="slide" id="slide-21" data-advance-ms="20270"><div class="slide-content"><h1>PERF ENGINEERING</h1>
+<h2>What requirements do we usually have?</h2>
+<h3>Latency</h3></div></div><div class="slide" id="slide-22" data-advance-ms="20271"><div class="slide-content"><h1>PERF ENGINEERING</h1>
+<h2>What requirements do we usually have?</h2>
+<h3>Resource efficiency</h3></div></div><div class="slide" id="slide-23" data-advance-ms="20270"><div class="slide-content"><h1>PERF ENGINEERING</h1>
+<h2>What requirements do we usually have?</h2>
+<h3>Robustness</h3></div></div><div class="slide" id="slide-24" data-advance-ms="20270"><div class="slide-content"><h1>PERF ENGINEERING</h1>
+<h2>Tool 1: benchmarking</h2></div></div><div class="slide" id="slide-25" data-advance-ms="20271"><div class="slide-content"><h1>PERF ENGINEERING</h1>
+<h2>Tool 1: benchmarking</h2>
+<h3>What still matters: warmup, noise, insufficient samples, GC</h3></div></div><div class="slide" id="slide-26" data-advance-ms="20270"><div class="slide-content"><h1>PERF ENGINEERING</h1>
+<h2>Tool 2: profiling</h2></div></div><div class="slide" id="slide-27" data-advance-ms="20270"><div class="slide-content"><h1>PERF ENGINEERING</h1>
+<h2>Tool 2: profiling</h2>
+<h3>Sample size is important, resolution</h3></div></div><div class="slide" id="slide-28" data-advance-ms="20270"><div class="slide-content"><h1>PERF ENGINEERING</h1>
+<h2>Tool 3: RUM and APM</h2></div></div><div class="slide" id="slide-29" data-advance-ms="20271"><div class="slide-content"><h1>PERF ENGINEERING</h1>
+<h2>What pre-LLM perf workflows looked like with these three tools put together</h2></div></div><div class="slide" id="slide-30" data-advance-ms="20270"><div class="slide-content"><h1>GENERAL PRINCIPLES OF LLM POWERED SOFTWARE DEVELOPMENT</h1></div></div><div class="slide" id="slide-31" data-advance-ms="20270"><div class="slide-content"><h1>GENERAL PRINCIPLES OF LLM POWERED SOFTWARE DEVELOPMENT</h1>
+<h2>Briefly: I use pi, codex and claude. see dotfiles.</h2></div></div><div class="slide" id="slide-32" data-advance-ms="20270"><div class="slide-content"><h1>GENERAL PRINCIPLES OF LLM POWERED SOFTWARE DEVELOPMENT</h1>
+<h2>I don&#39;t just ask. I ask it to come with a benchmark or a test that would demonstrate what is true, review the test, then come back in 10 minutes when it&#39;s demonstrated what is true conclusively.</h2></div></div><div class="slide" id="slide-33" data-advance-ms="20271"><div class="slide-content"><h1>GENERAL PRINCIPLES OF LLM POWERED SOFTWARE DEVELOPMENT</h1>
+<h2>Software factory</h2></div></div><div class="slide" id="slide-34" data-advance-ms="20270"><div class="slide-content"><h1>GENERAL PRINCIPLES OF LLM POWERED SOFTWARE DEVELOPMENT</h1>
+<h2>Verify, never trust</h2></div></div><div class="slide" id="slide-35" data-advance-ms="20270"><div class="slide-content"><h1>GENERAL PRINCIPLES OF LLM POWERED SOFTWARE DEVELOPMENT</h1>
+<h2>LLMs tend to want to write MORE, which is not always the correct solution</h2></div></div><div class="slide" id="slide-36" data-advance-ms="20271"><div class="slide-content"><h1>GENERAL PRINCIPLES OF LLM POWERED SOFTWARE DEVELOPMENT</h1>
+<h2>Onerous linting is actually encouraged</h2></div></div><div class="slide" id="slide-37" data-advance-ms="20270"><div class="slide-content"><h1>GENERAL PRINCIPLES OF LLM POWERED SOFTWARE DEVELOPMENT</h1>
+<h2>LLM judges are not really useful</h2></div></div><div class="slide" id="slide-38" data-advance-ms="20270"><div class="slide-content"><h1>GENERAL PRINCIPLES OF LLM POWERED SOFTWARE DEVELOPMENT</h1>
+<h2>Loops allow us to apply the bitter lesson, but are best when used against a deterministic standard</h2></div></div><div class="slide" id="slide-39" data-advance-ms="20270"><div class="slide-content"><h1>AUTORESEARCH DESIGN</h1>
+<p>Creating evals</p></div></div><div class="slide" id="slide-40" data-advance-ms="20271"><div class="slide-content"><h1>AUTORESEARCH DESIGN</h1>
+<h2>How &quot;Ralphing&quot; becomes &quot;Autoresearch&quot;</h2></div></div><div class="slide" id="slide-41" data-advance-ms="20270"><div class="slide-content"><h1>AUTORESEARCH DESIGN</h1>
+<h2>Software is not single-variable</h2></div></div><div class="slide" id="slide-42" data-advance-ms="20270"><div class="slide-content"><h1>AUTORESEARCH DESIGN</h1>
+<h2>Even performance is not single-variable</h2></div></div><div class="slide" id="slide-43" data-advance-ms="20270"><div class="slide-content"><h1>AUTORESEARCH DESIGN</h1>
+<h2>Looping is fundamentally about making the problem brute-forceable</h2></div></div><div class="slide" id="slide-44" data-advance-ms="20271"><div class="slide-content"><h1>AUTORESEARCH DESIGN</h1>
+<h2>Autoresearch design principles:</h2></div></div><div class="slide" id="slide-45" data-advance-ms="20270"><div class="slide-content"><h1>WHAT LLMS DONT CHANGE</h1></div></div><div class="slide" id="slide-46" data-advance-ms="20270"><div class="slide-content"><h1>WHAT LLMS DONT CHANGE</h1>
+<h2>We can&#39;t break software (or make other parts of it slow, or exceed memory usage constraints) in pursuit of optimizing a single variable. THIS IS IS THE HARD PART.</h2></div></div><div class="slide" id="slide-47" data-advance-ms="20270"><div class="slide-content"><h1>WHAT LLMS DONT CHANGE</h1>
+<h2>We can&#39;t ship slop.</h2></div></div><div class="slide" id="slide-48" data-advance-ms="20271"><div class="slide-content"><h1>WHAT LLMS DONT CHANGE</h1>
+<h2>You could make claude split that into 12 PRs of 100 lines or less.</h2></div></div><div class="slide" id="slide-49" data-advance-ms="20270"><div class="slide-content"><h1>WHAT LLMS DONT CHANGE</h1>
+<h2>No thousand line diffs.</h2></div></div><div class="slide" id="slide-50" data-advance-ms="20270"><div class="slide-content"><h1>WHAT LLMS DONT CHANGE</h1>
+<h2>Weaponized &quot;why don&#39;t you just&quot; nerd sniping</h2></div></div><div class="slide" id="slide-51" data-advance-ms="20271"><div class="slide-content"><h1>WHAT LLMS DONT CHANGE</h1>
+<h2>All of software engineering and development still applies</h2></div></div><div class="slide" id="slide-52" data-advance-ms="20270"><div class="slide-content"><h1>WHAT LLMS DONT CHANGE</h1>
+<h2>LLMs are amplifiers, not gods. They autocopmlete and amplify what already exists. If you have slop, it will amplify slop.</h2></div></div><div class="slide" id="slide-53" data-advance-ms="20270"><div class="slide-content"><h1>AUTORESEARCH RUBY HISTORY</h1></div></div><div class="slide" id="slide-54" data-advance-ms="20270"><div class="slide-content"><h1>AUTORESEARCH RUBY HISTORY</h1>
+<h2>Tobi</h2></div></div><div class="slide" id="slide-55" data-advance-ms="20271"><div class="slide-content"><h1>AUTORESEARCH RUBY HISTORY</h1>
+<h2>Bundler/Eileen</h2></div></div><div class="slide" id="slide-56" data-advance-ms="20270"><div class="slide-content"><h1>AUTORESEARCH RUBY HISTORY</h1>
+<h2>Stan Lo</h2></div></div><div class="slide" id="slide-57" data-advance-ms="20270"><div class="slide-content"><h1>THE RUBY AUTORESEARCH HARNESS</h1></div></div><div class="slide" id="slide-58" data-advance-ms="20270"><div class="slide-content"><h1>THE RUBY AUTORESEARCH HARNESS</h1>
+<h2>Skills:</h2></div></div><div class="slide" id="slide-59" data-advance-ms="20271"><div class="slide-content"><h1>THE RUBY AUTORESEARCH HARNESS</h1>
+<h2>Tools:</h2></div></div><div class="slide" id="slide-60" data-advance-ms="20270"><div class="slide-content"><h1>THE RUBY AUTORESEARCH HARNESS</h1>
+<h2>MCPs:</h2></div></div><div class="slide" id="slide-61" data-advance-ms="20270"><div class="slide-content"><h1>THE RUBY AUTORESEARCH HARNESS</h1>
+<h2>Prompts:</h2></div></div><div class="slide" id="slide-62" data-advance-ms="20271"><div class="slide-content"><h1>THE RUBY AUTORESEARCH HARNESS</h1>
+<h2>Sandboxes, remotes and security</h2></div></div><div class="slide" id="slide-63" data-advance-ms="20270"><div class="slide-content"><h1>THE RUBY AUTORESEARCH HARNESS</h1>
+<h2>Overview of harnesses and models</h2></div></div><div class="slide" id="slide-64" data-advance-ms="20270"><div class="slide-content"><h1>THE RUBY AUTORESEARCH HARNESS</h1>
+<h2>Knowing when to stop</h2></div></div><div class="slide" id="slide-65" data-advance-ms="20270"><div class="slide-content"><h1 class="fit-heading">Let&#39;s apply to <strong>Puma</strong>, <strong>Threadpilot</strong>, <strong>Sidekiq</strong> and <strong>Ruby</strong>.</h1></div></div><div class="slide" id="slide-66" data-advance-ms="20271"><div class="slide-content"><h1>HOW TO BE A GOOD OSS CONTRIBUTOR</h1></div></div><div class="slide" id="slide-67" data-advance-ms="20270"><div class="slide-content"><h1>HOW TO BE A GOOD OSS CONTRIBUTOR</h1>
+<h2>How to make useful issue reports for open source repositories</h2></div></div><div class="slide" id="slide-68" data-advance-ms="20270"><div class="slide-content"><h1>HOW TO BE A GOOD OSS CONTRIBUTOR</h1>
+<h2>Why you shouldn&#39;t just open PRs you don&#39;t understand and can&#39;t verify</h2></div></div><div class="slide" id="slide-69" data-advance-ms="20270"><div class="slide-content"><h1>Takeaways</h1></div></div><div class="slide" id="slide-70" data-advance-ms="20271"><div class="slide-content"><h1>Takeaways</h1>
+<h2>1: Research without verification is waste.</h2></div></div><div class="slide" id="slide-71" data-advance-ms="20270"><div class="slide-content"><h1>Takeaways</h1>
+<h2>2: De-risk what you can</h2></div></div><div class="slide" id="slide-72" data-advance-ms="20270"><div class="slide-content"><h1>Takeaways</h1>
+<h2>3: Use my toolkit:</h2></div></div><div class="slide" id="slide-73" data-advance-ms="20271"><div class="slide-content"><h1>Thank you!</h1></div></div></div><script>(function () {
   var mode = "reading";
-  var total = 25;
+  var total = 74;
   var slides = document.querySelectorAll(".slide");
   var progress = document.getElementById("progress");
 
