@@ -4,11 +4,11 @@ hooks {
   ["pre-commit"] {
     steps {
       ["lint"] {
-        glob = List("*.rb")
+        glob = List("*.rb", "lib/*.rb", "test/*.rb")
         check = "ruby -wc {{files}}"
       }
       ["test"] {
-        check = "ruby build_test.rb"
+        check = "ruby test/build_test.rb"
       }
     }
   }

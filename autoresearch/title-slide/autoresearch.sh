@@ -5,7 +5,7 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$script_dir/../.." && pwd)"
 cd "$repo_root"
 
-ruby -wc lib/build.rb build_test.rb lib/generate_slides.rb >/dev/null
+ruby -wc lib/build.rb test/build_test.rb >/dev/null
 mise build >/dev/null
 
 runs_json="$(mktemp)"
