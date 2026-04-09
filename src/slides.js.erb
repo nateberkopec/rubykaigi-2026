@@ -3,6 +3,27 @@
   var total = <%= total %>;
   var slides = document.querySelectorAll(".slide");
   var progress = document.getElementById("progress");
+  var descentSlides = Array.prototype.slice.call(
+    document.querySelectorAll('[data-slide-skin="descent"]')
+  );
+  var descentPatches = [
+    "inline send fastpath",
+    "shape cache ivar read",
+    "trim transient string allocs",
+    "specialize kwarg dispatch",
+    "fuse regexp match hot loop",
+    "reduce yjit exit churn",
+    "cache hash key shape checks"
+  ];
+  var descentBenches = [
+    "railsbench",
+    "liquid-render",
+    "optcarrot",
+    "lobsters-endpoint",
+    "erubi-hot-loop"
+  ];
+  var descentAnimationStarted = false;
+  var rubyKaigiStarPath = <%= rubykaigi_star_path.inspect %>;
 
   document.querySelectorAll(".slide-content").forEach(function (content) {
     if (
@@ -78,6 +99,1061 @@
 
   function fitAll() {
     slides.forEach(fitSlide);
+  }
+
+  function escapeHtml(text) {
+    return String(text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function setNodeText(nodes, text) {
+    nodes.forEach(function (node) {
+      node.textContent = text;
+    });
+  }
+
+  function signedValue(value, digits, suffix) {
+    return (value >= 0 ? "+" : "") + value.toFixed(digits) + (suffix || "");
+  }
+
+  function rotatedDescentBenches(index, count) {
+    var items = [];
+    for (var i = 0; i < count; i++) {
+      items.push(descentBenches[(index + i) % descentBenches.length]);
+    }
+    return items;
+  }
+
+  function descentNowClock() {
+    var now = new Date();
+    var ms = String(Math.floor(now.getMilliseconds() / 10)).padStart(2, "0");
+    return [
+      String(now.getHours()).padStart(2, "0"),
+      String(now.getMinutes()).padStart(2, "0"),
+      String(now.getSeconds()).padStart(2, "0"),
+      ms,
+    ].join(":");
+  }
+
+  function descentLogStamp() {
+    return new Date().toISOString().substring(11, 23);
+  }
+
+  function randomBetween(min, max) {
+    return min + Math.random() * (max - min);
+  }
+
+  function descentLoss(x, z) {
+    var skewX = x + z * 0.18;
+    var bowl = skewX * skewX * 0.03 + (z + 1.8) * (z + 1.8) * 0.02;
+    var primaryBasin = 7.1 * Math.exp(-0.055 * ((x - 1.8) * (x - 1.8) + (z - 10.6) * (z - 10.6)));
+    var sideChannel = 2.2 * Math.exp(-0.075 * ((x + 5.8) * (x + 5.8) + (z - 2.8) * (z - 2.8)));
+    var terrace = Math.sin((z - 2.5) * 0.28) * 0.18 + Math.cos(x * 0.36 + z * 0.08) * 0.1;
+
+    return bowl - primaryBasin - sideChannel + terrace;
+  }
+
+  function displayedDescentLoss(x, z) {
+    return Math.max(descentLoss(x, z) + 7.5, 0.0001);
+  }
+
+  function descentGradient(x, z) {
+    var h = 0.02;
+    return {
+      x: (descentLoss(x + h, z) - descentLoss(x - h, z)) / (2 * h),
+      z: (descentLoss(x, z + h) - descentLoss(x, z - h)) / (2 * h),
+    };
+  }
+
+  function descentNodeArray(slide, selector) {
+    return Array.prototype.slice.call(slide.querySelectorAll(selector));
+  }
+
+  function addDescentLog(state, message) {
+    state.logs.push({ time: descentLogStamp(), message: message });
+    if (state.logs.length > 10) {
+      state.logs.shift();
+    }
+  }
+
+  function renderDescentLogs(state) {
+    if (!state.logEl) return;
+
+    state.logEl.innerHTML = state.logs
+      .map(function (entry) {
+        return (
+          '<div class="descent-log-line">' +
+          '<span class="descent-log-time">[' +
+          escapeHtml(entry.time) +
+          ']</span>' +
+          "<span>" +
+          escapeHtml(entry.message) +
+          "</span>" +
+          "</div>"
+        );
+      })
+      .join("");
+  }
+
+  function currentDescentStatus(state) {
+    if (state.resetAt) return "RESETTING";
+    if (state.statusUntilFrame && state.frameCount <= state.statusUntilFrame) {
+      return state.statusText;
+    }
+    if (state.iteration < 24) return "WARMING";
+    return "DESCENDING";
+  }
+
+  function setDescentStatus(state, text, frames) {
+    state.statusText = text;
+    state.statusUntilFrame = state.frameCount + (frames || 0);
+  }
+
+  function syncDescentDom(state) {
+    var bestLoss = isFinite(state.globalBestLoss)
+      ? state.globalBestLoss
+      : state.currentLoss;
+    var status = currentDescentStatus(state);
+    var benchIndex = Math.floor(state.iteration / 24) % descentBenches.length;
+    var benchSuite = rotatedDescentBenches(benchIndex, 3).join(" / ");
+    var specShort = state.specPassPct.toFixed(2) + "%";
+    var specLong =
+      (18472 - Math.round((100 - state.specPassPct) * 18)).toLocaleString("en-US") +
+      " / 18,472 (" +
+      specShort +
+      ")";
+    var memoryShort = state.rssMb.toFixed(0) + "MB / " + signedValue(state.rssDelta, 1, "%");
+    var memoryLong =
+      state.rssMb.toFixed(0) +
+      "MB rss // heap live " +
+      (77 + state.jitCoverage * 0.12).toFixed(1) +
+      "%";
+    var jitText =
+      "YJIT on // side exits " +
+      Math.max(0.5, 3.4 - state.bestDelta * 0.13).toFixed(1) +
+      "%";
+
+    if (state.vectorEl) {
+      state.vectorEl.textContent =
+        "[ " + state.agent.x.toFixed(3) + ", " + state.agent.z.toFixed(3) + " ]";
+    }
+    if (state.patchEl) {
+      state.patchEl.textContent = state.currentPatch.toUpperCase();
+    }
+    if (state.statusEl) {
+      state.statusEl.textContent = status;
+      state.statusEl.setAttribute("data-text", status);
+    }
+
+    setNodeText(state.branchEls, state.currentBranch);
+    setNodeText(state.hotBenchEls, state.currentHotBench);
+    setNodeText(state.jitEls, jitText);
+    setNodeText(state.specShortEls, specShort);
+    setNodeText(state.specLongEls, specLong);
+    setNodeText(state.memoryShortEls, memoryShort);
+    setNodeText(state.memoryLongEls, memoryLong);
+    setNodeText(state.gcEls, state.gcProfile);
+    setNodeText(state.workerEls, state.workerSummary);
+    setNodeText(state.noiseEls, "±" + state.noiseFloor.toFixed(2) + "%");
+    setNodeText(state.mutationEls, String(state.mutationCount).padStart(4, "0"));
+    setNodeText(state.keepEls, String(state.keepCount).padStart(3, "0"));
+    setNodeText(state.jitCoverageEls, state.jitCoverage.toFixed(1) + "%");
+    setNodeText(state.failureEls, String(state.failureCount));
+    setNodeText(state.queueEls, String(state.queueDepth).padStart(2, "0") + " pending");
+    setNodeText(state.verifyEls, state.lastVerify);
+    setNodeText(state.baselineEls, state.baselineLabel);
+    setNodeText(state.throughputEls, signedValue(state.throughputDelta, 2, "%"));
+    setNodeText(state.ipsEls, state.ipsMillions.toFixed(2) + "M");
+    setNodeText(state.memoryDeltaEls, signedValue(state.rssDelta, 1, "%"));
+    setNodeText(state.benchSuiteEls, benchSuite);
+    setNodeText(state.lossEls, state.currentLoss.toFixed(6));
+    setNodeText(state.bestEls, bestLoss.toFixed(6));
+    setNodeText(state.deltaEls, "+" + state.bestDelta.toFixed(2) + "%");
+    setNodeText(state.clockEls, descentNowClock());
+  }
+
+  function resetDescentExperiment(state, initial) {
+    state.agent.x = randomBetween(-9.5, 9.5);
+    state.agent.z = randomBetween(-14.5, -6.5);
+    state.agent.vx = 0;
+    state.agent.vz = 0;
+    state.iteration = 0;
+    state.loopCount += 1;
+    state.trail = [];
+    state.history = [];
+    state.memoryHistory = [];
+    state.streamHistory = [];
+    state.costResults = [];
+    state.runCount = 0;
+    resetDescentCheckMatrix(state);
+    state.simulationAccumulator = 0;
+    state.resetAt = 0;
+    state.currentPatch = "warming benchmark harness";
+    state.currentHotBench = descentBenches[Math.floor(Math.random() * descentBenches.length)];
+    state.currentBranch =
+      "ruby-speed-lab-" + Math.floor(Math.random() * 4096).toString(16).toUpperCase();
+    state.rssMb = randomBetween(584, 676);
+    state.rssDelta = randomBetween(-0.3, 0.3);
+    state.specPassPct = randomBetween(99.54, 99.72);
+    state.jitCoverage = randomBetween(89.8, 92.6);
+    state.queueDepth = Math.floor(randomBetween(2, 6));
+    state.noiseFloor = randomBetween(0.24, 0.43);
+    state.ipsMillions = randomBetween(2.1, 2.5);
+    state.gcProfile = "RGENGC // compaction off // minor " + randomBetween(2.4, 4.4).toFixed(1) + "ms";
+    state.workerSummary =
+      String(Math.floor(randomBetween(6, 10))).padStart(2, "0") +
+      " local // " +
+      String(Math.floor(randomBetween(2, 5))).padStart(2, "0") +
+      " remote";
+    state.lastVerify = "spec + bench + memory";
+    state.currentLoss = displayedDescentLoss(state.agent.x, state.agent.z);
+    state.chartLoss = state.currentLoss;
+    state.baselineLoss = state.currentLoss;
+    state.latestDelta = 0;
+    state.throughputDelta = 0;
+    setDescentStatus(state, "AUTORESEARCHING", 40);
+
+    if (!isFinite(state.globalBestLoss)) {
+      state.globalBestLoss = state.currentLoss;
+    }
+
+    if (initial) {
+      state.logs = [];
+      addDescentLog(state, "BOOT ruby autoresearch console // objective: lower runtime cost");
+      addDescentLog(state, "ENABLE yjit, benchmark harness, rubyspec gate, rss budget");
+    } else {
+      addDescentLog(state, "RESET search basin // branch " + state.currentBranch);
+    }
+
+    addDescentLog(state, "TARGET ruby-head // keep only faster patches");
+    addDescentLog(state, "BASELINE " + state.currentHotBench + " // jitter " + signedValue(state.noiseFloor, 2, "%"));
+    renderDescentLogs(state);
+    syncDescentDom(state);
+  }
+
+  function setupDescentSlide(slide) {
+    if (slide._descentState) return slide._descentState;
+
+    var stage = slide.querySelector(".descent-stage");
+    var chart = slide.querySelector("[data-descent-chart]");
+    var memoryChart = slide.querySelector("[data-descent-memory-chart]");
+    var stackChart = slide.querySelector("[data-descent-stack-chart]");
+    var streamChart = slide.querySelector("[data-descent-stream-chart]");
+    var costChart = slide.querySelector("[data-descent-cost-chart]");
+    var state = {
+      slide: slide,
+      stage: stage,
+      stageCtx: stage ? stage.getContext("2d") : null,
+      bufferCanvas: document.createElement("canvas"),
+      bufferCtx: null,
+      chart: chart,
+      chartCtx: chart ? chart.getContext("2d") : null,
+      memoryChart: memoryChart,
+      memoryChartCtx: memoryChart ? memoryChart.getContext("2d") : null,
+      stackChart: stackChart,
+      stackChartCtx: stackChart ? stackChart.getContext("2d") : null,
+      streamChart: streamChart,
+      streamChartCtx: streamChart ? streamChart.getContext("2d") : null,
+      costChart: costChart,
+      costChartCtx: costChart ? costChart.getContext("2d") : null,
+      logEl: slide.querySelector("[data-descent-log]"),
+      vectorEl: slide.querySelector("[data-descent-vector]"),
+      patchEl: slide.querySelector("[data-descent-patch]"),
+      statusEl: slide.querySelector("[data-descent-status]"),
+      checkEls: descentNodeArray(slide, "[data-descent-check]"),
+      branchEls: descentNodeArray(slide, "[data-descent-branch]"),
+      hotBenchEls: descentNodeArray(slide, "[data-descent-hotbench]"),
+      jitEls: descentNodeArray(slide, "[data-descent-jit]"),
+      specShortEls: descentNodeArray(slide, "[data-descent-spec-short]"),
+      specLongEls: descentNodeArray(slide, "[data-descent-spec-long]"),
+      memoryShortEls: descentNodeArray(slide, "[data-descent-memory-short]"),
+      memoryLongEls: descentNodeArray(slide, "[data-descent-memory-long]"),
+      gcEls: descentNodeArray(slide, "[data-descent-gc]"),
+      workerEls: descentNodeArray(slide, "[data-descent-workers]"),
+      noiseEls: descentNodeArray(slide, "[data-descent-noise]"),
+      mutationEls: descentNodeArray(slide, "[data-descent-mutations]"),
+      keepEls: descentNodeArray(slide, "[data-descent-keeps]"),
+      jitCoverageEls: descentNodeArray(slide, "[data-descent-jitcov]"),
+      failureEls: descentNodeArray(slide, "[data-descent-failures]"),
+      queueEls: descentNodeArray(slide, "[data-descent-queue]"),
+      verifyEls: descentNodeArray(slide, "[data-descent-verify]"),
+      baselineEls: descentNodeArray(slide, "[data-descent-baseline]"),
+      throughputEls: descentNodeArray(slide, "[data-descent-throughput]"),
+      ipsEls: descentNodeArray(slide, "[data-descent-ips]"),
+      memoryDeltaEls: descentNodeArray(slide, "[data-descent-memory-delta]"),
+      benchSuiteEls: descentNodeArray(slide, "[data-descent-bench-suite]"),
+      lossEls: descentNodeArray(slide, "[data-descent-loss]"),
+      bestEls: descentNodeArray(slide, "[data-descent-best]"),
+      deltaEls: descentNodeArray(slide, "[data-descent-delta]"),
+      clockEls: descentNodeArray(slide, "[data-descent-clock]"),
+      logs: [],
+      trail: [],
+      history: [],
+      memoryHistory: [],
+      streamHistory: [],
+      costResults: [],
+      checkStates: [],
+      activeCheckIndex: -1,
+      matrixFailingIndex: null,
+      matrixResetAt: 0,
+      matrixResetTimer: null,
+      simulationAccumulator: 0,
+      frameCount: 0,
+      iteration: 0,
+      mutationCount: 0,
+      keepCount: 0,
+      loopCount: 0,
+      runCount: 0,
+      statusText: "AUTORESEARCHING",
+      statusUntilFrame: 0,
+      currentPatch: "warming benchmark harness",
+      currentBranch: "ruby-speed-lab-A12",
+      currentHotBench: descentBenches[0],
+      specPassPct: 99.60,
+      rssMb: 612,
+      rssDelta: 0,
+      jitCoverage: 91.4,
+      failureCount: 0,
+      queueDepth: 3,
+      throughputDelta: 0,
+      ipsMillions: 2.34,
+      gcProfile: "RGENGC // compaction off // minor 3.1ms",
+      workerSummary: "08 local // 03 remote",
+      noiseFloor: 0.37,
+      lastVerify: "spec + bench + memory",
+      baselineLabel: "ruby 3.5.0dev",
+      baselineLoss: 1,
+      currentLoss: 1,
+      latestDelta: 0,
+      bestDelta: 0,
+      chartLoss: 1,
+      globalBestLoss: Infinity,
+      orbitOffset: Math.random() * Math.PI * 2,
+      resetAt: 0,
+      agent: { x: 0, z: 0, vx: 0, vz: 0 },
+    };
+
+    state.bufferCtx = state.bufferCanvas.getContext("2d");
+    slide._descentState = state;
+    resetDescentExperiment(state, true);
+    return state;
+  }
+
+  function resizeAnimatedCanvas(canvas, options) {
+    if (!canvas) return null;
+
+    options = options || {};
+
+    var rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return null;
+
+    var scale = options.scale || 1;
+    var maxDpr = options.maxDpr || 2;
+    var dpr = Math.min(window.devicePixelRatio || 1, maxDpr) * scale;
+    var width = Math.max(1, Math.round(rect.width * dpr));
+    var height = Math.max(1, Math.round(rect.height * dpr));
+
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+    }
+
+    return { width: width, height: height, dpr: dpr };
+  }
+
+  function applyDescentDither(sourceCtx, targetCtx, width, height) {
+    var imageData = sourceCtx.getImageData(0, 0, width, height);
+    var data = imageData.data;
+    var bayer = [
+      0 / 16, 8 / 16, 2 / 16, 10 / 16,
+      12 / 16, 4 / 16, 14 / 16, 6 / 16,
+      3 / 16, 11 / 16, 1 / 16, 9 / 16,
+      15 / 16, 7 / 16, 13 / 16, 5 / 16,
+    ];
+
+    for (var y = 0; y < height; y++) {
+      for (var x = 0; x < width; x++) {
+        var offset = (y * width + x) * 4;
+        var brightness =
+          (0.299 * data[offset] + 0.587 * data[offset + 1] + 0.114 * data[offset + 2]) /
+          255;
+        brightness = Math.max(0, Math.min(1, (brightness - 0.06) * 1.9));
+
+        var threshold = bayer[(x % 4) + (y % 4) * 4];
+        var on = brightness > threshold;
+
+        data[offset] = on ? 244 : 0;
+        data[offset + 1] = on ? 235 : 0;
+        data[offset + 2] = on ? 97 : 0;
+        data[offset + 3] = 255;
+      }
+    }
+
+    targetCtx.putImageData(imageData, 0, 0);
+  }
+
+  function descentProjectPoint(x, y, z, orbit, pitch, centerX, centerY, scaleBase) {
+    var cosY = Math.cos(orbit);
+    var sinY = Math.sin(orbit);
+    var rx = x * cosY - z * sinY;
+    var rz = x * sinY + z * cosY;
+    var cosP = Math.cos(pitch);
+    var sinP = Math.sin(pitch);
+    var ry = y * cosP - rz * sinP;
+    var depth = y * sinP + rz * cosP + 30;
+    var scale = scaleBase / depth;
+
+    return {
+      x: centerX + rx * scale,
+      y: centerY - ry * scale,
+      depth: depth,
+    };
+  }
+
+  function renderDescentStage(state, time) {
+    var ctx = state.stageCtx;
+    var size = resizeAnimatedCanvas(state.stage, { scale: 0.55, maxDpr: 1 });
+    if (!ctx || !size || !state.bufferCtx) return;
+
+    var width = size.width;
+    var height = size.height;
+    var bctx = state.bufferCtx;
+    var orbit = state.orbitOffset + time * 0.00014;
+    var pitch = 0.96;
+    var centerX = width * 0.56;
+    var centerY = height * 0.47;
+    var scaleBase = Math.min(width, height) * 1.85;
+    var extent = 15.5;
+    var step = 1.25;
+    var rows = [];
+    var xCount = Math.floor((extent * 2) / step) + 1;
+
+    if (state.bufferCanvas.width !== width || state.bufferCanvas.height !== height) {
+      state.bufferCanvas.width = width;
+      state.bufferCanvas.height = height;
+    }
+
+    bctx.clearRect(0, 0, width, height);
+
+    var background = bctx.createLinearGradient(0, 0, 0, height);
+    background.addColorStop(0, "rgba(4, 7, 10, 1)");
+    background.addColorStop(1, "rgba(2, 3, 4, 1)");
+    bctx.fillStyle = background;
+    bctx.fillRect(0, 0, width, height);
+
+    for (var z = -extent; z <= extent + 0.001; z += step) {
+      var row = [];
+      for (var x = -extent; x <= extent + 0.001; x += step) {
+        row.push(
+          descentProjectPoint(
+            x,
+            descentLoss(x, z) * 1.25,
+            z,
+            orbit,
+            pitch,
+            centerX,
+            centerY,
+            scaleBase
+          )
+        );
+      }
+      rows.push(row);
+    }
+
+    bctx.lineCap = "round";
+    bctx.lineJoin = "round";
+    bctx.lineWidth = Math.max(1, Math.round(Math.min(width, height) * 0.0018));
+
+    rows.forEach(function (row, rowIndex) {
+      bctx.beginPath();
+      row.forEach(function (point, pointIndex) {
+        if (pointIndex === 0) bctx.moveTo(point.x, point.y);
+        else bctx.lineTo(point.x, point.y);
+      });
+      bctx.strokeStyle =
+        rowIndex % 3 === 0
+          ? "rgba(244, 235, 97, 0.28)"
+          : "rgba(244, 235, 97, 0.16)";
+      bctx.stroke();
+    });
+
+    for (var column = 0; column < xCount; column++) {
+      bctx.beginPath();
+      for (var rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+        var point = rows[rowIndex][column];
+        if (rowIndex === 0) bctx.moveTo(point.x, point.y);
+        else bctx.lineTo(point.x, point.y);
+      }
+      bctx.strokeStyle = "rgba(244, 235, 97, 0.12)";
+      bctx.stroke();
+    }
+
+    if (rubyKaigiStarPath && typeof Path2D !== "undefined") {
+      var starPath2d = state.rubyKaigiStarPath2d || (state.rubyKaigiStarPath2d = new Path2D(rubyKaigiStarPath));
+      var starScale = Math.min(width, height) * 0.0019;
+
+      bctx.save();
+      bctx.translate(width * 0.325, height * 0.73);
+      bctx.rotate(-0.22 + time * 0.00008);
+      bctx.scale(starScale, starScale);
+      bctx.translate(-115, -103);
+      bctx.fillStyle = "rgba(244, 235, 97, 0.26)";
+      bctx.fill(starPath2d);
+      bctx.lineWidth = 1 / starScale;
+      bctx.strokeStyle = "rgba(244, 235, 97, 0.22)";
+      bctx.stroke(starPath2d);
+      bctx.restore();
+    }
+
+    if (state.trail.length > 1) {
+      bctx.beginPath();
+      state.trail.forEach(function (entry, index) {
+        var projected = descentProjectPoint(
+          entry.x,
+          descentLoss(entry.x, entry.z) * 1.25 + 0.6,
+          entry.z,
+          orbit,
+          pitch,
+          centerX,
+          centerY,
+          scaleBase
+        );
+
+        if (index === 0) bctx.moveTo(projected.x, projected.y);
+        else bctx.lineTo(projected.x, projected.y);
+      });
+      bctx.strokeStyle = "rgba(244, 235, 97, 0.96)";
+      bctx.lineWidth = Math.max(1.5, Math.min(width, height) * 0.0032);
+      bctx.stroke();
+    }
+
+    var agentPoint = descentProjectPoint(
+      state.agent.x,
+      descentLoss(state.agent.x, state.agent.z) * 1.25 + 0.9,
+      state.agent.z,
+      orbit,
+      pitch,
+      centerX,
+      centerY,
+      scaleBase
+    );
+
+    bctx.beginPath();
+    bctx.fillStyle = "rgba(244, 235, 97, 1)";
+    bctx.arc(agentPoint.x, agentPoint.y, Math.max(2, Math.min(width, height) * 0.0065), 0, Math.PI * 2);
+    bctx.fill();
+
+    bctx.beginPath();
+    bctx.strokeStyle = "rgba(244, 235, 97, 0.45)";
+    bctx.lineWidth = Math.max(1, Math.min(width, height) * 0.0018);
+    bctx.arc(agentPoint.x, agentPoint.y, Math.max(8, Math.min(width, height) * 0.02), 0, Math.PI * 2);
+    bctx.stroke();
+
+    applyDescentDither(bctx, ctx, width, height);
+  }
+
+  function renderDescentChart(state) {
+    var ctx = state.chartCtx;
+    var size = resizeAnimatedCanvas(state.chart);
+    if (!ctx || !size) return;
+
+    var width = size.width;
+    var height = size.height;
+    var history = state.history;
+
+    ctx.clearRect(0, 0, width, height);
+    if (history.length < 2) return;
+
+    var maxLoss = Math.max.apply(null, history.concat([1]));
+    var minLoss = Math.min.apply(null, history);
+    var range = Math.max(maxLoss - minLoss, 0.0001);
+    var bottom = height - 1;
+
+    ctx.beginPath();
+    history.forEach(function (value, index) {
+      var x = (index / Math.max(history.length - 1, 1)) * width;
+      var y = bottom - ((value - minLoss) / range) * (height - 4);
+      if (index === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = "rgba(244, 235, 97, 1)";
+    ctx.lineWidth = Math.max(1.5, Math.min(width, height) * 0.01);
+    ctx.stroke();
+
+    ctx.lineTo(width, bottom);
+    ctx.lineTo(0, bottom);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(244, 235, 97, 0.12)";
+    ctx.fill();
+
+    var latestX = width;
+    var latestY = bottom - ((history[history.length - 1] - minLoss) / range) * (height - 4);
+    ctx.beginPath();
+    ctx.fillStyle = "rgba(244, 235, 97, 1)";
+    ctx.arc(latestX, latestY, Math.max(2, Math.min(width, height) * 0.015), 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function resetDescentCheckMatrix(state) {
+    if (state.matrixResetTimer) {
+      clearTimeout(state.matrixResetTimer);
+      state.matrixResetTimer = null;
+    }
+
+    state.checkStates = state.checkEls.map(function (_cell, index) {
+      return index < 2 ? "pass" : "pending";
+    });
+    state.activeCheckIndex = Math.min(2, Math.max(state.checkStates.length - 1, 0));
+    if (state.checkStates.length) {
+      state.checkStates[state.activeCheckIndex] = "running";
+    }
+    state.matrixFailingIndex = null;
+    state.matrixResetAt = 0;
+  }
+
+  function renderDescentCheckMatrix(state) {
+    state.checkEls.forEach(function (cell, index) {
+      var status = state.checkStates[index] || "pending";
+      cell.classList.remove("is-pending", "is-running", "is-pass", "is-fail", "is-flashing");
+      cell.classList.add("is-" + status);
+
+      if (state.matrixFailingIndex === index && state.matrixResetAt) {
+        cell.classList.add("is-flashing");
+      }
+
+      var stateEl = cell.querySelector(".descent-check-state");
+      if (stateEl) stateEl.textContent = status;
+    });
+  }
+
+  function renderDescentMemoryChart(state) {
+    var ctx = state.memoryChartCtx;
+    var size = resizeAnimatedCanvas(state.memoryChart, { maxDpr: 1.5 });
+    if (!ctx || !size) return;
+
+    var width = size.width;
+    var height = size.height;
+    var history = state.memoryHistory;
+
+    ctx.clearRect(0, 0, width, height);
+    if (history.length < 2) return;
+
+    var minValue = Math.min.apply(null, history) - 8;
+    var maxValue = Math.max.apply(null, history) + 8;
+    var range = Math.max(maxValue - minValue, 1);
+    var bottom = height - 2;
+
+    ctx.beginPath();
+    history.forEach(function (value, index) {
+      var x = (index / Math.max(history.length - 1, 1)) * width;
+      var y = bottom - ((value - minValue) / range) * (height - 8);
+      if (index === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = "rgba(244, 235, 97, 1)";
+    ctx.lineWidth = Math.max(1, width * 0.008);
+    ctx.stroke();
+
+    ctx.lineTo(width, bottom);
+    ctx.lineTo(0, bottom);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(244, 235, 97, 0.12)";
+    ctx.fill();
+  }
+
+  function renderDescentTreemap(state) {
+    var ctx = state.stackChartCtx;
+    var size = resizeAnimatedCanvas(state.stackChart, { maxDpr: 1.5 });
+    if (!ctx || !size) return;
+
+    var width = size.width;
+    var height = size.height;
+    var nodes = [
+      { label: "send", value: 28 + Math.abs(Math.sin(state.iteration / 13)) * 18 },
+      { label: "alloc", value: 20 + Math.abs(Math.cos(state.iteration / 17)) * 14 },
+      { label: "gc", value: 14 + Math.abs(Math.sin(state.iteration / 23 + 1.2)) * 10 },
+      { label: "regexp", value: 8 + Math.abs(Math.cos(state.iteration / 19 + 2.1)) * 8 },
+      { label: "cfunc", value: 10 + Math.abs(Math.sin(state.iteration / 11 + 0.8)) * 8 },
+      { label: "shape", value: 12 + Math.abs(Math.cos(state.iteration / 29 + 0.4)) * 9 },
+    ];
+    var total = nodes.reduce(function (sum, node) { return sum + node.value; }, 0);
+    var leftWidth = width * ((nodes[0].value + nodes[1].value + nodes[2].value) / total);
+    var leftY = 0;
+    var leftTotal = nodes[0].value + nodes[1].value + nodes[2].value;
+    var rightX = leftWidth;
+    var rightTotal = total - leftTotal;
+    var rightY = 0;
+
+    ctx.clearRect(0, 0, width, height);
+
+    nodes.slice(0, 3).forEach(function (node, index) {
+      var h = height * (node.value / leftTotal);
+      ctx.fillStyle = index % 2 === 0 ? "rgba(244, 235, 97, 0.24)" : "rgba(244, 235, 97, 0.12)";
+      ctx.fillRect(0, leftY, leftWidth - 1, h - 1);
+      ctx.strokeStyle = "rgba(244, 235, 97, 0.35)";
+      ctx.strokeRect(0.5, leftY + 0.5, leftWidth - 1, h - 1);
+      ctx.fillStyle = "rgba(244, 235, 97, 0.92)";
+      ctx.font = Math.max(9, width * 0.05) + "px monospace";
+      ctx.fillText(node.label, 4, leftY + 12);
+      leftY += h;
+    });
+
+    nodes.slice(3).forEach(function (node, index) {
+      var h = height * (node.value / rightTotal);
+      ctx.fillStyle = index % 2 === 0 ? "rgba(244, 235, 97, 0.16)" : "rgba(244, 235, 97, 0.08)";
+      ctx.fillRect(rightX, rightY, width - rightX - 1, h - 1);
+      ctx.strokeStyle = "rgba(244, 235, 97, 0.28)";
+      ctx.strokeRect(rightX + 0.5, rightY + 0.5, width - rightX - 1, h - 1);
+      ctx.fillStyle = "rgba(244, 235, 97, 0.86)";
+      ctx.font = Math.max(8, width * 0.04) + "px monospace";
+      ctx.fillText(node.label, rightX + 4, rightY + 12);
+      rightY += h;
+    });
+  }
+
+  function renderDescentStreamgraph(state) {
+    var ctx = state.streamChartCtx;
+    var size = resizeAnimatedCanvas(state.streamChart, { maxDpr: 1.5 });
+    if (!ctx || !size) return;
+
+    var width = size.width;
+    var height = size.height;
+    var history = state.streamHistory;
+    var keys = ["postgres", "redis", "http", "views", "rubyvm"];
+    var fills = [0.08, 0.14, 0.2, 0.26, 0.34];
+
+    ctx.clearRect(0, 0, width, height);
+    if (history.length < 2) return;
+
+    var baseline = new Array(history.length).fill(height * 0.5);
+    keys.forEach(function (key, keyIndex) {
+      var upper = [];
+      var lower = [];
+      for (var i = 0; i < history.length; i++) {
+        var total = keys.reduce(function (sum, name) { return sum + history[i][name]; }, 0);
+        var thickness = ((history[i][key] / total) * height * 0.72);
+        var x = (i / Math.max(history.length - 1, 1)) * width;
+        lower.push({ x: x, y: baseline[i] });
+        upper.push({ x: x, y: baseline[i] - thickness });
+        baseline[i] -= thickness * 0.58;
+      }
+
+      ctx.beginPath();
+      upper.forEach(function (point, index) {
+        if (index === 0) ctx.moveTo(point.x, point.y);
+        else ctx.lineTo(point.x, point.y);
+      });
+      for (var j = lower.length - 1; j >= 0; j--) {
+        ctx.lineTo(lower[j].x, lower[j].y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = "rgba(244, 235, 97, " + fills[keyIndex] + ")";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(244, 235, 97, 0.22)";
+      ctx.stroke();
+    });
+  }
+
+  function renderDescentCostResults(state, time) {
+    var ctx = state.costChartCtx;
+    var size = resizeAnimatedCanvas(state.costChart, { maxDpr: 1.5 });
+    if (!ctx || !size) return;
+
+    var width = size.width;
+    var height = size.height;
+    var left = 8;
+    var right = width - 6;
+    var top = 6;
+    var bottom = height - 8;
+    var minCost = 0;
+    var maxCost = 4.2;
+    var minGain = -1.5;
+    var maxGain = 12.5;
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.strokeStyle = "rgba(244, 235, 97, 0.12)";
+    ctx.lineWidth = 1;
+
+    for (var gridIndex = 0; gridIndex < 4; gridIndex++) {
+      var gy = top + ((bottom - top) / 3) * gridIndex;
+      ctx.beginPath();
+      ctx.moveTo(left, gy);
+      ctx.lineTo(right, gy);
+      ctx.stroke();
+    }
+
+    for (var gxIndex = 0; gxIndex < 5; gxIndex++) {
+      var gx = left + ((right - left) / 4) * gxIndex;
+      ctx.beginPath();
+      ctx.moveTo(gx, top);
+      ctx.lineTo(gx, bottom);
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = "rgba(244, 235, 97, 0.42)";
+    ctx.beginPath();
+    ctx.moveTo(left, bottom);
+    ctx.lineTo(right, bottom);
+    ctx.moveTo(left, top);
+    ctx.lineTo(left, bottom);
+    ctx.stroke();
+
+    state.costResults.forEach(function (point) {
+      var normalizedCost = (point.cost - minCost) / (maxCost - minCost);
+      var normalizedGain = (point.gain - minGain) / (maxGain - minGain);
+      var x = left + normalizedCost * (right - left);
+      var y = bottom - normalizedGain * (bottom - top);
+      var age = Math.max(0, (time - point.bornAt) / 320);
+      var eased = Math.min(1, age);
+      var radius = 1.5 + eased * (point.keep ? 2.7 : 1.9);
+
+      ctx.beginPath();
+      ctx.fillStyle = point.keep
+        ? "rgba(244, 235, 97, " + (0.18 + eased * 0.8) + ")"
+        : "rgba(244, 235, 97, " + (0.1 + eased * 0.42) + ")";
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (eased < 1) {
+        ctx.beginPath();
+        ctx.strokeStyle = "rgba(244, 235, 97, " + (0.4 * (1 - eased)) + ")";
+        ctx.arc(x, y, radius + 4 * (1 - eased), 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    });
+  }
+
+  function emitPeriodicDescentLog(state, grad) {
+    var cycle = Math.floor(state.iteration / 42);
+    var patch = descentPatches[cycle % descentPatches.length];
+    var bench = descentBenches[Math.floor(state.iteration / 21) % descentBenches.length];
+    var messages = [
+      "PATCH " + patch + " // isolate and benchmark",
+      "BENCH " + bench + " // best keep +" + state.bestDelta.toFixed(2) + "%",
+      "VERIFY specs, perf, memory budget // green across harness",
+      "GRAD [" + grad.x.toFixed(2) + ", " + grad.z.toFixed(2) + "] // keep exploring",
+    ];
+
+    state.currentPatch = patch;
+    state.currentHotBench = bench;
+    state.lastVerify =
+      cycle % 3 === 0 ? "spec + bench + memory" : cycle % 3 === 1 ? "rubyspec + yjit stats" : "bench variance + rss";
+    addDescentLog(state, messages[cycle % messages.length]);
+    renderDescentLogs(state);
+  }
+
+  function descentShouldAnimate(state) {
+    if (!state || state.slide.clientWidth === 0 || state.slide.clientHeight === 0) {
+      return false;
+    }
+
+    return mode !== "presentation" || state.slide.classList.contains("active");
+  }
+
+  function stepDescentState(state, time) {
+    if (state.resetAt && time >= state.resetAt) {
+      resetDescentExperiment(state, false);
+    }
+
+    if (state.resetAt) {
+      syncDescentDom(state);
+      return;
+    }
+
+    if (state.matrixResetAt) {
+      syncDescentDom(state);
+      return;
+    }
+
+    state.frameCount += 1;
+    state.simulationAccumulator += 0.2;
+
+    while (state.simulationAccumulator >= 1) {
+      state.simulationAccumulator -= 1;
+      var grad = descentGradient(state.agent.x, state.agent.z);
+      var targetX = 1.6 + Math.sin(state.iteration / 28 + state.loopCount * 0.4) * 0.7;
+      var targetZ = 10.8 + Math.cos(state.iteration / 33 + state.loopCount * 0.25) * 0.9;
+      var wanderX =
+        Math.sin(state.iteration / 16 + state.orbitOffset) * 0.018 +
+        Math.cos(state.iteration / 24 + state.loopCount * 0.45) * 0.012;
+      var wanderZ =
+        Math.cos(state.iteration / 19 + state.orbitOffset * 0.7) * 0.016 +
+        Math.sin(state.iteration / 27 + state.loopCount * 0.35) * 0.01;
+      var guideX = (targetX - state.agent.x) * 0.0034;
+      var guideZ = (targetZ - state.agent.z) * 0.0052;
+
+      state.agent.vx = 0.9 * state.agent.vx - 0.0108 * grad.x + guideX + wanderX;
+      state.agent.vz = 0.9 * state.agent.vz - 0.0108 * grad.z + guideZ + wanderZ;
+      state.agent.x = Math.max(-15.8, Math.min(15.8, state.agent.x + state.agent.vx));
+      state.agent.z = Math.max(-15.8, Math.min(15.8, state.agent.z + state.agent.vz));
+      state.iteration += 1;
+      state.mutationCount += 1;
+      state.currentLoss = displayedDescentLoss(state.agent.x, state.agent.z);
+      state.chartLoss = state.chartLoss * 0.84 + state.currentLoss * 0.16;
+      state.latestDelta = Math.max(
+        0,
+        ((state.baselineLoss - state.currentLoss) / Math.max(state.baselineLoss, 0.001)) * 100
+      );
+      state.throughputDelta = Math.max(state.bestDelta, state.latestDelta);
+      state.ipsMillions = 2.18 + state.throughputDelta * 0.05 + Math.sin(state.iteration / 28) * 0.03;
+      state.specPassPct = Math.max(99.42, Math.min(99.96, 99.58 + state.throughputDelta * 0.014 + Math.sin(state.iteration / 41) * 0.03));
+      state.jitCoverage = Math.max(88.5, Math.min(97.8, 90.2 + state.throughputDelta * 0.45 + state.iteration * 0.01));
+      state.rssDelta = Math.max(-1.8, Math.min(3.4, Math.sin(state.iteration / 33) * 0.8 - state.throughputDelta * 0.04));
+      state.rssMb = Math.max(540, 618 + state.rssDelta * 12 + state.keepCount * 0.8);
+      state.noiseFloor = Math.max(0.18, Math.min(0.64, 0.31 + Math.cos(state.iteration / 37) * 0.09));
+      state.queueDepth = Math.max(1, Math.min(9, 3 + Math.round(Math.sin(state.iteration / 19) * 3)));
+
+      state.trail.push({ x: state.agent.x, z: state.agent.z });
+      if (state.trail.length > 220) state.trail.shift();
+
+      if (state.iteration % 2 === 0) {
+        state.history.push(state.chartLoss);
+        if (state.history.length > 180) state.history.shift();
+
+        state.memoryHistory.push(state.rssMb);
+        if (state.memoryHistory.length > 96) state.memoryHistory.shift();
+
+        state.streamHistory.push({
+          postgres: 0.18 + Math.abs(Math.sin(state.iteration / 18 + 0.4)) * 0.18,
+          redis: 0.1 + Math.abs(Math.sin(state.iteration / 27 + 1.1)) * 0.14,
+          http: 0.12 + Math.abs(Math.cos(state.iteration / 23 + 0.8)) * 0.16,
+          views: 0.14 + Math.abs(Math.sin(state.iteration / 31 + 2.2)) * 0.15,
+          rubyvm: 0.2 + Math.abs(Math.cos(state.iteration / 21 + state.bestDelta * 0.08)) * 0.24,
+        });
+        if (state.streamHistory.length > 72) state.streamHistory.shift();
+
+      }
+
+      if (state.iteration % 12 === 0) {
+        state.runCount += 1;
+        state.costResults.push({
+          cost: Math.max(
+            0.06,
+            Math.min(
+              4.0,
+              0.14 + state.runCount * 0.028 + state.keepCount * 0.018 + randomBetween(-0.05, 0.08)
+            )
+          ),
+          gain: Math.max(
+            -1.2,
+            Math.min(12.1, state.latestDelta + Math.sin(state.iteration / 15) * 0.85 + randomBetween(-0.65, 0.9))
+          ),
+          keep: state.latestDelta >= state.bestDelta - 0.35,
+          bornAt: time,
+        });
+        if (state.costResults.length > 72) state.costResults.shift();
+      }
+
+      if (state.currentLoss < state.globalBestLoss - 0.02) {
+        var previousBestDelta = state.bestDelta;
+        state.globalBestLoss = state.currentLoss;
+        state.bestDelta = Math.max(state.bestDelta, state.latestDelta);
+        state.keepCount += 1;
+        setDescentStatus(state, "KEEPING", 40);
+
+        if (state.bestDelta > previousBestDelta + 0.6) {
+          addDescentLog(
+            state,
+            "KEEP mutation // ruby faster by +" + state.latestDelta.toFixed(2) + "%"
+          );
+          renderDescentLogs(state);
+        }
+      }
+
+      if (state.iteration % 12 === 0 && state.checkStates.length) {
+        var previousCheckIndex = state.activeCheckIndex;
+        if (previousCheckIndex >= 0) {
+          var previousStatus = state.checkStates[previousCheckIndex];
+          if (previousStatus === "running") {
+            var forceFail = window.__piForceCheckFailure === true;
+            var failed = forceFail || Math.random() < 0.14;
+            if (forceFail) {
+              window.__piForceCheckFailure = false;
+            }
+
+            state.checkStates[previousCheckIndex] = failed ? "fail" : "pass";
+            if (failed) {
+              state.failureCount += 1;
+              state.matrixFailingIndex = previousCheckIndex;
+              state.matrixResetAt = time + 800;
+              state.activeCheckIndex = -1;
+              addDescentLog(state, "VERIFY FAIL // restarting lint + test gauntlet");
+              renderDescentLogs(state);
+              state.matrixResetTimer = window.setTimeout(function () {
+                addDescentLog(state, "VERIFY MATRIX RESET // restarting lints + tests");
+                renderDescentLogs(state);
+                resetDescentCheckMatrix(state);
+              }, 800);
+              break;
+            }
+          }
+        }
+
+        state.activeCheckIndex = (previousCheckIndex + 1 + state.checkStates.length) % state.checkStates.length;
+        state.checkStates[state.activeCheckIndex] = "running";
+      }
+
+      if (state.iteration % 42 === 0) {
+        emitPeriodicDescentLog(state, grad);
+      }
+
+      var converged =
+        Math.abs(state.agent.vx) + Math.abs(state.agent.vz) < 0.0025 &&
+        state.iteration > 200;
+      var escaped =
+        Math.abs(state.agent.x) > 16.5 || Math.abs(state.agent.z) > 16.5;
+      var exhausted = state.iteration > 780;
+
+      if (converged || escaped || exhausted) {
+        if (escaped) {
+          state.failureCount += 1;
+        }
+
+        addDescentLog(
+          state,
+          converged
+            ? "CONVERGENCE reached // reseeding search"
+            : escaped
+              ? "BOUNDARY exceeded // gradient explosion detected"
+              : "TIMEBOX reached // restart 5-minute loop"
+        );
+        renderDescentLogs(state);
+        setDescentStatus(state, "RESETTING", 80);
+        state.resetAt = time + 1400;
+        state.simulationAccumulator = 0;
+        break;
+      }
+    }
+
+    syncDescentDom(state);
+  }
+
+  function startDescentAnimation() {
+    if (!descentSlides.length || descentAnimationStarted) return;
+
+    descentAnimationStarted = true;
+
+    function frame(time) {
+      descentSlides.forEach(function (slide) {
+        var state = setupDescentSlide(slide);
+        if (!descentShouldAnimate(state)) return;
+
+        stepDescentState(state, time || 0);
+        renderDescentCheckMatrix(state);
+        renderDescentStage(state, time || 0);
+        renderDescentChart(state);
+        renderDescentMemoryChart(state);
+        renderDescentTreemap(state);
+        renderDescentStreamgraph(state);
+        renderDescentCostResults(state, time || 0);
+      });
+
+      requestAnimationFrame(frame);
+    }
+
+    requestAnimationFrame(frame);
   }
 
   if (mode === "presentation") {
@@ -161,6 +1237,7 @@
         syncAutoAdvanceState();
       }
 
+      startDescentAnimation();
       scheduleAutoAdvance();
     }
 
@@ -173,7 +1250,11 @@
     }
 
     document.addEventListener("click", function (e) {
-      if (e.clientX < window.innerWidth * 0.15) {
+      var activeSlide = slides[current];
+      var prevZoneRatio =
+        activeSlide && activeSlide.dataset.slideSkin === "descent" ? 0.04 : 0.15;
+
+      if (e.clientX < window.innerWidth * prevZoneRatio) {
         prev();
       } else {
         next();
@@ -215,7 +1296,11 @@
     return;
   }
 
-  window.addEventListener("load", fitAll);
+  window.addEventListener("load", function () {
+    fitAll();
+    startDescentAnimation();
+  });
   window.addEventListener("resize", fitAll);
   fitAll();
+  startDescentAnimation();
 })();

@@ -10,6 +10,7 @@ STOP_HEADING = "REMAINING RESEARCH HOURS"
 TITLE_SLIDE = <<~MARKDOWN
   ---
 
+  [slide-skin:descent]
   # [fit] Autoresearching Ruby Performance with LLMs
 
   **Nate Berkopec**

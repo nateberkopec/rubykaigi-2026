@@ -109,11 +109,592 @@ a {
 body[data-auto-advance="on"] .progress {
   background: #0a84ff;
 }
+.slide.slide--descent.active {
+  display: block;
+}
+.slide--descent {
+  position: relative;
+  padding: 0;
+  background: #05070a;
+  color: #f4eb61;
+  overflow: hidden;
+}
+.slide--descent .slide-content {
+  height: 100%;
+}
+.slide--descent h1,
+.slide--descent h2,
+.slide--descent h3,
+.slide--descent p {
+  margin: 0;
+}
+.slide--descent .descent-shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(244, 235, 97, 0.08), transparent 32%),
+    linear-gradient(180deg, #05070a 0%, #020304 100%);
+  font-family: "JetBrains Mono", "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.slide--descent .descent-canvas-wrap,
+.slide--descent .descent-scanlines,
+.slide--descent .descent-ui {
+  position: absolute;
+  inset: 0;
+}
+.slide--descent .descent-stage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+.slide--descent .descent-scanlines {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 0) 50%,
+    rgba(0, 0, 0, 0.18) 50%,
+    rgba(0, 0, 0, 0.18)
+  );
+  background-size: 100% 4px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+.slide--descent .descent-ui {
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 20cqw 1fr 25cqw;
+  grid-template-rows: 8cqh 1fr 16cqh;
+  pointer-events: none;
+}
+.slide--descent .descent-header {
+  grid-column: 1 / 4;
+  grid-row: 1 / 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.35rem;
+  border-bottom: 1px solid rgba(244, 235, 97, 0.95);
+  background: rgba(3, 5, 8, 0.92);
+}
+.slide--descent .descent-header-title {
+  position: relative;
+  font-size: clamp(0.72rem, 1.05cqw, 1.05rem);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+.slide--descent .descent-header-title::before {
+  content: "";
+  width: 0.7rem;
+  height: 0.7rem;
+  background: currentColor;
+  display: inline-block;
+  animation: descent-blink 1.05s step-end infinite;
+}
+.slide--descent .descent-sys-status {
+  display: flex;
+  gap: 1rem 1.4rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  text-align: right;
+  font-size: clamp(0.56rem, 0.72cqw, 0.8rem);
+  max-width: 54rem;
+}
+.slide--descent .descent-sys-status > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+}
+.slide--descent .descent-panel {
+  border: 1px solid rgba(244, 235, 97, 0.95);
+  background: rgba(3, 5, 8, 0.84);
+  backdrop-filter: blur(2px);
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+  min-height: 0;
+}
+.slide--descent .descent-panel-header {
+  padding: 0.46rem 0.75rem;
+  border-bottom: 1px solid rgba(244, 235, 97, 0.95);
+  background: #f4eb61;
+  color: #05070a;
+  font-size: clamp(0.6rem, 0.8cqw, 0.82rem);
+  font-weight: 700;
+}
+.slide--descent .descent-panel-left {
+  grid-column: 1 / 2;
+  grid-row: 2 / 4;
+  border-top: none;
+}
+.slide--descent .descent-panel-right {
+  grid-column: 3 / 4;
+  grid-row: 2 / 3;
+  border-bottom: none;
+}
+.slide--descent .descent-panel-bottom {
+  grid-column: 2 / 4;
+  grid-row: 3 / 4;
+  display: grid;
+  grid-template-columns: 1fr 18cqw;
+  min-height: 0;
+  overflow: hidden;
+}
+.slide--descent .descent-param-group {
+  min-height: 3rem;
+  padding: 0.5rem 0.72rem;
+  border-bottom: 1px solid rgba(244, 235, 97, 0.28);
+}
+.slide--descent .descent-param-group-fill {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-bottom: none;
+}
+.slide--descent .descent-label {
+  display: block;
+  margin-bottom: 0.16rem;
+  color: rgba(244, 235, 97, 0.72);
+  font-size: clamp(0.44rem, 0.58cqw, 0.62rem);
+  letter-spacing: 0.1em;
+}
+.slide--descent .descent-value {
+  font-size: clamp(0.66rem, 0.88cqw, 0.9rem);
+  font-weight: 700;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.slide--descent .descent-value-highlight {
+  display: inline-block;
+  padding: 0.12rem 0.3rem;
+  background: #f4eb61;
+  color: #05070a;
+}
+.slide--descent .descent-check-matrix {
+  padding: 0.65rem 0.9rem 0;
+}
+.slide--descent .descent-check-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.28rem;
+  margin-top: 0.32rem;
+}
+.slide--descent .descent-check-cell {
+  min-height: 2.15rem;
+  border: 1px solid rgba(244, 235, 97, 0.18);
+  background: rgba(244, 235, 97, 0.03);
+  padding: 0.22rem 0.28rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.slide--descent .descent-check-cell.is-pending {
+  background: rgba(244, 235, 97, 0.03);
+  border-color: rgba(244, 235, 97, 0.15);
+}
+.slide--descent .descent-check-cell.is-running {
+  background: rgba(244, 235, 97, 0.18);
+  border-color: rgba(244, 235, 97, 0.8);
+  box-shadow: inset 0 0 0 1px rgba(244, 235, 97, 0.28), 0 0 0.55rem rgba(244, 235, 97, 0.12);
+}
+.slide--descent .descent-check-cell.is-pass {
+  background: rgba(244, 235, 97, 0.11);
+  border-color: rgba(244, 235, 97, 0.45);
+}
+.slide--descent .descent-check-cell.is-fail {
+  background: rgba(255, 109, 82, 0.2);
+  border-color: rgba(255, 109, 82, 0.9);
+}
+.slide--descent .descent-check-cell.is-flashing {
+  animation: descent-check-alert 0.18s steps(2, end) infinite;
+}
+.slide--descent .descent-check-name,
+.slide--descent .descent-check-state {
+  display: block;
+  font-size: clamp(0.36rem, 0.48cqw, 0.52rem);
+  line-height: 1.05;
+}
+.slide--descent .descent-check-name {
+  color: rgba(244, 235, 97, 0.92);
+}
+.slide--descent .descent-check-state {
+  color: rgba(244, 235, 97, 0.65);
+}
+.slide--descent .descent-check-cell.is-fail .descent-check-name,
+.slide--descent .descent-check-cell.is-fail .descent-check-state {
+  color: #ff8e74;
+}
+.slide--descent .descent-analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 6.6rem);
+  gap: 0.45rem;
+  padding: 0.75rem 0.9rem 0;
+}
+.slide--descent .descent-viz-card {
+  border: 1px solid rgba(244, 235, 97, 0.2);
+  background: rgba(244, 235, 97, 0.03);
+  padding: 0.35rem 0.45rem 0.45rem;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.slide--descent .descent-viz-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+  font-size: clamp(0.4rem, 0.52cqw, 0.56rem);
+  color: rgba(244, 235, 97, 0.76);
+}
+.slide--descent .descent-viz-canvas {
+  display: block;
+  flex: 1 1 0;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: 100%;
+  image-rendering: pixelated;
+}
+.slide--descent .descent-log-container {
+  flex: 1;
+  padding: 0.55rem 0.9rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.3rem;
+}
+.slide--descent .descent-log-line {
+  display: flex;
+  gap: 0.45rem;
+  opacity: 0.92;
+  font-size: clamp(0.48rem, 0.62cqw, 0.66rem);
+}
+.slide--descent .descent-log-time {
+  color: rgba(244, 235, 97, 0.54);
+  flex: none;
+}
+.slide--descent .descent-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+  padding: 0.75rem 0.9rem 0;
+}
+.slide--descent .descent-mini-stat,
+.slide--descent .descent-readout-stat,
+.slide--descent .descent-footer-item {
+  border: 1px solid rgba(244, 235, 97, 0.2);
+  padding: 0.42rem 0.5rem;
+  background: rgba(244, 235, 97, 0.03);
+}
+.slide--descent .descent-mini-value {
+  display: block;
+  font-size: clamp(0.78rem, 0.96cqw, 1rem);
+  font-weight: 700;
+}
+.slide--descent .descent-footer-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+  padding: 0 0.9rem 0.8rem;
+  font-size: clamp(0.54rem, 0.68cqw, 0.74rem);
+}
+.slide--descent .descent-footer-item span:last-child {
+  display: block;
+}
+.slide--descent .descent-chart-container {
+  position: relative;
+  padding: 0.75rem 0.9rem;
+  border-right: 1px solid rgba(244, 235, 97, 0.95);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.slide--descent .descent-chart-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.slide--descent .descent-chart {
+  flex: 1 1 auto;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  margin-top: 0.45rem;
+  border-left: 1px dashed rgba(244, 235, 97, 0.55);
+  border-bottom: 1px dashed rgba(244, 235, 97, 0.55);
+}
+.slide--descent .descent-chart-labels {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 1rem;
+  right: 1rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: clamp(0.52rem, 0.66cqw, 0.72rem);
+}
+.slide--descent .descent-loss-readout {
+  padding: 0.55rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  text-align: center;
+  min-height: 0;
+  overflow: hidden;
+}
+.slide--descent .descent-loss-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+.slide--descent .descent-loss-block {
+  min-width: 0;
+  padding: 0.38rem 0.4rem;
+  border: 1px solid rgba(244, 235, 97, 0.2);
+  background: rgba(244, 235, 97, 0.03);
+}
+.slide--descent .descent-loss-value {
+  margin-top: 0.18rem;
+  font-size: clamp(0.92rem, 1.55cqw, 1.75rem);
+  line-height: 0.92;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+}
+.slide--descent .descent-loss-best,
+.slide--descent .descent-loss-caption {
+  margin-top: 0.28rem;
+  font-size: clamp(0.46rem, 0.58cqw, 0.64rem);
+}
+.slide--descent .descent-loss-best span {
+  background: #f4eb61;
+  color: #05070a;
+  padding: 0 0.22rem;
+}
+.slide--descent .descent-loss-caption {
+  color: rgba(244, 235, 97, 0.7);
+}
+.slide--descent .descent-delta-value {
+  margin-top: 0.18rem;
+  font-size: clamp(0.8rem, 1.18cqw, 1.3rem);
+  line-height: 0.98;
+  font-weight: 700;
+}
+.slide--descent .descent-readout-grid {
+  width: 100%;
+  margin-top: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+.slide--descent .descent-readout-stat {
+  padding: 0.32rem 0.38rem;
+}
+.slide--descent .descent-readout-stat .descent-label {
+  font-size: clamp(0.34rem, 0.44cqw, 0.46rem);
+}
+.slide--descent .descent-readout-stat .descent-mini-value {
+  font-size: clamp(0.58rem, 0.72cqw, 0.78rem);
+}
+.slide--descent .descent-target {
+  position: absolute;
+  top: 48%;
+  left: 56%;
+  width: 5.4rem;
+  height: 5.4rem;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.slide--descent .descent-target::before,
+.slide--descent .descent-target::after {
+  content: "";
+  position: absolute;
+  background: rgba(244, 235, 97, 0.9);
+}
+.slide--descent .descent-target::before {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+}
+.slide--descent .descent-target::after {
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
+}
+.slide--descent .descent-target-bracket {
+  position: absolute;
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 1px solid rgba(244, 235, 97, 0.9);
+}
+.slide--descent .descent-target-top-left {
+  top: -0.7rem;
+  left: -0.7rem;
+  border-right: none;
+  border-bottom: none;
+}
+.slide--descent .descent-target-top-right {
+  top: -0.7rem;
+  right: -0.7rem;
+  border-left: none;
+  border-bottom: none;
+}
+.slide--descent .descent-target-bottom-left {
+  bottom: -0.7rem;
+  left: -0.7rem;
+  border-right: none;
+  border-top: none;
+}
+.slide--descent .descent-target-bottom-right {
+  bottom: -0.7rem;
+  right: -0.7rem;
+  border-left: none;
+  border-top: none;
+}
+.slide--descent .descent-title-card {
+  position: absolute;
+  left: 50%;
+  top: 47.5%;
+  width: min(38cqw, 33rem);
+  transform: translate(-50%, -50%);
+  padding: 1.1rem 1.3rem;
+  border: 1px solid rgba(244, 235, 97, 0.95);
+  background: rgba(3, 5, 8, 0.74);
+  box-shadow: 0 0 0 1px rgba(244, 235, 97, 0.12), 0 0 2rem rgba(244, 235, 97, 0.1);
+  text-align: center;
+}
+.slide--descent .descent-kicker {
+  margin-bottom: 0.85rem;
+  color: rgba(244, 235, 97, 0.72);
+  font-size: clamp(0.6rem, 0.76cqw, 0.8rem);
+  letter-spacing: 0.18em;
+}
+.slide--descent .descent-title {
+  font-size: clamp(1.65rem, 3.3cqw, 3.5rem);
+  line-height: 0.95;
+  font-weight: 700;
+  text-wrap: balance;
+}
+.slide--descent .descent-subtitle {
+  margin-top: 0.75rem;
+  font-size: clamp(0.72rem, 0.96cqw, 1rem);
+  color: rgba(244, 235, 97, 0.82);
+  line-height: 1.35;
+}
+.slide--descent .descent-meta {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+.slide--descent .descent-meta-pill {
+  padding: 0.2rem 0.5rem;
+  border: 1px solid rgba(244, 235, 97, 0.62);
+  font-size: clamp(0.62rem, 0.84cqw, 0.9rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+.slide--descent .descent-meta-pill--logo {
+  padding: 0.26rem 0.62rem;
+}
+.slide--descent .descent-rubykaigi-wordmark,
+.slide--descent .descent-rubykaigi-wordmark-fallback {
+  display: block;
+  color: #f4eb61;
+}
+.slide--descent .descent-rubykaigi-wordmark {
+  width: auto;
+  height: clamp(0.54rem, 0.9cqw, 0.96rem);
+}
+.slide--descent .descent-rubykaigi-wordmark-fallback {
+  font-size: clamp(0.56rem, 0.76cqw, 0.82rem);
+  letter-spacing: 0.08em;
+}
+.slide--descent .glitch-text {
+  position: relative;
+}
+.slide--descent .glitch-text::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 2px;
+  top: 0;
+  color: #f4eb61;
+  background: transparent;
+  text-shadow: -1px 0 #05070a;
+  overflow: hidden;
+  clip: rect(0, 9999px, 0, 0);
+  animation: descent-noise 3s infinite linear alternate-reverse;
+}
+@keyframes descent-blink {
+  0%, 52% { opacity: 1; }
+  53%, 100% { opacity: 0; }
+}
+@keyframes descent-noise {
+  0% { clip: rect(4px, 9999px, 1px, 0); }
+  10% { clip: rect(11px, 9999px, 8px, 0); }
+  20% { clip: rect(2px, 9999px, 13px, 0); }
+  30% { clip: rect(8px, 9999px, 5px, 0); }
+  40% { clip: rect(1px, 9999px, 10px, 0); }
+  50% { clip: rect(9px, 9999px, 3px, 0); }
+  60% { clip: rect(5px, 9999px, 12px, 0); }
+  70% { clip: rect(13px, 9999px, 6px, 0); }
+  80% { clip: rect(3px, 9999px, 9px, 0); }
+  90% { clip: rect(10px, 9999px, 4px, 0); }
+  100% { clip: rect(6px, 9999px, 1px, 0); }
+}
+@keyframes descent-check-alert {
+  0%, 100% {
+    background: rgba(255, 109, 82, 0.2);
+    border-color: rgba(255, 109, 82, 0.95);
+    box-shadow: 0 0 0.5rem rgba(255, 109, 82, 0.2);
+  }
+  50% {
+    background: rgba(255, 109, 82, 0.75);
+    border-color: rgba(255, 180, 160, 1);
+    box-shadow: 0 0 0.95rem rgba(255, 109, 82, 0.45);
+  }
+}
+@media (max-width: 900px) {
+  .slide--descent .descent-ui {
+    grid-template-columns: 24cqw 1fr 28cqw;
+  }
+  .slide--descent .descent-panel-bottom {
+    grid-template-columns: 1fr 22cqw;
+  }
+  .slide--descent .descent-footer-strip,
+  .slide--descent .descent-readout-grid,
+  .slide--descent .descent-mini-grid,
+  .slide--descent .descent-analytics-grid,
+  .slide--descent .descent-check-grid {
+    grid-template-columns: 1fr;
+  }
+  .slide--descent .descent-title-card {
+    width: min(52cqw, 34rem);
+    left: 52%;
+  }
+}
 </style>
 </head>
-<body><div class="slide" id="slide-0" data-advance-ms="20270"><div class="slide-content"><h1 class="fit-heading">Autoresearching Ruby Performance with LLMs</h1>
-<p><strong>Nate Berkopec</strong></p>
-<p>RubyKaigi 2026</p></div></div><div class="slide" id="slide-1" data-advance-ms="20270"><div class="slide-content"><h1>THE HOOK</h1>
+<body><div class="slide slide--descent" id="slide-0" data-advance-ms="20270" data-slide-skin="descent"><div class="slide-content descent-shell">  <div class="descent-canvas-wrap"><canvas class="descent-stage" aria-hidden="true"></canvas></div>  <div class="descent-scanlines" aria-hidden="true"></div>  <div class="descent-ui">    <header class="descent-header">      <div class="descent-header-title">RUBY AUTORESEARCH // PERFORMANCE DESCENT</div>      <div class="descent-sys-status">        <div>          <span class="descent-label">BENCH SUITE</span>          <span data-descent-bench-suite>railsbench / liquid / optcarrot</span>        </div>        <div>          <span class="descent-label">KEEP DELTA</span>          <span data-descent-delta>+0.00%</span>        </div>        <div>          <span class="descent-label">RUBYSPEC</span>          <span data-descent-spec-short>99.60%</span>        </div>        <div>          <span class="descent-label">RSS</span>          <span data-descent-memory-short>612MB / +0.0%</span>        </div>        <div>          <span class="descent-label">SYS.TIME</span>          <span data-descent-clock>00:00:00:00</span>        </div>      </div>    </header>    <aside class="descent-panel descent-panel-left">      <div class="descent-panel-header">PROCESS PARAMETERS</div>      <div class="descent-param-group">        <div class="descent-label">TARGET</div>        <div class="descent-value">ruby-head // make it faster</div>      </div>      <div class="descent-param-group">        <div class="descent-label">SEARCH STRATEGY</div>        <div class="descent-value descent-value-highlight">AUTORESEARCH LOOP</div>      </div>      <div class="descent-param-group">        <div class="descent-label">ACTIVE BRANCH</div>        <div class="descent-value" data-descent-branch>ruby-speed-lab-A12</div>      </div>      <div class="descent-param-group">        <div class="descent-label">LEARNING RATE (α)</div>        <div class="descent-value">0.011</div>      </div>      <div class="descent-param-group">        <div class="descent-label">MOMENTUM (β)</div>        <div class="descent-value">0.840</div>      </div>      <div class="descent-param-group">        <div class="descent-label">CURRENT PATCH</div>        <div class="descent-value" data-descent-patch>warming benchmark harness</div>      </div>      <div class="descent-param-group">        <div class="descent-label">HOT BENCH</div>        <div class="descent-value" data-descent-hotbench>railsbench</div>      </div>      <div class="descent-param-group">        <div class="descent-label">JIT STATUS</div>        <div class="descent-value" data-descent-jit>YJIT on // side exits 1.8%</div>      </div>      <div class="descent-param-group">        <div class="descent-label">RUBYSPEC PASS</div>        <div class="descent-value" data-descent-spec-long>18,415 / 18,472 (99.69%)</div>      </div>      <div class="descent-param-group">        <div class="descent-label">RSS / OBJSPACE</div>        <div class="descent-value" data-descent-memory-long>612MB rss // heap live 78.3%</div>      </div>      <div class="descent-param-group">        <div class="descent-label">GC PROFILE</div>        <div class="descent-value" data-descent-gc>RGENGC // compaction off // minor 3.1ms</div>      </div>      <div class="descent-param-group">        <div class="descent-label">WORKERS / SANDBOXES</div>        <div class="descent-value" data-descent-workers>08 local // 03 remote</div>      </div>      <div class="descent-param-group">        <div class="descent-label">NOISE FLOOR (σ)</div>        <div class="descent-value" data-descent-noise>±0.37%</div>      </div>      <div class="descent-param-group">        <div class="descent-label">SEARCH VECTOR [dispatch, alloc]</div>        <div class="descent-value" data-descent-vector>[ 0.000, 0.000 ]</div>      </div>      <div class="descent-param-group descent-param-group-fill">        <div class="descent-label">AGENT STATUS</div>        <div class="descent-value glitch-text" data-text="AUTORESEARCHING" data-descent-status>AUTORESEARCHING</div>      </div>    </aside>    <aside class="descent-panel descent-panel-right">      <div class="descent-panel-header">TELEMETRY STREAM</div>      <div class="descent-mini-grid">        <div class="descent-mini-stat">          <span class="descent-label">MUTATIONS</span>          <span class="descent-mini-value" data-descent-mutations>0000</span>        </div>        <div class="descent-mini-stat">          <span class="descent-label">KEEPS</span>          <span class="descent-mini-value" data-descent-keeps>000</span>        </div>        <div class="descent-mini-stat">          <span class="descent-label">YJIT COVERAGE</span>          <span class="descent-mini-value" data-descent-jitcov>91.4%</span>        </div>        <div class="descent-mini-stat">          <span class="descent-label">FAILURES</span>          <span class="descent-mini-value" data-descent-failures>0</span>        </div>      </div>      <div class="descent-check-matrix">        <div class="descent-viz-header"><span>VERIFY MATRIX</span><span>LINTS + TESTS</span></div>        <div class="descent-check-grid" data-descent-check-grid>          <div class="descent-check-cell" data-descent-check="rubyspec-core"><span class="descent-check-name">spec</span><span class="descent-check-state">pending</span></div>          <div class="descent-check-cell" data-descent-check="ruby-lint"><span class="descent-check-name">lint</span><span class="descent-check-state">pending</span></div>          <div class="descent-check-cell" data-descent-check="bench-suite"><span class="descent-check-name">bench</span><span class="descent-check-state">pending</span></div>          <div class="descent-check-cell" data-descent-check="rss-budget"><span class="descent-check-name">rss</span><span class="descent-check-state">pending</span></div>          <div class="descent-check-cell" data-descent-check="gc-guard"><span class="descent-check-name">gc</span><span class="descent-check-state">pending</span></div>          <div class="descent-check-cell" data-descent-check="yjit-exits"><span class="descent-check-name">yjit</span><span class="descent-check-state">pending</span></div>          <div class="descent-check-cell" data-descent-check="shape-cache"><span class="descent-check-name">shape</span><span class="descent-check-state">pending</span></div>          <div class="descent-check-cell" data-descent-check="alloc-budget"><span class="descent-check-name">alloc</span><span class="descent-check-state">pending</span></div>          <div class="descent-check-cell" data-descent-check="railsbench"><span class="descent-check-name">rails</span><span class="descent-check-state">pending</span></div>          <div class="descent-check-cell" data-descent-check="optcarrot"><span class="descent-check-name">8bit</span><span class="descent-check-state">pending</span></div>          <div class="descent-check-cell" data-descent-check="liquid"><span class="descent-check-name">liquid</span><span class="descent-check-state">pending</span></div>          <div class="descent-check-cell" data-descent-check="threading"><span class="descent-check-name">threads</span><span class="descent-check-state">pending</span></div>          <div class="descent-check-cell" data-descent-check="ffi"><span class="descent-check-name">ffi</span><span class="descent-check-state">pending</span></div>          <div class="descent-check-cell" data-descent-check="api-compat"><span class="descent-check-name">api</span><span class="descent-check-state">pending</span></div>          <div class="descent-check-cell" data-descent-check="asan"><span class="descent-check-name">asan</span><span class="descent-check-state">pending</span></div>          <div class="descent-check-cell" data-descent-check="ubsan"><span class="descent-check-name">ubsan</span><span class="descent-check-state">pending</span></div>        </div>      </div>      <div class="descent-analytics-grid">        <section class="descent-viz-card">          <div class="descent-viz-header"><span>RSS HISTORY</span><span data-descent-memory-short>612MB / +0.0%</span></div>          <canvas class="descent-viz-canvas" data-descent-memory-chart aria-hidden="true"></canvas>        </section>        <section class="descent-viz-card">          <div class="descent-viz-header"><span>STACK TRACE TREEMAP</span><span>HOT PATHS</span></div>          <canvas class="descent-viz-canvas" data-descent-stack-chart aria-hidden="true"></canvas>        </section>        <section class="descent-viz-card">          <div class="descent-viz-header"><span>TIME IN SUBSERVICES</span><span>STREAMGRAPH</span></div>          <canvas class="descent-viz-canvas" data-descent-stream-chart aria-hidden="true"></canvas>        </section>        <section class="descent-viz-card">          <div class="descent-viz-header"><span>COST/$ RESULTS</span><span>SCATTERPLOT</span></div>          <canvas class="descent-viz-canvas" data-descent-cost-chart aria-hidden="true"></canvas>        </section>      </div>      <div class="descent-log-container" data-descent-log></div>      <div class="descent-footer-strip">        <div class="descent-footer-item">          <span class="descent-label">QUEUE DEPTH</span>          <span data-descent-queue>03 pending</span>        </div>        <div class="descent-footer-item">          <span class="descent-label">LAST VERIFY</span>          <span data-descent-verify>spec + bench + memory</span>        </div>        <div class="descent-footer-item">          <span class="descent-label">BASELINE</span>          <span data-descent-baseline>ruby 3.5.0dev</span>        </div>      </div>    </aside>    <div class="descent-panel descent-panel-bottom">      <div class="descent-chart-container">        <div class="descent-label descent-chart-heading">          <span>LOSS FUNCTION TRAJECTORY // RUBY GETS FASTER</span>          <span>f(patch)</span>        </div>        <canvas class="descent-chart" data-descent-chart aria-hidden="true"></canvas>        <div class="descent-chart-labels">          <span>ITERATION (t)</span>          <span>KEEP IF LOWER</span>        </div>      </div>      <div class="descent-loss-readout">        <div class="descent-loss-grid">          <div class="descent-loss-block">            <div class="descent-label">CURRENT LOSS</div>            <div class="descent-loss-value" data-descent-loss>0.000000</div>            <div class="descent-loss-best">GLOBAL MIN <span data-descent-best>0.000000</span></div>          </div>          <div class="descent-loss-block">            <div class="descent-label">LATEST KEEP</div>            <div class="descent-delta-value" data-descent-delta>+0.00%</div>            <div class="descent-loss-caption">WIN VS BASELINE</div>          </div>        </div>        <div class="descent-readout-grid">          <div class="descent-readout-stat">            <span class="descent-label">THROUGHPUT</span>            <span class="descent-mini-value" data-descent-throughput>+0.00%</span>          </div>          <div class="descent-readout-stat">            <span class="descent-label">IPS</span>            <span class="descent-mini-value" data-descent-ips>0.00M</span>          </div>          <div class="descent-readout-stat">            <span class="descent-label">MEM Δ</span>            <span class="descent-mini-value" data-descent-memory-delta>+0.0%</span>          </div>          <div class="descent-readout-stat">            <span class="descent-label">SPEC OK</span>            <span class="descent-mini-value" data-descent-spec-short>99.60%</span>          </div>        </div>      </div>    </div>    <div class="descent-target" aria-hidden="true">      <div class="descent-target-bracket descent-target-top-left"></div>      <div class="descent-target-bracket descent-target-top-right"></div>      <div class="descent-target-bracket descent-target-bottom-left"></div>      <div class="descent-target-bracket descent-target-bottom-right"></div>    </div>    <div class="descent-title-card">      <div class="descent-kicker">AUTORESEARCH HARNESS v0.1</div>      <h1 class="descent-title">Autoresearching Ruby Performance with LLMs</h1>            <div class="descent-meta">        <span class="descent-meta-pill"><strong>Nate Berkopec</strong></span>        <span class="descent-meta-pill">SPEEDSHOP.CO.JP</span>        <span class="descent-meta-pill descent-meta-pill--logo"><svg class="descent-rubykaigi-wordmark" viewBox="223 61 729 102" role="img" aria-label="RubyKaigi 2026" xmlns="http://www.w3.org/2000/svg">  <path d="M223.485 140.156V64.0615H235.952V140.156H223.485ZM232.049 107.87V97.543H251.237C255.067 97.543 258.03 96.5647 260.162 94.5355C262.294 92.5426 263.378 89.7886 263.378 86.2376C263.378 83.0489 262.33 80.3674 260.234 78.1933C258.139 76.0192 255.176 74.9321 251.345 74.9321H232.049V64.0615H251.887C256.657 64.0615 260.849 65.0399 264.462 66.9242C268.076 68.8446 270.858 71.4535 272.882 74.7509C274.869 78.0483 275.845 81.8168 275.845 85.9839C275.845 90.4046 274.869 94.2455 272.882 97.5067C270.894 100.768 268.076 103.304 264.462 105.116C260.849 106.928 256.657 107.834 251.887 107.834H232.049V107.87ZM265.113 140.156L238.554 107.109L250.153 102.87L280.831 140.156H265.113Z" fill="currentColor"/><path d="M308.836 141.243C304.427 141.243 300.489 140.264 297.092 138.307C293.659 136.351 290.985 133.633 289.07 130.191C287.155 126.748 286.215 122.799 286.215 118.306V87.9766H298.14V117.762C298.14 120.299 298.573 122.473 299.404 124.248C300.236 126.024 301.464 127.401 303.09 128.306C304.716 129.249 306.668 129.72 308.908 129.72C312.377 129.72 315.015 128.669 316.894 126.64C318.737 124.574 319.64 121.639 319.64 117.762V87.9766H331.564V118.306C331.564 122.871 330.625 126.893 328.71 130.299C326.795 133.742 324.157 136.423 320.724 138.344C317.291 140.264 313.389 141.206 308.908 141.206L308.836 141.243Z" fill="currentColor"/><path d="M343.092 140.156V61.8877H355.016V100.804L352.956 113.414L355.016 126.133V140.156H343.092ZM370.951 141.243C366.977 141.243 363.435 140.374 360.328 138.707C357.22 137.004 354.763 134.685 353.029 131.677C351.258 128.706 350.355 125.336 350.355 121.567V106.566C350.355 102.797 351.258 99.4276 353.065 96.4563C354.871 93.485 357.329 91.1659 360.436 89.4266C363.544 87.7236 367.049 86.8539 370.951 86.8539C375.649 86.8539 379.877 88.0859 383.707 90.5136C387.501 92.9414 390.5 96.2026 392.705 100.297C394.909 104.392 396.029 109.03 396.029 114.175C396.029 119.321 394.945 123.85 392.705 127.909C390.5 132.003 387.501 135.228 383.707 137.656C379.913 140.047 375.649 141.243 370.951 141.243ZM369 129.938C371.891 129.938 374.42 129.249 376.661 127.909C378.865 126.568 380.599 124.72 381.864 122.328C383.129 119.937 383.779 117.183 383.779 114.067C383.779 110.95 383.129 108.197 381.864 105.805C380.599 103.413 378.865 101.565 376.661 100.225C374.457 98.884 371.891 98.1955 369 98.1955C366.109 98.1955 363.544 98.884 361.303 100.225C359.063 101.565 357.329 103.413 356.1 105.805C354.871 108.197 354.257 110.95 354.257 114.067C354.257 117.183 354.871 119.937 356.1 122.328C357.329 124.72 359.063 126.604 361.303 127.909C363.544 129.249 366.109 129.938 369 129.938Z" fill="currentColor"/><path d="M419.517 140.699L397.294 87.9766H410.411L425.587 126.676H421.793L437.837 87.9766H451.062L426.888 140.699H419.517ZM404.015 161.897L420.167 128.524L426.888 140.699L417.24 161.897H404.015Z" fill="currentColor"/><path d="M459.048 140.156V64.0615H471.514V140.156H459.048ZM504.903 140.156L469.78 100.478L504.144 64.0615H520.079L482.138 103.631V96.7821L521.164 140.156H504.903Z" fill="currentColor"/><path d="M544.362 141.243C539.665 141.243 535.401 140.047 531.607 137.656C527.812 135.264 524.813 132.039 522.609 127.908C520.405 123.814 519.285 119.212 519.285 114.175C519.285 109.138 520.369 104.428 522.609 100.297C524.813 96.2022 527.812 92.941 531.607 90.5132C535.401 88.0854 539.629 86.8535 544.362 86.8535C548.337 86.8535 551.842 87.7231 554.914 89.4262C557.985 91.1293 560.406 93.4846 562.213 96.4559C564.02 99.4272 564.923 102.797 564.923 106.565V121.567C564.923 125.335 564.02 128.705 562.285 131.677C560.514 134.648 558.057 137.003 554.95 138.706C551.842 140.409 548.301 141.243 544.326 141.243H544.362ZM546.314 129.937C550.722 129.937 554.299 128.452 557.009 125.48C559.719 122.509 561.056 118.704 561.056 114.066C561.056 110.95 560.442 108.196 559.214 105.805C557.985 103.413 556.287 101.565 554.082 100.224C551.878 98.8836 549.277 98.1951 546.35 98.1951C543.423 98.1951 540.893 98.8836 538.689 100.224C536.485 101.565 534.75 103.413 533.486 105.805C532.221 108.196 531.607 110.95 531.607 114.066C531.607 117.182 532.221 119.936 533.486 122.328C534.75 124.719 536.485 126.604 538.689 127.908C540.893 129.249 543.423 129.937 546.35 129.937H546.314ZM560.298 140.156V126.133L562.357 113.414L560.298 100.804V87.9768H572.222V140.156H560.298Z" fill="currentColor"/><path d="M590.651 78.4107C588.627 78.4107 586.929 77.7222 585.628 76.3453C584.291 74.9683 583.604 73.2652 583.604 71.2361C583.604 69.2069 584.291 67.5039 585.628 66.127C586.965 64.75 588.627 64.0615 590.651 64.0615C592.674 64.0615 594.445 64.75 595.746 66.127C597.047 67.5039 597.697 69.2069 597.697 71.2361C597.697 73.2652 597.047 74.9683 595.746 76.3453C594.445 77.7222 592.747 78.4107 590.651 78.4107ZM584.689 140.156V87.9769H596.613V140.156H584.689Z" fill="currentColor"/><path d="M630.327 139.069C625.702 139.069 621.546 137.909 617.824 135.626C614.102 133.343 611.175 130.227 609.043 126.241C606.911 122.255 605.864 117.798 605.864 112.87C605.864 107.942 606.911 103.522 609.043 99.6083C611.175 95.6949 614.102 92.5787 617.824 90.3321C621.546 88.0855 625.702 86.8896 630.327 86.8896C634.446 86.8896 638.06 87.7231 641.167 89.3899C644.275 91.0567 646.696 93.3395 648.43 96.2746C650.165 99.2097 651.032 102.616 651.032 106.529V119.357C651.032 123.198 650.129 126.604 648.358 129.575C646.587 132.546 644.13 134.865 641.059 136.532C637.951 138.199 634.374 139.032 630.327 139.032V139.069ZM630.869 162.984C625.376 162.984 620.57 162.006 616.451 160.013C612.332 158.02 609.007 155.193 606.478 151.57L614.283 143.743C616.379 146.352 618.764 148.309 621.438 149.613C624.112 150.918 627.328 151.57 631.086 151.57C635.783 151.57 639.505 150.374 642.251 147.946C644.997 145.519 646.371 142.185 646.371 137.982V125.154L648.43 113.631L646.371 102V87.9768H658.295V137.982C658.295 142.982 657.139 147.33 654.826 151.099C652.514 154.831 649.298 157.73 645.178 159.868C641.059 161.969 636.289 163.02 630.869 163.02V162.984ZM632.712 127.763C635.602 127.763 638.132 127.147 640.3 125.915C642.468 124.683 644.13 122.98 645.323 120.77C646.515 118.559 647.129 115.987 647.129 112.979C647.129 109.972 646.515 107.435 645.323 105.189C644.13 102.978 642.468 101.275 640.3 100.043C638.132 98.8111 635.602 98.1951 632.712 98.1951C629.821 98.1951 627.291 98.8111 625.051 100.043C622.847 101.275 621.149 102.978 619.92 105.189C618.691 107.399 618.077 110.008 618.077 112.979C618.077 115.95 618.691 118.451 619.92 120.697C621.149 122.944 622.847 124.683 625.051 125.915C627.255 127.147 629.821 127.763 632.712 127.763Z" fill="currentColor"/><path d="M676.688 78.4107C674.664 78.4107 672.966 77.7222 671.665 76.3453C670.328 74.9683 669.641 73.2652 669.641 71.2361C669.641 69.2069 670.328 67.5039 671.665 66.127C673.002 64.75 674.664 64.0615 676.688 64.0615C678.711 64.0615 680.482 64.75 681.783 66.127C683.083 67.5039 683.734 69.2069 683.734 71.2361C683.734 73.2652 683.083 74.9683 681.783 76.3453C680.482 77.7222 678.783 78.4107 676.688 78.4107ZM670.725 140.156V87.9769H682.65V140.156H670.725Z" fill="currentColor"/><path d="M714.087 132.764L742.055 102.979C744.368 100.515 746.247 98.3042 747.692 96.3475C749.138 94.3908 750.186 92.5428 750.836 90.8035C751.487 89.0642 751.812 87.2886 751.812 85.4769C751.812 82.0707 750.692 79.4255 748.487 77.4688C746.283 75.5483 743.465 74.6063 740.068 74.6063C736.455 74.6063 733.275 75.5121 730.528 77.3239C727.782 79.1357 725.325 81.962 723.157 85.803L714.485 78.6283C717.448 73.4829 721.097 69.6058 725.433 66.9244C729.77 64.2792 734.792 62.9746 740.502 62.9746C745.199 62.9746 749.319 63.9167 752.86 65.801C756.401 67.6852 759.147 70.3304 761.098 73.6641C763.05 77.034 764.025 80.9475 764.025 85.3682C764.025 88.5569 763.664 91.4194 762.905 93.8834C762.146 96.3836 760.846 98.8839 759.039 101.384C757.232 103.884 754.739 106.82 751.559 110.153L730.095 132.438L714.051 132.764H714.087ZM714.087 140.156V132.764L724.819 128.959H765.579V140.156H714.087Z" fill="currentColor"/><path d="M804.569 141.243C798.859 141.243 793.62 139.649 788.922 136.424C784.189 133.199 780.394 128.633 777.612 122.799C774.794 116.929 773.384 110.008 773.384 102.036C773.384 94.0644 774.757 87.1798 777.54 81.3097C780.322 75.4758 784.044 70.9826 788.778 67.7938C793.475 64.6051 798.679 63.0107 804.388 63.0107C810.097 63.0107 815.409 64.6051 820.107 67.7938C824.804 70.9826 828.526 75.512 831.308 81.3097C834.091 87.1436 835.5 94.0645 835.5 102.145C835.5 110.226 834.127 117.038 831.308 122.908C828.526 128.778 824.804 133.307 820.143 136.496C815.481 139.685 810.278 141.279 804.605 141.279L804.569 141.243ZM804.352 129.503C808.11 129.503 811.362 128.488 814.108 126.459C816.854 124.43 818.986 121.386 820.576 117.328C822.13 113.269 822.925 108.16 822.925 102C822.925 95.8401 822.13 90.8395 820.576 86.7812C819.022 82.7228 816.854 79.7153 814.072 77.7223C811.29 75.7294 808.037 74.7148 804.352 74.7148C800.666 74.7148 797.414 75.7294 794.668 77.7223C791.885 79.7153 789.717 82.7229 788.199 86.745C786.682 90.7671 785.923 95.8762 785.923 102.036C785.923 108.196 786.682 113.305 788.199 117.364C789.717 121.422 791.849 124.466 794.668 126.495C797.45 128.524 800.702 129.539 804.352 129.539V129.503Z" fill="currentColor"/><path d="M840.414 132.764L868.383 102.979C870.695 100.515 872.574 98.3042 874.02 96.3475C875.465 94.3908 876.513 92.5428 877.163 90.8035C877.814 89.0642 878.139 87.2886 878.139 85.4769C878.139 82.0707 877.019 79.4255 874.815 77.4688C872.61 75.5483 869.792 74.6063 866.395 74.6063C862.782 74.6063 859.602 75.5121 856.856 77.3239C854.109 79.1357 851.652 81.962 849.484 85.803L840.812 78.6283C843.775 73.4829 847.424 69.6058 851.761 66.9244C856.097 64.2792 861.12 62.9746 866.829 62.9746C871.526 62.9746 875.646 63.9167 879.187 65.801C882.728 67.6852 885.474 70.3304 887.426 73.6641C889.377 77.034 890.353 80.9475 890.353 85.3682C890.353 88.5569 889.991 91.4194 889.232 93.8834C888.474 96.3836 887.173 98.8839 885.366 101.384C883.559 103.884 881.066 106.82 877.886 110.153L856.422 132.438L840.378 132.764H840.414ZM840.414 140.156V132.764L851.146 128.959H891.906V140.156H840.414Z" fill="currentColor"/><path d="M924.97 141.243C919.911 141.243 915.358 140.083 911.311 137.728C907.264 135.373 904.048 132.22 901.699 128.234C899.35 124.248 898.158 119.828 898.158 114.972C898.158 108.015 900.579 100.985 905.421 93.8831L926.126 64.0977H940.544L918.429 95.2963L913.876 98.0139C914.599 96.3471 915.502 94.9339 916.623 93.7019C917.743 92.5061 919.224 91.6002 921.067 90.948C922.91 90.2958 925.187 89.9697 927.933 89.9697C932.341 89.9697 936.352 90.9843 939.929 93.0497C943.507 95.1151 946.398 97.9777 948.53 101.637C950.698 105.297 951.782 109.573 951.782 114.501C951.782 119.429 950.589 123.922 948.204 127.981C945.819 132.039 942.567 135.264 938.52 137.655C934.437 140.047 929.884 141.243 924.897 141.243H924.97ZM924.97 129.503C927.716 129.503 930.173 128.85 932.341 127.546C934.509 126.241 936.244 124.466 937.472 122.183C938.737 119.9 939.387 117.364 939.387 114.501C939.387 111.638 938.773 109.138 937.472 106.892C936.208 104.645 934.509 102.906 932.341 101.637C930.173 100.369 927.716 99.717 924.97 99.717C922.223 99.717 919.766 100.369 917.598 101.674C915.43 102.978 913.732 104.754 912.503 106.964C911.275 109.174 910.66 111.711 910.66 114.501C910.66 117.291 911.275 119.864 912.503 122.183C913.732 124.466 915.43 126.241 917.598 127.546C919.766 128.85 922.223 129.503 924.97 129.503Z" fill="currentColor"/></svg></span>      </div>    </div>  </div></div></div><div class="slide" id="slide-1" data-advance-ms="20270"><div class="slide-content"><h1>THE HOOK</h1>
 <p>Karpathy sets the world on fire: the coining of &quot;autoresearch&quot;</p></div></div><div class="slide" id="slide-2" data-advance-ms="20270"><div class="slide-content"><h1>THE HOOK</h1>
 <h2>Explain the tweet</h2></div></div><div class="slide" id="slide-3" data-advance-ms="20271"><div class="slide-content"><h1>THE HOOK</h1>
 <h2>Explain what was accomplished</h2></div></div><div class="slide" id="slide-4" data-advance-ms="20270"><div class="slide-content"><h1>THE HOOK</h1>
@@ -188,6 +769,27 @@ body[data-auto-advance="on"] .progress {
   var total = 74;
   var slides = document.querySelectorAll(".slide");
   var progress = document.getElementById("progress");
+  var descentSlides = Array.prototype.slice.call(
+    document.querySelectorAll('[data-slide-skin="descent"]')
+  );
+  var descentPatches = [
+    "inline send fastpath",
+    "shape cache ivar read",
+    "trim transient string allocs",
+    "specialize kwarg dispatch",
+    "fuse regexp match hot loop",
+    "reduce yjit exit churn",
+    "cache hash key shape checks"
+  ];
+  var descentBenches = [
+    "railsbench",
+    "liquid-render",
+    "optcarrot",
+    "lobsters-endpoint",
+    "erubi-hot-loop"
+  ];
+  var descentAnimationStarted = false;
+  var rubyKaigiStarPath = "M167.115 91.3472C164.694 89.3905 162.346 87.4701 160.43 85.9482H101.964L105.253 80.549H148.795L147.061 75.15H108.541L111.829 69.7509H139.797L139.364 69.4247L143.158 64.4968C143.158 64.4968 143.158 64.4243 143.086 64.3156H115.117L118.406 58.9165H141.098C140.52 57.3221 139.834 55.4742 139.111 53.5174H121.658L124.946 48.1184H137.123C136.437 46.2704 135.75 44.4585 135.136 42.7192H128.234L131.523 37.3202H133.149C132.065 34.4576 131.378 32.5733 131.306 32.5371C131.233 32.5371 129.138 33.9141 126.102 35.8708L88.3777 98.0869L84.5474 93.9924L115.659 42.7192C111.54 45.4007 107.601 48.0097 105.18 49.6041L102.868 53.4087L102.94 57.3584H100.447L80.681 89.934L76.8507 85.8395L94.1592 57.3221H93.3281L85.523 62.9387L84.9449 62.0689L73.0204 81.7448L69.1901 77.6502L81.223 57.8295C80.0305 57.8657 77.6818 57.9744 74.7549 58.0831L65.3598 73.5919L61.5295 69.4973L68.2867 58.3367C66.1548 58.4092 63.9506 58.5179 61.8186 58.5904L57.6992 65.4026L53.869 61.308L55.3505 58.8803C51.1589 59.0615 48.1597 59.2063 48.0874 59.2426C48.0874 59.2788 48.6294 61.4168 49.4605 64.533L106.12 124.865L102.398 128.815L52.4236 75.5485C53.5076 79.5344 54.5917 83.5566 55.4228 86.6004L62.1077 93.7388L62.8665 93.9562L62.722 94.391L98.7122 132.728L94.9903 136.678L60.7707 100.225L59.8312 103.124L61.7463 109.175L91.2684 140.627L87.5466 144.577L58.4219 113.56L56.7597 114.031C56.7597 114.031 56.29 115.734 55.5312 118.379L82.5961 147.222L85.1255 143.562L91.4853 148.237L130.294 106.965L133.185 111.748L97.9172 149.251H102.47L102.362 152.404L136.112 116.531L139.002 121.314L105.072 157.368C106.301 158.202 107.854 159.252 109.625 160.412L141.893 126.097L144.784 130.88L114.142 163.456C115.659 164.47 117.177 165.485 118.695 166.499L142.074 141.606L139.002 137.547L146.808 131.931L148.542 126.677L127.15 91.3472H133.474L153.276 124.032L155.661 124.901C155.661 124.901 156.817 123.995 158.66 122.546L139.761 91.3835H146.085L162.924 119.176C164.261 118.125 165.706 116.966 167.188 115.806L152.372 91.3835H158.696L171.451 112.4C172.933 111.204 174.378 110.081 175.715 109.03L165.019 91.3835H167.188L167.115 91.3472ZM127.367 102.182L109.733 120.915L92.1357 102.145L98.7122 91.3472H120.827L127.403 102.182H127.367ZM175.282 97.9782L179.907 105.624C181.352 104.464 182.22 103.74 182.256 103.703C182.256 103.703 179.22 101.203 175.282 97.9782ZM48.7017 142.693L52.9656 147.222C55.1698 147.331 57.8799 147.476 60.7346 147.621L50.4 136.605C49.7496 138.888 49.1714 140.99 48.7017 142.693ZM127.765 172.551L133.727 166.21C135.281 162.187 137.123 157.259 138.786 152.947L123.212 169.507C124.982 170.667 126.536 171.717 127.765 172.551ZM52.0984 130.518L68.5035 148.019C71.3582 148.164 74.0683 148.309 76.2725 148.418L53.7967 124.466C53.2547 126.423 52.6765 128.489 52.0984 130.554V130.518Z";
 
   document.querySelectorAll(".slide-content").forEach(function (content) {
     if (
@@ -263,6 +865,1061 @@ body[data-auto-advance="on"] .progress {
 
   function fitAll() {
     slides.forEach(fitSlide);
+  }
+
+  function escapeHtml(text) {
+    return String(text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function setNodeText(nodes, text) {
+    nodes.forEach(function (node) {
+      node.textContent = text;
+    });
+  }
+
+  function signedValue(value, digits, suffix) {
+    return (value >= 0 ? "+" : "") + value.toFixed(digits) + (suffix || "");
+  }
+
+  function rotatedDescentBenches(index, count) {
+    var items = [];
+    for (var i = 0; i < count; i++) {
+      items.push(descentBenches[(index + i) % descentBenches.length]);
+    }
+    return items;
+  }
+
+  function descentNowClock() {
+    var now = new Date();
+    var ms = String(Math.floor(now.getMilliseconds() / 10)).padStart(2, "0");
+    return [
+      String(now.getHours()).padStart(2, "0"),
+      String(now.getMinutes()).padStart(2, "0"),
+      String(now.getSeconds()).padStart(2, "0"),
+      ms,
+    ].join(":");
+  }
+
+  function descentLogStamp() {
+    return new Date().toISOString().substring(11, 23);
+  }
+
+  function randomBetween(min, max) {
+    return min + Math.random() * (max - min);
+  }
+
+  function descentLoss(x, z) {
+    var skewX = x + z * 0.18;
+    var bowl = skewX * skewX * 0.03 + (z + 1.8) * (z + 1.8) * 0.02;
+    var primaryBasin = 7.1 * Math.exp(-0.055 * ((x - 1.8) * (x - 1.8) + (z - 10.6) * (z - 10.6)));
+    var sideChannel = 2.2 * Math.exp(-0.075 * ((x + 5.8) * (x + 5.8) + (z - 2.8) * (z - 2.8)));
+    var terrace = Math.sin((z - 2.5) * 0.28) * 0.18 + Math.cos(x * 0.36 + z * 0.08) * 0.1;
+
+    return bowl - primaryBasin - sideChannel + terrace;
+  }
+
+  function displayedDescentLoss(x, z) {
+    return Math.max(descentLoss(x, z) + 7.5, 0.0001);
+  }
+
+  function descentGradient(x, z) {
+    var h = 0.02;
+    return {
+      x: (descentLoss(x + h, z) - descentLoss(x - h, z)) / (2 * h),
+      z: (descentLoss(x, z + h) - descentLoss(x, z - h)) / (2 * h),
+    };
+  }
+
+  function descentNodeArray(slide, selector) {
+    return Array.prototype.slice.call(slide.querySelectorAll(selector));
+  }
+
+  function addDescentLog(state, message) {
+    state.logs.push({ time: descentLogStamp(), message: message });
+    if (state.logs.length > 10) {
+      state.logs.shift();
+    }
+  }
+
+  function renderDescentLogs(state) {
+    if (!state.logEl) return;
+
+    state.logEl.innerHTML = state.logs
+      .map(function (entry) {
+        return (
+          '<div class="descent-log-line">' +
+          '<span class="descent-log-time">[' +
+          escapeHtml(entry.time) +
+          ']</span>' +
+          "<span>" +
+          escapeHtml(entry.message) +
+          "</span>" +
+          "</div>"
+        );
+      })
+      .join("");
+  }
+
+  function currentDescentStatus(state) {
+    if (state.resetAt) return "RESETTING";
+    if (state.statusUntilFrame && state.frameCount <= state.statusUntilFrame) {
+      return state.statusText;
+    }
+    if (state.iteration < 24) return "WARMING";
+    return "DESCENDING";
+  }
+
+  function setDescentStatus(state, text, frames) {
+    state.statusText = text;
+    state.statusUntilFrame = state.frameCount + (frames || 0);
+  }
+
+  function syncDescentDom(state) {
+    var bestLoss = isFinite(state.globalBestLoss)
+      ? state.globalBestLoss
+      : state.currentLoss;
+    var status = currentDescentStatus(state);
+    var benchIndex = Math.floor(state.iteration / 24) % descentBenches.length;
+    var benchSuite = rotatedDescentBenches(benchIndex, 3).join(" / ");
+    var specShort = state.specPassPct.toFixed(2) + "%";
+    var specLong =
+      (18472 - Math.round((100 - state.specPassPct) * 18)).toLocaleString("en-US") +
+      " / 18,472 (" +
+      specShort +
+      ")";
+    var memoryShort = state.rssMb.toFixed(0) + "MB / " + signedValue(state.rssDelta, 1, "%");
+    var memoryLong =
+      state.rssMb.toFixed(0) +
+      "MB rss // heap live " +
+      (77 + state.jitCoverage * 0.12).toFixed(1) +
+      "%";
+    var jitText =
+      "YJIT on // side exits " +
+      Math.max(0.5, 3.4 - state.bestDelta * 0.13).toFixed(1) +
+      "%";
+
+    if (state.vectorEl) {
+      state.vectorEl.textContent =
+        "[ " + state.agent.x.toFixed(3) + ", " + state.agent.z.toFixed(3) + " ]";
+    }
+    if (state.patchEl) {
+      state.patchEl.textContent = state.currentPatch.toUpperCase();
+    }
+    if (state.statusEl) {
+      state.statusEl.textContent = status;
+      state.statusEl.setAttribute("data-text", status);
+    }
+
+    setNodeText(state.branchEls, state.currentBranch);
+    setNodeText(state.hotBenchEls, state.currentHotBench);
+    setNodeText(state.jitEls, jitText);
+    setNodeText(state.specShortEls, specShort);
+    setNodeText(state.specLongEls, specLong);
+    setNodeText(state.memoryShortEls, memoryShort);
+    setNodeText(state.memoryLongEls, memoryLong);
+    setNodeText(state.gcEls, state.gcProfile);
+    setNodeText(state.workerEls, state.workerSummary);
+    setNodeText(state.noiseEls, "±" + state.noiseFloor.toFixed(2) + "%");
+    setNodeText(state.mutationEls, String(state.mutationCount).padStart(4, "0"));
+    setNodeText(state.keepEls, String(state.keepCount).padStart(3, "0"));
+    setNodeText(state.jitCoverageEls, state.jitCoverage.toFixed(1) + "%");
+    setNodeText(state.failureEls, String(state.failureCount));
+    setNodeText(state.queueEls, String(state.queueDepth).padStart(2, "0") + " pending");
+    setNodeText(state.verifyEls, state.lastVerify);
+    setNodeText(state.baselineEls, state.baselineLabel);
+    setNodeText(state.throughputEls, signedValue(state.throughputDelta, 2, "%"));
+    setNodeText(state.ipsEls, state.ipsMillions.toFixed(2) + "M");
+    setNodeText(state.memoryDeltaEls, signedValue(state.rssDelta, 1, "%"));
+    setNodeText(state.benchSuiteEls, benchSuite);
+    setNodeText(state.lossEls, state.currentLoss.toFixed(6));
+    setNodeText(state.bestEls, bestLoss.toFixed(6));
+    setNodeText(state.deltaEls, "+" + state.bestDelta.toFixed(2) + "%");
+    setNodeText(state.clockEls, descentNowClock());
+  }
+
+  function resetDescentExperiment(state, initial) {
+    state.agent.x = randomBetween(-9.5, 9.5);
+    state.agent.z = randomBetween(-14.5, -6.5);
+    state.agent.vx = 0;
+    state.agent.vz = 0;
+    state.iteration = 0;
+    state.loopCount += 1;
+    state.trail = [];
+    state.history = [];
+    state.memoryHistory = [];
+    state.streamHistory = [];
+    state.costResults = [];
+    state.runCount = 0;
+    resetDescentCheckMatrix(state);
+    state.simulationAccumulator = 0;
+    state.resetAt = 0;
+    state.currentPatch = "warming benchmark harness";
+    state.currentHotBench = descentBenches[Math.floor(Math.random() * descentBenches.length)];
+    state.currentBranch =
+      "ruby-speed-lab-" + Math.floor(Math.random() * 4096).toString(16).toUpperCase();
+    state.rssMb = randomBetween(584, 676);
+    state.rssDelta = randomBetween(-0.3, 0.3);
+    state.specPassPct = randomBetween(99.54, 99.72);
+    state.jitCoverage = randomBetween(89.8, 92.6);
+    state.queueDepth = Math.floor(randomBetween(2, 6));
+    state.noiseFloor = randomBetween(0.24, 0.43);
+    state.ipsMillions = randomBetween(2.1, 2.5);
+    state.gcProfile = "RGENGC // compaction off // minor " + randomBetween(2.4, 4.4).toFixed(1) + "ms";
+    state.workerSummary =
+      String(Math.floor(randomBetween(6, 10))).padStart(2, "0") +
+      " local // " +
+      String(Math.floor(randomBetween(2, 5))).padStart(2, "0") +
+      " remote";
+    state.lastVerify = "spec + bench + memory";
+    state.currentLoss = displayedDescentLoss(state.agent.x, state.agent.z);
+    state.chartLoss = state.currentLoss;
+    state.baselineLoss = state.currentLoss;
+    state.latestDelta = 0;
+    state.throughputDelta = 0;
+    setDescentStatus(state, "AUTORESEARCHING", 40);
+
+    if (!isFinite(state.globalBestLoss)) {
+      state.globalBestLoss = state.currentLoss;
+    }
+
+    if (initial) {
+      state.logs = [];
+      addDescentLog(state, "BOOT ruby autoresearch console // objective: lower runtime cost");
+      addDescentLog(state, "ENABLE yjit, benchmark harness, rubyspec gate, rss budget");
+    } else {
+      addDescentLog(state, "RESET search basin // branch " + state.currentBranch);
+    }
+
+    addDescentLog(state, "TARGET ruby-head // keep only faster patches");
+    addDescentLog(state, "BASELINE " + state.currentHotBench + " // jitter " + signedValue(state.noiseFloor, 2, "%"));
+    renderDescentLogs(state);
+    syncDescentDom(state);
+  }
+
+  function setupDescentSlide(slide) {
+    if (slide._descentState) return slide._descentState;
+
+    var stage = slide.querySelector(".descent-stage");
+    var chart = slide.querySelector("[data-descent-chart]");
+    var memoryChart = slide.querySelector("[data-descent-memory-chart]");
+    var stackChart = slide.querySelector("[data-descent-stack-chart]");
+    var streamChart = slide.querySelector("[data-descent-stream-chart]");
+    var costChart = slide.querySelector("[data-descent-cost-chart]");
+    var state = {
+      slide: slide,
+      stage: stage,
+      stageCtx: stage ? stage.getContext("2d") : null,
+      bufferCanvas: document.createElement("canvas"),
+      bufferCtx: null,
+      chart: chart,
+      chartCtx: chart ? chart.getContext("2d") : null,
+      memoryChart: memoryChart,
+      memoryChartCtx: memoryChart ? memoryChart.getContext("2d") : null,
+      stackChart: stackChart,
+      stackChartCtx: stackChart ? stackChart.getContext("2d") : null,
+      streamChart: streamChart,
+      streamChartCtx: streamChart ? streamChart.getContext("2d") : null,
+      costChart: costChart,
+      costChartCtx: costChart ? costChart.getContext("2d") : null,
+      logEl: slide.querySelector("[data-descent-log]"),
+      vectorEl: slide.querySelector("[data-descent-vector]"),
+      patchEl: slide.querySelector("[data-descent-patch]"),
+      statusEl: slide.querySelector("[data-descent-status]"),
+      checkEls: descentNodeArray(slide, "[data-descent-check]"),
+      branchEls: descentNodeArray(slide, "[data-descent-branch]"),
+      hotBenchEls: descentNodeArray(slide, "[data-descent-hotbench]"),
+      jitEls: descentNodeArray(slide, "[data-descent-jit]"),
+      specShortEls: descentNodeArray(slide, "[data-descent-spec-short]"),
+      specLongEls: descentNodeArray(slide, "[data-descent-spec-long]"),
+      memoryShortEls: descentNodeArray(slide, "[data-descent-memory-short]"),
+      memoryLongEls: descentNodeArray(slide, "[data-descent-memory-long]"),
+      gcEls: descentNodeArray(slide, "[data-descent-gc]"),
+      workerEls: descentNodeArray(slide, "[data-descent-workers]"),
+      noiseEls: descentNodeArray(slide, "[data-descent-noise]"),
+      mutationEls: descentNodeArray(slide, "[data-descent-mutations]"),
+      keepEls: descentNodeArray(slide, "[data-descent-keeps]"),
+      jitCoverageEls: descentNodeArray(slide, "[data-descent-jitcov]"),
+      failureEls: descentNodeArray(slide, "[data-descent-failures]"),
+      queueEls: descentNodeArray(slide, "[data-descent-queue]"),
+      verifyEls: descentNodeArray(slide, "[data-descent-verify]"),
+      baselineEls: descentNodeArray(slide, "[data-descent-baseline]"),
+      throughputEls: descentNodeArray(slide, "[data-descent-throughput]"),
+      ipsEls: descentNodeArray(slide, "[data-descent-ips]"),
+      memoryDeltaEls: descentNodeArray(slide, "[data-descent-memory-delta]"),
+      benchSuiteEls: descentNodeArray(slide, "[data-descent-bench-suite]"),
+      lossEls: descentNodeArray(slide, "[data-descent-loss]"),
+      bestEls: descentNodeArray(slide, "[data-descent-best]"),
+      deltaEls: descentNodeArray(slide, "[data-descent-delta]"),
+      clockEls: descentNodeArray(slide, "[data-descent-clock]"),
+      logs: [],
+      trail: [],
+      history: [],
+      memoryHistory: [],
+      streamHistory: [],
+      costResults: [],
+      checkStates: [],
+      activeCheckIndex: -1,
+      matrixFailingIndex: null,
+      matrixResetAt: 0,
+      matrixResetTimer: null,
+      simulationAccumulator: 0,
+      frameCount: 0,
+      iteration: 0,
+      mutationCount: 0,
+      keepCount: 0,
+      loopCount: 0,
+      runCount: 0,
+      statusText: "AUTORESEARCHING",
+      statusUntilFrame: 0,
+      currentPatch: "warming benchmark harness",
+      currentBranch: "ruby-speed-lab-A12",
+      currentHotBench: descentBenches[0],
+      specPassPct: 99.60,
+      rssMb: 612,
+      rssDelta: 0,
+      jitCoverage: 91.4,
+      failureCount: 0,
+      queueDepth: 3,
+      throughputDelta: 0,
+      ipsMillions: 2.34,
+      gcProfile: "RGENGC // compaction off // minor 3.1ms",
+      workerSummary: "08 local // 03 remote",
+      noiseFloor: 0.37,
+      lastVerify: "spec + bench + memory",
+      baselineLabel: "ruby 3.5.0dev",
+      baselineLoss: 1,
+      currentLoss: 1,
+      latestDelta: 0,
+      bestDelta: 0,
+      chartLoss: 1,
+      globalBestLoss: Infinity,
+      orbitOffset: Math.random() * Math.PI * 2,
+      resetAt: 0,
+      agent: { x: 0, z: 0, vx: 0, vz: 0 },
+    };
+
+    state.bufferCtx = state.bufferCanvas.getContext("2d");
+    slide._descentState = state;
+    resetDescentExperiment(state, true);
+    return state;
+  }
+
+  function resizeAnimatedCanvas(canvas, options) {
+    if (!canvas) return null;
+
+    options = options || {};
+
+    var rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return null;
+
+    var scale = options.scale || 1;
+    var maxDpr = options.maxDpr || 2;
+    var dpr = Math.min(window.devicePixelRatio || 1, maxDpr) * scale;
+    var width = Math.max(1, Math.round(rect.width * dpr));
+    var height = Math.max(1, Math.round(rect.height * dpr));
+
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+    }
+
+    return { width: width, height: height, dpr: dpr };
+  }
+
+  function applyDescentDither(sourceCtx, targetCtx, width, height) {
+    var imageData = sourceCtx.getImageData(0, 0, width, height);
+    var data = imageData.data;
+    var bayer = [
+      0 / 16, 8 / 16, 2 / 16, 10 / 16,
+      12 / 16, 4 / 16, 14 / 16, 6 / 16,
+      3 / 16, 11 / 16, 1 / 16, 9 / 16,
+      15 / 16, 7 / 16, 13 / 16, 5 / 16,
+    ];
+
+    for (var y = 0; y < height; y++) {
+      for (var x = 0; x < width; x++) {
+        var offset = (y * width + x) * 4;
+        var brightness =
+          (0.299 * data[offset] + 0.587 * data[offset + 1] + 0.114 * data[offset + 2]) /
+          255;
+        brightness = Math.max(0, Math.min(1, (brightness - 0.06) * 1.9));
+
+        var threshold = bayer[(x % 4) + (y % 4) * 4];
+        var on = brightness > threshold;
+
+        data[offset] = on ? 244 : 0;
+        data[offset + 1] = on ? 235 : 0;
+        data[offset + 2] = on ? 97 : 0;
+        data[offset + 3] = 255;
+      }
+    }
+
+    targetCtx.putImageData(imageData, 0, 0);
+  }
+
+  function descentProjectPoint(x, y, z, orbit, pitch, centerX, centerY, scaleBase) {
+    var cosY = Math.cos(orbit);
+    var sinY = Math.sin(orbit);
+    var rx = x * cosY - z * sinY;
+    var rz = x * sinY + z * cosY;
+    var cosP = Math.cos(pitch);
+    var sinP = Math.sin(pitch);
+    var ry = y * cosP - rz * sinP;
+    var depth = y * sinP + rz * cosP + 30;
+    var scale = scaleBase / depth;
+
+    return {
+      x: centerX + rx * scale,
+      y: centerY - ry * scale,
+      depth: depth,
+    };
+  }
+
+  function renderDescentStage(state, time) {
+    var ctx = state.stageCtx;
+    var size = resizeAnimatedCanvas(state.stage, { scale: 0.55, maxDpr: 1 });
+    if (!ctx || !size || !state.bufferCtx) return;
+
+    var width = size.width;
+    var height = size.height;
+    var bctx = state.bufferCtx;
+    var orbit = state.orbitOffset + time * 0.00014;
+    var pitch = 0.96;
+    var centerX = width * 0.56;
+    var centerY = height * 0.47;
+    var scaleBase = Math.min(width, height) * 1.85;
+    var extent = 15.5;
+    var step = 1.25;
+    var rows = [];
+    var xCount = Math.floor((extent * 2) / step) + 1;
+
+    if (state.bufferCanvas.width !== width || state.bufferCanvas.height !== height) {
+      state.bufferCanvas.width = width;
+      state.bufferCanvas.height = height;
+    }
+
+    bctx.clearRect(0, 0, width, height);
+
+    var background = bctx.createLinearGradient(0, 0, 0, height);
+    background.addColorStop(0, "rgba(4, 7, 10, 1)");
+    background.addColorStop(1, "rgba(2, 3, 4, 1)");
+    bctx.fillStyle = background;
+    bctx.fillRect(0, 0, width, height);
+
+    for (var z = -extent; z <= extent + 0.001; z += step) {
+      var row = [];
+      for (var x = -extent; x <= extent + 0.001; x += step) {
+        row.push(
+          descentProjectPoint(
+            x,
+            descentLoss(x, z) * 1.25,
+            z,
+            orbit,
+            pitch,
+            centerX,
+            centerY,
+            scaleBase
+          )
+        );
+      }
+      rows.push(row);
+    }
+
+    bctx.lineCap = "round";
+    bctx.lineJoin = "round";
+    bctx.lineWidth = Math.max(1, Math.round(Math.min(width, height) * 0.0018));
+
+    rows.forEach(function (row, rowIndex) {
+      bctx.beginPath();
+      row.forEach(function (point, pointIndex) {
+        if (pointIndex === 0) bctx.moveTo(point.x, point.y);
+        else bctx.lineTo(point.x, point.y);
+      });
+      bctx.strokeStyle =
+        rowIndex % 3 === 0
+          ? "rgba(244, 235, 97, 0.28)"
+          : "rgba(244, 235, 97, 0.16)";
+      bctx.stroke();
+    });
+
+    for (var column = 0; column < xCount; column++) {
+      bctx.beginPath();
+      for (var rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+        var point = rows[rowIndex][column];
+        if (rowIndex === 0) bctx.moveTo(point.x, point.y);
+        else bctx.lineTo(point.x, point.y);
+      }
+      bctx.strokeStyle = "rgba(244, 235, 97, 0.12)";
+      bctx.stroke();
+    }
+
+    if (rubyKaigiStarPath && typeof Path2D !== "undefined") {
+      var starPath2d = state.rubyKaigiStarPath2d || (state.rubyKaigiStarPath2d = new Path2D(rubyKaigiStarPath));
+      var starScale = Math.min(width, height) * 0.0019;
+
+      bctx.save();
+      bctx.translate(width * 0.325, height * 0.73);
+      bctx.rotate(-0.22 + time * 0.00008);
+      bctx.scale(starScale, starScale);
+      bctx.translate(-115, -103);
+      bctx.fillStyle = "rgba(244, 235, 97, 0.26)";
+      bctx.fill(starPath2d);
+      bctx.lineWidth = 1 / starScale;
+      bctx.strokeStyle = "rgba(244, 235, 97, 0.22)";
+      bctx.stroke(starPath2d);
+      bctx.restore();
+    }
+
+    if (state.trail.length > 1) {
+      bctx.beginPath();
+      state.trail.forEach(function (entry, index) {
+        var projected = descentProjectPoint(
+          entry.x,
+          descentLoss(entry.x, entry.z) * 1.25 + 0.6,
+          entry.z,
+          orbit,
+          pitch,
+          centerX,
+          centerY,
+          scaleBase
+        );
+
+        if (index === 0) bctx.moveTo(projected.x, projected.y);
+        else bctx.lineTo(projected.x, projected.y);
+      });
+      bctx.strokeStyle = "rgba(244, 235, 97, 0.96)";
+      bctx.lineWidth = Math.max(1.5, Math.min(width, height) * 0.0032);
+      bctx.stroke();
+    }
+
+    var agentPoint = descentProjectPoint(
+      state.agent.x,
+      descentLoss(state.agent.x, state.agent.z) * 1.25 + 0.9,
+      state.agent.z,
+      orbit,
+      pitch,
+      centerX,
+      centerY,
+      scaleBase
+    );
+
+    bctx.beginPath();
+    bctx.fillStyle = "rgba(244, 235, 97, 1)";
+    bctx.arc(agentPoint.x, agentPoint.y, Math.max(2, Math.min(width, height) * 0.0065), 0, Math.PI * 2);
+    bctx.fill();
+
+    bctx.beginPath();
+    bctx.strokeStyle = "rgba(244, 235, 97, 0.45)";
+    bctx.lineWidth = Math.max(1, Math.min(width, height) * 0.0018);
+    bctx.arc(agentPoint.x, agentPoint.y, Math.max(8, Math.min(width, height) * 0.02), 0, Math.PI * 2);
+    bctx.stroke();
+
+    applyDescentDither(bctx, ctx, width, height);
+  }
+
+  function renderDescentChart(state) {
+    var ctx = state.chartCtx;
+    var size = resizeAnimatedCanvas(state.chart);
+    if (!ctx || !size) return;
+
+    var width = size.width;
+    var height = size.height;
+    var history = state.history;
+
+    ctx.clearRect(0, 0, width, height);
+    if (history.length < 2) return;
+
+    var maxLoss = Math.max.apply(null, history.concat([1]));
+    var minLoss = Math.min.apply(null, history);
+    var range = Math.max(maxLoss - minLoss, 0.0001);
+    var bottom = height - 1;
+
+    ctx.beginPath();
+    history.forEach(function (value, index) {
+      var x = (index / Math.max(history.length - 1, 1)) * width;
+      var y = bottom - ((value - minLoss) / range) * (height - 4);
+      if (index === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = "rgba(244, 235, 97, 1)";
+    ctx.lineWidth = Math.max(1.5, Math.min(width, height) * 0.01);
+    ctx.stroke();
+
+    ctx.lineTo(width, bottom);
+    ctx.lineTo(0, bottom);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(244, 235, 97, 0.12)";
+    ctx.fill();
+
+    var latestX = width;
+    var latestY = bottom - ((history[history.length - 1] - minLoss) / range) * (height - 4);
+    ctx.beginPath();
+    ctx.fillStyle = "rgba(244, 235, 97, 1)";
+    ctx.arc(latestX, latestY, Math.max(2, Math.min(width, height) * 0.015), 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function resetDescentCheckMatrix(state) {
+    if (state.matrixResetTimer) {
+      clearTimeout(state.matrixResetTimer);
+      state.matrixResetTimer = null;
+    }
+
+    state.checkStates = state.checkEls.map(function (_cell, index) {
+      return index < 2 ? "pass" : "pending";
+    });
+    state.activeCheckIndex = Math.min(2, Math.max(state.checkStates.length - 1, 0));
+    if (state.checkStates.length) {
+      state.checkStates[state.activeCheckIndex] = "running";
+    }
+    state.matrixFailingIndex = null;
+    state.matrixResetAt = 0;
+  }
+
+  function renderDescentCheckMatrix(state) {
+    state.checkEls.forEach(function (cell, index) {
+      var status = state.checkStates[index] || "pending";
+      cell.classList.remove("is-pending", "is-running", "is-pass", "is-fail", "is-flashing");
+      cell.classList.add("is-" + status);
+
+      if (state.matrixFailingIndex === index && state.matrixResetAt) {
+        cell.classList.add("is-flashing");
+      }
+
+      var stateEl = cell.querySelector(".descent-check-state");
+      if (stateEl) stateEl.textContent = status;
+    });
+  }
+
+  function renderDescentMemoryChart(state) {
+    var ctx = state.memoryChartCtx;
+    var size = resizeAnimatedCanvas(state.memoryChart, { maxDpr: 1.5 });
+    if (!ctx || !size) return;
+
+    var width = size.width;
+    var height = size.height;
+    var history = state.memoryHistory;
+
+    ctx.clearRect(0, 0, width, height);
+    if (history.length < 2) return;
+
+    var minValue = Math.min.apply(null, history) - 8;
+    var maxValue = Math.max.apply(null, history) + 8;
+    var range = Math.max(maxValue - minValue, 1);
+    var bottom = height - 2;
+
+    ctx.beginPath();
+    history.forEach(function (value, index) {
+      var x = (index / Math.max(history.length - 1, 1)) * width;
+      var y = bottom - ((value - minValue) / range) * (height - 8);
+      if (index === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = "rgba(244, 235, 97, 1)";
+    ctx.lineWidth = Math.max(1, width * 0.008);
+    ctx.stroke();
+
+    ctx.lineTo(width, bottom);
+    ctx.lineTo(0, bottom);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(244, 235, 97, 0.12)";
+    ctx.fill();
+  }
+
+  function renderDescentTreemap(state) {
+    var ctx = state.stackChartCtx;
+    var size = resizeAnimatedCanvas(state.stackChart, { maxDpr: 1.5 });
+    if (!ctx || !size) return;
+
+    var width = size.width;
+    var height = size.height;
+    var nodes = [
+      { label: "send", value: 28 + Math.abs(Math.sin(state.iteration / 13)) * 18 },
+      { label: "alloc", value: 20 + Math.abs(Math.cos(state.iteration / 17)) * 14 },
+      { label: "gc", value: 14 + Math.abs(Math.sin(state.iteration / 23 + 1.2)) * 10 },
+      { label: "regexp", value: 8 + Math.abs(Math.cos(state.iteration / 19 + 2.1)) * 8 },
+      { label: "cfunc", value: 10 + Math.abs(Math.sin(state.iteration / 11 + 0.8)) * 8 },
+      { label: "shape", value: 12 + Math.abs(Math.cos(state.iteration / 29 + 0.4)) * 9 },
+    ];
+    var total = nodes.reduce(function (sum, node) { return sum + node.value; }, 0);
+    var leftWidth = width * ((nodes[0].value + nodes[1].value + nodes[2].value) / total);
+    var leftY = 0;
+    var leftTotal = nodes[0].value + nodes[1].value + nodes[2].value;
+    var rightX = leftWidth;
+    var rightTotal = total - leftTotal;
+    var rightY = 0;
+
+    ctx.clearRect(0, 0, width, height);
+
+    nodes.slice(0, 3).forEach(function (node, index) {
+      var h = height * (node.value / leftTotal);
+      ctx.fillStyle = index % 2 === 0 ? "rgba(244, 235, 97, 0.24)" : "rgba(244, 235, 97, 0.12)";
+      ctx.fillRect(0, leftY, leftWidth - 1, h - 1);
+      ctx.strokeStyle = "rgba(244, 235, 97, 0.35)";
+      ctx.strokeRect(0.5, leftY + 0.5, leftWidth - 1, h - 1);
+      ctx.fillStyle = "rgba(244, 235, 97, 0.92)";
+      ctx.font = Math.max(9, width * 0.05) + "px monospace";
+      ctx.fillText(node.label, 4, leftY + 12);
+      leftY += h;
+    });
+
+    nodes.slice(3).forEach(function (node, index) {
+      var h = height * (node.value / rightTotal);
+      ctx.fillStyle = index % 2 === 0 ? "rgba(244, 235, 97, 0.16)" : "rgba(244, 235, 97, 0.08)";
+      ctx.fillRect(rightX, rightY, width - rightX - 1, h - 1);
+      ctx.strokeStyle = "rgba(244, 235, 97, 0.28)";
+      ctx.strokeRect(rightX + 0.5, rightY + 0.5, width - rightX - 1, h - 1);
+      ctx.fillStyle = "rgba(244, 235, 97, 0.86)";
+      ctx.font = Math.max(8, width * 0.04) + "px monospace";
+      ctx.fillText(node.label, rightX + 4, rightY + 12);
+      rightY += h;
+    });
+  }
+
+  function renderDescentStreamgraph(state) {
+    var ctx = state.streamChartCtx;
+    var size = resizeAnimatedCanvas(state.streamChart, { maxDpr: 1.5 });
+    if (!ctx || !size) return;
+
+    var width = size.width;
+    var height = size.height;
+    var history = state.streamHistory;
+    var keys = ["postgres", "redis", "http", "views", "rubyvm"];
+    var fills = [0.08, 0.14, 0.2, 0.26, 0.34];
+
+    ctx.clearRect(0, 0, width, height);
+    if (history.length < 2) return;
+
+    var baseline = new Array(history.length).fill(height * 0.5);
+    keys.forEach(function (key, keyIndex) {
+      var upper = [];
+      var lower = [];
+      for (var i = 0; i < history.length; i++) {
+        var total = keys.reduce(function (sum, name) { return sum + history[i][name]; }, 0);
+        var thickness = ((history[i][key] / total) * height * 0.72);
+        var x = (i / Math.max(history.length - 1, 1)) * width;
+        lower.push({ x: x, y: baseline[i] });
+        upper.push({ x: x, y: baseline[i] - thickness });
+        baseline[i] -= thickness * 0.58;
+      }
+
+      ctx.beginPath();
+      upper.forEach(function (point, index) {
+        if (index === 0) ctx.moveTo(point.x, point.y);
+        else ctx.lineTo(point.x, point.y);
+      });
+      for (var j = lower.length - 1; j >= 0; j--) {
+        ctx.lineTo(lower[j].x, lower[j].y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = "rgba(244, 235, 97, " + fills[keyIndex] + ")";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(244, 235, 97, 0.22)";
+      ctx.stroke();
+    });
+  }
+
+  function renderDescentCostResults(state, time) {
+    var ctx = state.costChartCtx;
+    var size = resizeAnimatedCanvas(state.costChart, { maxDpr: 1.5 });
+    if (!ctx || !size) return;
+
+    var width = size.width;
+    var height = size.height;
+    var left = 8;
+    var right = width - 6;
+    var top = 6;
+    var bottom = height - 8;
+    var minCost = 0;
+    var maxCost = 4.2;
+    var minGain = -1.5;
+    var maxGain = 12.5;
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.strokeStyle = "rgba(244, 235, 97, 0.12)";
+    ctx.lineWidth = 1;
+
+    for (var gridIndex = 0; gridIndex < 4; gridIndex++) {
+      var gy = top + ((bottom - top) / 3) * gridIndex;
+      ctx.beginPath();
+      ctx.moveTo(left, gy);
+      ctx.lineTo(right, gy);
+      ctx.stroke();
+    }
+
+    for (var gxIndex = 0; gxIndex < 5; gxIndex++) {
+      var gx = left + ((right - left) / 4) * gxIndex;
+      ctx.beginPath();
+      ctx.moveTo(gx, top);
+      ctx.lineTo(gx, bottom);
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = "rgba(244, 235, 97, 0.42)";
+    ctx.beginPath();
+    ctx.moveTo(left, bottom);
+    ctx.lineTo(right, bottom);
+    ctx.moveTo(left, top);
+    ctx.lineTo(left, bottom);
+    ctx.stroke();
+
+    state.costResults.forEach(function (point) {
+      var normalizedCost = (point.cost - minCost) / (maxCost - minCost);
+      var normalizedGain = (point.gain - minGain) / (maxGain - minGain);
+      var x = left + normalizedCost * (right - left);
+      var y = bottom - normalizedGain * (bottom - top);
+      var age = Math.max(0, (time - point.bornAt) / 320);
+      var eased = Math.min(1, age);
+      var radius = 1.5 + eased * (point.keep ? 2.7 : 1.9);
+
+      ctx.beginPath();
+      ctx.fillStyle = point.keep
+        ? "rgba(244, 235, 97, " + (0.18 + eased * 0.8) + ")"
+        : "rgba(244, 235, 97, " + (0.1 + eased * 0.42) + ")";
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (eased < 1) {
+        ctx.beginPath();
+        ctx.strokeStyle = "rgba(244, 235, 97, " + (0.4 * (1 - eased)) + ")";
+        ctx.arc(x, y, radius + 4 * (1 - eased), 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    });
+  }
+
+  function emitPeriodicDescentLog(state, grad) {
+    var cycle = Math.floor(state.iteration / 42);
+    var patch = descentPatches[cycle % descentPatches.length];
+    var bench = descentBenches[Math.floor(state.iteration / 21) % descentBenches.length];
+    var messages = [
+      "PATCH " + patch + " // isolate and benchmark",
+      "BENCH " + bench + " // best keep +" + state.bestDelta.toFixed(2) + "%",
+      "VERIFY specs, perf, memory budget // green across harness",
+      "GRAD [" + grad.x.toFixed(2) + ", " + grad.z.toFixed(2) + "] // keep exploring",
+    ];
+
+    state.currentPatch = patch;
+    state.currentHotBench = bench;
+    state.lastVerify =
+      cycle % 3 === 0 ? "spec + bench + memory" : cycle % 3 === 1 ? "rubyspec + yjit stats" : "bench variance + rss";
+    addDescentLog(state, messages[cycle % messages.length]);
+    renderDescentLogs(state);
+  }
+
+  function descentShouldAnimate(state) {
+    if (!state || state.slide.clientWidth === 0 || state.slide.clientHeight === 0) {
+      return false;
+    }
+
+    return mode !== "presentation" || state.slide.classList.contains("active");
+  }
+
+  function stepDescentState(state, time) {
+    if (state.resetAt && time >= state.resetAt) {
+      resetDescentExperiment(state, false);
+    }
+
+    if (state.resetAt) {
+      syncDescentDom(state);
+      return;
+    }
+
+    if (state.matrixResetAt) {
+      syncDescentDom(state);
+      return;
+    }
+
+    state.frameCount += 1;
+    state.simulationAccumulator += 0.2;
+
+    while (state.simulationAccumulator >= 1) {
+      state.simulationAccumulator -= 1;
+      var grad = descentGradient(state.agent.x, state.agent.z);
+      var targetX = 1.6 + Math.sin(state.iteration / 28 + state.loopCount * 0.4) * 0.7;
+      var targetZ = 10.8 + Math.cos(state.iteration / 33 + state.loopCount * 0.25) * 0.9;
+      var wanderX =
+        Math.sin(state.iteration / 16 + state.orbitOffset) * 0.018 +
+        Math.cos(state.iteration / 24 + state.loopCount * 0.45) * 0.012;
+      var wanderZ =
+        Math.cos(state.iteration / 19 + state.orbitOffset * 0.7) * 0.016 +
+        Math.sin(state.iteration / 27 + state.loopCount * 0.35) * 0.01;
+      var guideX = (targetX - state.agent.x) * 0.0034;
+      var guideZ = (targetZ - state.agent.z) * 0.0052;
+
+      state.agent.vx = 0.9 * state.agent.vx - 0.0108 * grad.x + guideX + wanderX;
+      state.agent.vz = 0.9 * state.agent.vz - 0.0108 * grad.z + guideZ + wanderZ;
+      state.agent.x = Math.max(-15.8, Math.min(15.8, state.agent.x + state.agent.vx));
+      state.agent.z = Math.max(-15.8, Math.min(15.8, state.agent.z + state.agent.vz));
+      state.iteration += 1;
+      state.mutationCount += 1;
+      state.currentLoss = displayedDescentLoss(state.agent.x, state.agent.z);
+      state.chartLoss = state.chartLoss * 0.84 + state.currentLoss * 0.16;
+      state.latestDelta = Math.max(
+        0,
+        ((state.baselineLoss - state.currentLoss) / Math.max(state.baselineLoss, 0.001)) * 100
+      );
+      state.throughputDelta = Math.max(state.bestDelta, state.latestDelta);
+      state.ipsMillions = 2.18 + state.throughputDelta * 0.05 + Math.sin(state.iteration / 28) * 0.03;
+      state.specPassPct = Math.max(99.42, Math.min(99.96, 99.58 + state.throughputDelta * 0.014 + Math.sin(state.iteration / 41) * 0.03));
+      state.jitCoverage = Math.max(88.5, Math.min(97.8, 90.2 + state.throughputDelta * 0.45 + state.iteration * 0.01));
+      state.rssDelta = Math.max(-1.8, Math.min(3.4, Math.sin(state.iteration / 33) * 0.8 - state.throughputDelta * 0.04));
+      state.rssMb = Math.max(540, 618 + state.rssDelta * 12 + state.keepCount * 0.8);
+      state.noiseFloor = Math.max(0.18, Math.min(0.64, 0.31 + Math.cos(state.iteration / 37) * 0.09));
+      state.queueDepth = Math.max(1, Math.min(9, 3 + Math.round(Math.sin(state.iteration / 19) * 3)));
+
+      state.trail.push({ x: state.agent.x, z: state.agent.z });
+      if (state.trail.length > 220) state.trail.shift();
+
+      if (state.iteration % 2 === 0) {
+        state.history.push(state.chartLoss);
+        if (state.history.length > 180) state.history.shift();
+
+        state.memoryHistory.push(state.rssMb);
+        if (state.memoryHistory.length > 96) state.memoryHistory.shift();
+
+        state.streamHistory.push({
+          postgres: 0.18 + Math.abs(Math.sin(state.iteration / 18 + 0.4)) * 0.18,
+          redis: 0.1 + Math.abs(Math.sin(state.iteration / 27 + 1.1)) * 0.14,
+          http: 0.12 + Math.abs(Math.cos(state.iteration / 23 + 0.8)) * 0.16,
+          views: 0.14 + Math.abs(Math.sin(state.iteration / 31 + 2.2)) * 0.15,
+          rubyvm: 0.2 + Math.abs(Math.cos(state.iteration / 21 + state.bestDelta * 0.08)) * 0.24,
+        });
+        if (state.streamHistory.length > 72) state.streamHistory.shift();
+
+      }
+
+      if (state.iteration % 12 === 0) {
+        state.runCount += 1;
+        state.costResults.push({
+          cost: Math.max(
+            0.06,
+            Math.min(
+              4.0,
+              0.14 + state.runCount * 0.028 + state.keepCount * 0.018 + randomBetween(-0.05, 0.08)
+            )
+          ),
+          gain: Math.max(
+            -1.2,
+            Math.min(12.1, state.latestDelta + Math.sin(state.iteration / 15) * 0.85 + randomBetween(-0.65, 0.9))
+          ),
+          keep: state.latestDelta >= state.bestDelta - 0.35,
+          bornAt: time,
+        });
+        if (state.costResults.length > 72) state.costResults.shift();
+      }
+
+      if (state.currentLoss < state.globalBestLoss - 0.02) {
+        var previousBestDelta = state.bestDelta;
+        state.globalBestLoss = state.currentLoss;
+        state.bestDelta = Math.max(state.bestDelta, state.latestDelta);
+        state.keepCount += 1;
+        setDescentStatus(state, "KEEPING", 40);
+
+        if (state.bestDelta > previousBestDelta + 0.6) {
+          addDescentLog(
+            state,
+            "KEEP mutation // ruby faster by +" + state.latestDelta.toFixed(2) + "%"
+          );
+          renderDescentLogs(state);
+        }
+      }
+
+      if (state.iteration % 12 === 0 && state.checkStates.length) {
+        var previousCheckIndex = state.activeCheckIndex;
+        if (previousCheckIndex >= 0) {
+          var previousStatus = state.checkStates[previousCheckIndex];
+          if (previousStatus === "running") {
+            var forceFail = window.__piForceCheckFailure === true;
+            var failed = forceFail || Math.random() < 0.14;
+            if (forceFail) {
+              window.__piForceCheckFailure = false;
+            }
+
+            state.checkStates[previousCheckIndex] = failed ? "fail" : "pass";
+            if (failed) {
+              state.failureCount += 1;
+              state.matrixFailingIndex = previousCheckIndex;
+              state.matrixResetAt = time + 800;
+              state.activeCheckIndex = -1;
+              addDescentLog(state, "VERIFY FAIL // restarting lint + test gauntlet");
+              renderDescentLogs(state);
+              state.matrixResetTimer = window.setTimeout(function () {
+                addDescentLog(state, "VERIFY MATRIX RESET // restarting lints + tests");
+                renderDescentLogs(state);
+                resetDescentCheckMatrix(state);
+              }, 800);
+              break;
+            }
+          }
+        }
+
+        state.activeCheckIndex = (previousCheckIndex + 1 + state.checkStates.length) % state.checkStates.length;
+        state.checkStates[state.activeCheckIndex] = "running";
+      }
+
+      if (state.iteration % 42 === 0) {
+        emitPeriodicDescentLog(state, grad);
+      }
+
+      var converged =
+        Math.abs(state.agent.vx) + Math.abs(state.agent.vz) < 0.0025 &&
+        state.iteration > 200;
+      var escaped =
+        Math.abs(state.agent.x) > 16.5 || Math.abs(state.agent.z) > 16.5;
+      var exhausted = state.iteration > 780;
+
+      if (converged || escaped || exhausted) {
+        if (escaped) {
+          state.failureCount += 1;
+        }
+
+        addDescentLog(
+          state,
+          converged
+            ? "CONVERGENCE reached // reseeding search"
+            : escaped
+              ? "BOUNDARY exceeded // gradient explosion detected"
+              : "TIMEBOX reached // restart 5-minute loop"
+        );
+        renderDescentLogs(state);
+        setDescentStatus(state, "RESETTING", 80);
+        state.resetAt = time + 1400;
+        state.simulationAccumulator = 0;
+        break;
+      }
+    }
+
+    syncDescentDom(state);
+  }
+
+  function startDescentAnimation() {
+    if (!descentSlides.length || descentAnimationStarted) return;
+
+    descentAnimationStarted = true;
+
+    function frame(time) {
+      descentSlides.forEach(function (slide) {
+        var state = setupDescentSlide(slide);
+        if (!descentShouldAnimate(state)) return;
+
+        stepDescentState(state, time || 0);
+        renderDescentCheckMatrix(state);
+        renderDescentStage(state, time || 0);
+        renderDescentChart(state);
+        renderDescentMemoryChart(state);
+        renderDescentTreemap(state);
+        renderDescentStreamgraph(state);
+        renderDescentCostResults(state, time || 0);
+      });
+
+      requestAnimationFrame(frame);
+    }
+
+    requestAnimationFrame(frame);
   }
 
   if (mode === "presentation") {
@@ -346,6 +2003,7 @@ body[data-auto-advance="on"] .progress {
         syncAutoAdvanceState();
       }
 
+      startDescentAnimation();
       scheduleAutoAdvance();
     }
 
@@ -358,7 +2016,11 @@ body[data-auto-advance="on"] .progress {
     }
 
     document.addEventListener("click", function (e) {
-      if (e.clientX < window.innerWidth * 0.15) {
+      var activeSlide = slides[current];
+      var prevZoneRatio =
+        activeSlide && activeSlide.dataset.slideSkin === "descent" ? 0.04 : 0.15;
+
+      if (e.clientX < window.innerWidth * prevZoneRatio) {
         prev();
       } else {
         next();
@@ -400,9 +2062,13 @@ body[data-auto-advance="on"] .progress {
     return;
   }
 
-  window.addEventListener("load", fitAll);
+  window.addEventListener("load", function () {
+    fitAll();
+    startDescentAnimation();
+  });
   window.addEventListener("resize", fitAll);
   fitAll();
+  startDescentAnimation();
 })();
 </script></body>
 </html>

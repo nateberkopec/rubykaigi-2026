@@ -190,6 +190,23 @@ class BuildArtifactTest < Minitest::Test
     assert_equal ["# C"], slides.last.fetch(:lines)
   end
 
+  def test_parses_optional_slide_skin_tag
+    slides = parse_slides(<<~MD)
+      [slide-skin:descent]
+      # A
+
+      ---
+
+      [ticks:2x]
+      [slide-skin:descent]
+      # B
+    MD
+
+    assert_equal ["descent", "descent"], slides.map { _1.fetch(:skin) }
+    assert_equal [1, 2], slides.map { _1.fetch(:ticks) }
+    assert_equal ["# A"], slides.first.fetch(:lines)
+  end
+
   def test_advance_durations_sum_to_25_minutes
     durations = advance_durations_ms([1, 2, 3])
 
@@ -335,6 +352,51 @@ class BuildArtifactTest < Minitest::Test
     refute_includes reading_html, 'class="progress"'
   end
 
+  def test_renders_descent_slide_skin_markup
+    html = build_html(<<~MD)
+      [slide-skin:descent]
+      # [fit] Autoresearching Ruby Performance with LLMs
+
+      **Nate Berkopec**
+
+      RubyKaigi 2026
+    MD
+
+    assert_includes html, 'data-slide-skin="descent"'
+    assert_includes html, 'class="slide slide--descent"'
+    assert_includes html, "RUBY AUTORESEARCH // PERFORMANCE DESCENT"
+    assert_includes html, "LOSS FUNCTION TRAJECTORY // RUBY GETS FASTER"
+    assert_includes html, 'class="descent-stage"'
+    assert_includes html, 'data-descent-chart'
+    assert_includes html, 'data-descent-jit'
+    assert_includes html, 'data-descent-spec-long'
+    assert_includes html, 'data-descent-memory-long'
+    assert_includes html, 'data-descent-check-grid'
+    assert_includes html, 'data-descent-check="rubyspec-core"'
+    assert_includes html, 'data-descent-memory-chart'
+    assert_includes html, 'data-descent-stack-chart'
+    assert_includes html, 'data-descent-stream-chart'
+    assert_includes html, 'data-descent-cost-chart'
+    assert_includes html, 'COST/$ RESULTS'
+    assert_includes html, 'SPEEDSHOP.CO.JP'
+    assert_includes html, 'AUTORESEARCH HARNESS v0.1'
+    assert_includes html, 'descent-meta-pill--logo'
+    assert_includes html, 'descent-rubykaigi-wordmark'
+    assert_includes html, 'descent-loss-grid'
+    assert_includes html, 'WIN VS BASELINE'
+    assert_includes html, 'applyDescentDither'
+    assert_includes html, 'rubyKaigiStarPath'
+    assert_includes html, 'descent-check-alert'
+    assert_includes html, 'renderDescentCheckMatrix'
+    assert_includes html, 'renderDescentMemoryChart'
+    assert_includes html, 'renderDescentTreemap'
+    assert_includes html, 'renderDescentStreamgraph'
+    assert_includes html, 'renderDescentCostResults'
+    assert_includes html, 'currentPatch.toUpperCase()'
+    assert_includes html, 'requestAnimationFrame(frame);'
+    refute_includes html, 'descent-header-title glitch-text'
+  end
+
   def test_fit_heading_matches_golden_master_in_presentation_mode
     golden = FIT_HEADING_GOLDENS.fetch("presentation_desktop")
 
@@ -353,6 +415,104 @@ class BuildArtifactTest < Minitest::Test
       assert_equal "slide-1", active_slide_id(dom)
       assert_match(/<div class="progress" id="progress" style="[^"]*width: 66\.6667%;[^"]*">/, dom)
     end
+  end
+
+  def test_descent_title_slide_click_advances_even_inside_left_panel_area
+    markdown = <<~MD
+      [slide-skin:descent]
+      # [fit] Autoresearching Ruby Performance with LLMs
+
+      **Nate Berkopec**
+
+      RubyKaigi 2026
+
+      ---
+
+      # Next
+    MD
+
+    script = <<~JS
+      setTimeout(function () {
+        document.dispatchEvent(new MouseEvent("click", { clientX: 200, clientY: 300, bubbles: true }));
+      }, 50);
+      setTimeout(function () {
+        document.body.setAttribute("data-test-active", document.querySelector(".slide.active").id);
+        document.body.setAttribute("data-test-slide0-display", getComputedStyle(document.getElementById("slide-0")).display);
+        var center = document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2);
+        document.body.setAttribute(
+          "data-test-center-slide",
+          center && center.closest(".slide") ? center.closest(".slide").id : "none"
+        );
+      }, 500);
+    JS
+
+    with_built_artifacts(markdown) do |presentation_path, _reading_mode_path|
+      dom = rendered_dom_with_injected_script(
+        presentation_path,
+        window_size: [1440, 900],
+        script:,
+        virtual_time_budget: 1000
+      )
+
+      assert_equal "slide-1", body_data_attribute(dom, "data-test-active")
+      assert_equal "none", body_data_attribute(dom, "data-test-slide0-display")
+      assert_equal "slide-1", body_data_attribute(dom, "data-test-center-slide")
+    end
+  end
+
+  def test_descent_title_slide_animates_check_matrix_states
+    markdown = <<~MD
+      [slide-skin:descent]
+      # [fit] Autoresearching Ruby Performance with LLMs
+
+      **Nate Berkopec**
+
+      RubyKaigi 2026
+    MD
+
+    script = <<~JS
+      setTimeout(function () {
+        document.body.setAttribute(
+          "data-test-running-checks",
+          String(document.querySelectorAll(".descent-check-cell.is-running").length)
+        );
+        document.body.setAttribute(
+          "data-test-pass-checks",
+          String(document.querySelectorAll(".descent-check-cell.is-pass").length)
+        );
+      }, 600);
+    JS
+
+    with_built_artifacts(markdown) do |presentation_path, _reading_mode_path|
+      dom = rendered_dom_with_injected_script(
+        presentation_path,
+        window_size: [1440, 900],
+        script:,
+        virtual_time_budget: 1100
+      )
+
+      assert_operator body_data_attribute(dom, "data-test-running-checks").to_i, :>=, 1
+      assert_operator body_data_attribute(dom, "data-test-pass-checks").to_i, :>=, 1
+    end
+  end
+
+  def test_descent_title_slide_failure_logic_flashes_and_resets_matrix
+    html = build_html(<<~MD)
+      [slide-skin:descent]
+      # [fit] Autoresearching Ruby Performance with LLMs
+
+      **Nate Berkopec**
+
+      RubyKaigi 2026
+    MD
+
+    assert_includes html, 'is-flashing'
+    assert_includes html, 'descent-check-alert'
+    assert_includes html, 'window.__piForceCheckFailure'
+    assert_includes html, 'VERIFY FAIL // restarting lint + test gauntlet'
+    assert_includes html, 'VERIFY MATRIX RESET // restarting lints + tests'
+    assert_includes html, 'state.matrixResetTimer = window.setTimeout('
+    assert_includes html, 'resetDescentCheckMatrix(state);'
   end
 
   def test_auto_advance_toggle_turns_progress_bar_blue_and_advances_slide

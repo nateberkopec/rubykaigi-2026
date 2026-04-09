@@ -1,5 +1,6 @@
 ---
 
+[slide-skin:descent]
 # [fit] Autoresearching Ruby Performance with LLMs
 
 **Nate Berkopec**
