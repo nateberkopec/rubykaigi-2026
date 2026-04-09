@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Presentation</title>
+<title>Presentation (Reading Mode)</title>
 <style>
 * {
   margin: 0;
@@ -12,24 +12,34 @@
 }
 html, body {
   width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #fff;
+  min-height: 100%;
+  background: #f3f3f3;
   color: #000;
   font-family: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
   -webkit-user-select: none;
   user-select: none;
 }
+body {
+  overflow-y: auto;
+}
+.deck {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4vh;
+  padding: 4vh 0;
+}
 .slide {
-  display: none;
   width: min(100vw, calc(100vh * 16 / 9));
   height: 100vh;
+  flex: none;
   margin: 0 auto;
+  display: flex;
   justify-content: center;
   align-items: center;
-}
-.slide.active {
-  display: flex;
+  background: #fff;
+  overflow: hidden;
 }
 .slide-content {
   width: 100%;
@@ -64,9 +74,7 @@ h3 {
   line-height: 0.9;
   text-align: center;
   text-wrap: balance;
-  overflow-wrap: normal;
-  word-break: normal;
-  hyphens: none;
+  overflow-wrap: anywhere;
 }
 p {
   font-size: clamp(1rem, 1.55vw, 2rem);
@@ -96,17 +104,9 @@ a {
   color: #000;
   text-decoration: underline;
 }
-.progress {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  height: 3px;
-  background: #000;
-  transition: width 0.3s ease;
-}
 </style>
 </head>
-<body><div class="slide" id="slide-0"><div class="slide-content"><h1 class="fit-heading">Autoresearching Ruby Performance with LLMs</h1>
+<body><div class="deck"><div class="slide" id="slide-0"><div class="slide-content"><h1 class="fit-heading">Autoresearching Ruby Performance with LLMs</h1>
 <p><strong>Nate Berkopec</strong> from <strong><a href="https://speedshop.co">speedshop.co</a></strong></p>
 <p>RubyKaigi 2026</p></div></div><div class="slide" id="slide-1"><div class="slide-content"><h1>The Hook</h1>
 <p>Karpathy sets the world on fire: <strong>&quot;autoresearch&quot;</strong></p></div></div><div class="slide" id="slide-2"><div class="slide-content"><h1>What Was Accomplished</h1>
@@ -222,5 +222,5 @@ a {
 </ol>
 <p>Find more resources here: <em>(link)</em></p></div></div><div class="slide" id="slide-24"><div class="slide-content"><h1>Thank You!</h1>
 <p><strong>Nate Berkopec</strong></p>
-<p>RubyKaigi 2026</p></div></div><div class="progress" id="progress"></div><script>(function(){var current=0;var total=25;var slides=document.querySelectorAll(".slide");var progress=document.getElementById("progress");document.querySelectorAll(".slide-content").forEach(function(content){if(content.children.length===1&&content.firstElementChild.classList.contains("fit-heading")){content.classList.add("fit-layout")}});function slideContent(slide){return slide.querySelector(".slide-content")}function slideFits(slide){var content=slideContent(slide);if(!content)return true;return content.scrollWidth<=slide.clientWidth&&content.scrollHeight<=slide.clientHeight}function fitHeading(heading){var slide=heading.closest(".slide");if(!slide)return;heading.style.fontSize="";var min=16;var max=Math.max(slide.clientWidth,slide.clientHeight);while(max-min>1){var mid=(min+max)/2;heading.style.fontSize=mid+"px";if(slideFits(slide)){min=mid}else{max=mid}}heading.style.fontSize=min+"px"}function fitSlide(slide){var headings=slide.querySelectorAll(".fit-heading");headings.forEach(function(heading){heading.style.fontSize=""});headings.forEach(fitHeading)}function show(n){if(n<0||n>=total)return;slides[current].classList.remove("active");current=n;slides[current].classList.add("active");fitSlide(slides[current]);progress.style.width=((current+1)/total*100)+"%"}function next(){show(current+1)}function prev(){show(current-1)}document.addEventListener("click",function(e){if(e.clientX<window.innerWidth*.15){prev()}else{next()}});document.addEventListener("keydown",function(e){if(e.key==="ArrowRight"||e.key===" "||e.key==="Enter"){e.preventDefault();next()}else if(e.key==="ArrowLeft"||e.key==="Backspace"){e.preventDefault();prev()}else if(e.key==="Home"){e.preventDefault();show(0)}else if(e.key==="End"){e.preventDefault();show(total-1)}});window.addEventListener("resize",function(){fitSlide(slides[current])});show(0)})();</script></body>
+<p>RubyKaigi 2026</p></div></div></div><script>(function(){document.querySelectorAll(".slide-content").forEach(function(content){if(content.children.length===1&&content.firstElementChild.classList.contains("fit-heading")){content.classList.add("fit-layout")}});function slideContent(slide){return slide.querySelector(".slide-content")}function slideFits(slide){var content=slideContent(slide);if(!content)return true;return content.scrollWidth<=slide.clientWidth&&content.scrollHeight<=slide.clientHeight}function fitHeading(heading){var slide=heading.closest(".slide");if(!slide)return;heading.style.fontSize="";var min=16;var max=Math.max(slide.clientWidth,slide.clientHeight);while(max-min>1){var mid=(min+max)/2;heading.style.fontSize=mid+"px";if(slideFits(slide)){min=mid}else{max=mid}}heading.style.fontSize=min+"px"}function fitSlide(slide){var headings=slide.querySelectorAll(".fit-heading");headings.forEach(function(heading){heading.style.fontSize=""});headings.forEach(fitHeading)}function fitAll(){document.querySelectorAll(".slide").forEach(fitSlide)}window.addEventListener("load",fitAll);window.addEventListener("resize",fitAll);fitAll()})();</script></body>
 </html>

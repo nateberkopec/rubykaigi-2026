@@ -1,8 +1,10 @@
 ---
 
-# Autoresearch: LLM-Powered Performance Engineering for Ruby
+# [fit] Autoresearching Ruby Performance with LLMs
 
-**Nate Berkopec** — RubyKaigi 2026
+**Nate Berkopec** from **[speedshop.co](https://speedshop.co)**
+
+RubyKaigi 2026
 
 ---
 

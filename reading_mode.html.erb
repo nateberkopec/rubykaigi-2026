@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presentation (Reading Mode)</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background: #f3f3f3;
+  color: #000;
+  font-family: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  -webkit-user-select: none;
+  user-select: none;
+}
+body {
+  overflow-y: auto;
+}
+.deck {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4vh;
+  padding: 4vh 0;
+}
+.slide {
+  width: min(100vw, calc(100vh * 16 / 9));
+  height: 100vh;
+  flex: none;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  overflow: hidden;
+}
+.slide-content {
+  width: 100%;
+}
+.slide-content.fit-layout {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+h1 {
+  font-size: clamp(2.2rem, 4vw, 4.75rem);
+  font-weight: 700;
+  margin-bottom: 0.45em;
+  line-height: 1.1;
+}
+h2 {
+  font-size: clamp(1.8rem, 3vw, 3.5rem);
+  font-weight: 600;
+  margin-bottom: 0.4em;
+  line-height: 1.15;
+}
+h3 {
+  font-size: clamp(1.4rem, 2.2vw, 2.5rem);
+  font-weight: 600;
+  margin-bottom: 0.35em;
+  line-height: 1.2;
+}
+.fit-heading {
+  width: 100%;
+  margin: 0;
+  line-height: 0.9;
+  text-align: center;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+p {
+  font-size: clamp(1rem, 1.55vw, 2rem);
+  line-height: 1.4;
+  margin-bottom: 0.7em;
+}
+ul, ol {
+  font-size: clamp(1rem, 1.55vw, 2rem);
+  line-height: 1.5;
+  margin-left: 1.25em;
+  margin-bottom: 0.7em;
+}
+li {
+  margin-bottom: 0.25em;
+}
+strong {
+  font-weight: 700;
+}
+code {
+  font-family: "SF Mono", Menlo, monospace;
+  background: #f0f0f0;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+a {
+  color: #000;
+  text-decoration: underline;
+}
+</style>
+</head>
+<body><div class="deck"><%= slides %></div><script>(function(){document.querySelectorAll(".slide-content").forEach(function(content){if(content.children.length===1&&content.firstElementChild.classList.contains("fit-heading")){content.classList.add("fit-layout")}});function slideContent(slide){return slide.querySelector(".slide-content")}function slideFits(slide){var content=slideContent(slide);if(!content)return true;return content.scrollWidth<=slide.clientWidth&&content.scrollHeight<=slide.clientHeight}function fitHeading(heading){var slide=heading.closest(".slide");if(!slide)return;heading.style.fontSize="";var min=16;var max=Math.max(slide.clientWidth,slide.clientHeight);while(max-min>1){var mid=(min+max)/2;heading.style.fontSize=mid+"px";if(slideFits(slide)){min=mid}else{max=mid}}heading.style.fontSize=min+"px"}function fitSlide(slide){var headings=slide.querySelectorAll(".fit-heading");headings.forEach(function(heading){heading.style.fontSize=""});headings.forEach(fitHeading)}function fitAll(){document.querySelectorAll(".slide").forEach(fitSlide)}window.addEventListener("load",fitAll);window.addEventListener("resize",fitAll);fitAll()})();</script></body>
+</html>

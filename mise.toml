@@ -1,8 +1,9 @@
 [tools]
 ruby = "3"
+hk = "latest"
 
 [tasks.build]
-description = "Build presentation.md into dist/presentation.html"
+description = "Build presentation.md into dist/presentation.html and dist/reading-mode.html"
 run = "ruby build.rb"
 
 [tasks.clean]
@@ -17,6 +18,10 @@ run = "open dist/presentation.html"
 [tasks.test]
 description = "Run tests"
 run = "ruby build_test.rb"
+
+[tasks.lint]
+description = "Check Ruby syntax"
+run = "ruby -wc build.rb build_test.rb"
 
 [tasks.count]
 description = "Show slide count from presentation.md"

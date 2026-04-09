@@ -1,0 +1,15 @@
+amends "package://github.com/jdx/hk/releases/download/v1.41.0/hk@1.41.0#/Config.pkl"
+
+hooks {
+  ["pre-commit"] {
+    steps {
+      ["lint"] {
+        glob = List("*.rb")
+        check = "ruby -wc {{files}}"
+      }
+      ["test"] {
+        check = "ruby build_test.rb"
+      }
+    }
+  }
+}

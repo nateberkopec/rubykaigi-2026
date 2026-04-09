@@ -18,6 +18,18 @@ class BuildArtifactTest < Minitest::Test
     end
   end
 
+  def build_outputs(markdown)
+    Dir.mktmpdir do |dir|
+      md = File.join(dir, "test.md")
+      presentation_path = File.join(dir, "presentation.html")
+      reading_mode_path = File.join(dir, "reading-mode.html")
+
+      File.write(md, markdown)
+      build_artifacts(md, presentation_path)
+      [File.read(presentation_path), File.read(reading_mode_path)]
+    end
+  end
+
   public
 
   def test_renders_inline_formatting
@@ -57,6 +69,14 @@ class BuildArtifactTest < Minitest::Test
     assert_includes html, "<h1>Title</h1>"
     assert_includes html, "<h2>Subtitle</h2>"
     assert_includes html, "<h3>Small</h3>"
+  end
+
+  def test_renders_fit_headings
+    html = build_html("# [fit] The Slide")
+
+    assert_includes html, '<h1 class="fit-heading">The Slide</h1>'
+    refute_includes html, "[fit] The Slide"
+    assert_includes html, "fit-layout"
   end
 
   def test_renders_lists
@@ -122,7 +142,10 @@ class BuildArtifactTest < Minitest::Test
     assert_includes html, "<!DOCTYPE html>"
     assert_includes html, "<title>Presentation</title>"
     assert_includes html, "Palatino Linotype"
-    assert_includes html, "var total = 1"
+    assert_includes html, "width: min(100vw, calc(100vh * 16 / 9));"
+    assert_includes html, "font-size: clamp(2.2rem, 4vw, 4.75rem);"
+    assert_includes html, "function fitHeading(heading)"
+    assert_includes html, "var total=1"
     assert_includes html, 'class="progress"'
   end
 
@@ -132,5 +155,17 @@ class BuildArtifactTest < Minitest::Test
     assert_includes html, 'id="slide-0"'
     assert_includes html, 'id="slide-1"'
     assert_includes html, 'id="slide-2"'
+  end
+
+  def test_build_artifacts_generates_reading_mode
+    presentation_html, reading_html = build_outputs("# A\n\n---\n\n# [fit] B")
+
+    assert_includes presentation_html, '<title>Presentation</title>'
+    assert_includes reading_html, '<title>Presentation (Reading Mode)</title>'
+    assert_includes reading_html, 'class="deck"'
+    assert_equal 2, reading_html.scan(/class="slide"/).length
+    assert_includes reading_html, '<h1 class="fit-heading">B</h1>'
+    assert_includes reading_html, 'overflow-y: auto;'
+    refute_includes reading_html, 'class="progress"'
   end
 end

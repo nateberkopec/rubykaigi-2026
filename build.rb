@@ -17,6 +17,7 @@ LISTS = {
   ol: [/\A\d+[.)]\s/, /\A\d+[.)]\s+/]
 }.freeze
 PAGE = ERB.new(File.read(File.join(__dir__, "page.html.erb")))
+READING_MODE_PAGE = ERB.new(File.read(File.join(__dir__, "reading_mode.html.erb")))
 
 def parse_inline(text)
   html = INLINE.reduce(CGI.escapeHTML(text)) do |memo, (pattern, replacement)|
@@ -32,7 +33,12 @@ end
 
 def render_heading(line)
   HEADINGS.find { |prefix, _| line.start_with?(prefix) }&.then do |prefix, tag|
-    "<#{tag}>#{parse_inline(line.delete_prefix(prefix))}</#{tag}>"
+    content = line.delete_prefix(prefix)
+    fit = content.match?(/\A\[fit\]\s+/)
+    content = content.sub(/\A\[fit\]\s+/, "")
+    classes = fit ? ' class="fit-heading"' : ""
+
+    "<#{tag}#{classes}>#{parse_inline(content)}</#{tag}>"
   end
 end
 
@@ -84,17 +90,41 @@ def slide_html(index, lines)
   %(<div class="slide" id="slide-#{index}"><div class="slide-content">#{render_slide(lines)}</div></div>)
 end
 
+def render_deck(input_path)
+  slides = parse_slides(File.read(input_path))
+  html = slides.each_with_index.map { |lines, i| slide_html(i, lines) }.join
+
+  [slides.length, html]
+end
+
 def page_html(total, slides)
   PAGE.result_with_hash(total:, slides:)
 end
 
-def build(input_path, output_path)
-  slides = parse_slides(File.read(input_path))
-  html = slides.each_with_index.map { |lines, i| slide_html(i, lines) }.join
-
-  FileUtils.mkdir_p(File.dirname(output_path))
-  File.write(output_path, page_html(slides.length, html))
-  puts "Built #{slides.length} slides -> #{output_path}"
+def reading_mode_html(total, slides)
+  READING_MODE_PAGE.result_with_hash(total:, slides:)
 end
 
-build(ARGV[0] || "presentation.md", ARGV[1] || "dist/presentation.html") if __FILE__ == $PROGRAM_NAME
+def write_artifact(total, output_path, html)
+  FileUtils.mkdir_p(File.dirname(output_path))
+  File.write(output_path, html)
+  puts "Built #{total} slides -> #{output_path}"
+end
+
+def build(input_path, output_path)
+  total, slides = render_deck(input_path)
+  write_artifact(total, output_path, page_html(total, slides))
+end
+
+def build_artifacts(input_path, output_path)
+  total, slides = render_deck(input_path)
+
+  write_artifact(total, output_path, page_html(total, slides))
+
+  reading_mode_path = File.join(File.dirname(output_path), "reading-mode.html")
+  return if File.expand_path(reading_mode_path) == File.expand_path(output_path)
+
+  write_artifact(total, reading_mode_path, reading_mode_html(total, slides))
+end
+
+build_artifacts(ARGV[0] || "presentation.md", ARGV[1] || "dist/presentation.html") if __FILE__ == $PROGRAM_NAME
