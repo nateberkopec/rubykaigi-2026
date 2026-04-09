@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presentation</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #fff;
+  color: #000;
+  font-family: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.slide {
+  display: none;
+  width: min(100vw, calc(100vh * 16 / 9));
+  height: 100vh;
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+  padding: 2vh;
+  container-type: size;
+}
+.slide.active {
+  display: flex;
+}
+.slide-content {
+  width: 100%;
+}
+.slide-content.fit-layout {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+h1 {
+  font-size: clamp(2.4rem, 5.5cqh, 6rem);
+  font-weight: 700;
+  margin-bottom: 0.45em;
+  line-height: 1.1;
+}
+h2 {
+  font-size: clamp(2rem, 4.2cqh, 4.5rem);
+  font-weight: 600;
+  margin-bottom: 0.4em;
+  line-height: 1.15;
+}
+h3 {
+  font-size: clamp(1.6rem, 3.2cqh, 3.25rem);
+  font-weight: 600;
+  margin-bottom: 0.35em;
+  line-height: 1.2;
+}
+.fit-heading {
+  width: 100%;
+  margin: 0;
+  line-height: 0.9;
+  text-align: center;
+  text-wrap: balance;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+p {
+  font-size: clamp(1.1rem, 2.3cqh, 2.4rem);
+  line-height: 1.4;
+  margin-bottom: 0.7em;
+}
+ul, ol {
+  font-size: clamp(1.1rem, 2.3cqh, 2.4rem);
+  line-height: 1.5;
+  margin-left: 1.25em;
+  margin-bottom: 0.7em;
+}
+li {
+  margin-bottom: 0.25em;
+}
+strong {
+  font-weight: 700;
+}
+code {
+  font-family: "SF Mono", Menlo, monospace;
+  background: #f0f0f0;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+a {
+  color: #000;
+  text-decoration: underline;
+}
+.progress {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: #000;
+  transition: width 0.3s ease, background-color 0.2s ease;
+}
+body[data-auto-advance="on"] .progress {
+  background: #0a84ff;
+}
+</style>
+</head>
+<body><%= slides %><div class="progress" id="progress"></div><script><%= script %></script></body>
+</html>

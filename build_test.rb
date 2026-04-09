@@ -1,10 +1,16 @@
 # frozen_string_literal: true
 
+require "cgi"
+require "json"
 require "minitest/autorun"
+require "open3"
 require "tmpdir"
-require_relative "build"
+require_relative "lib/build"
 
 class BuildArtifactTest < Minitest::Test
+  CHROME_PATH = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+  FIT_HEADING_GOLDENS = JSON.parse(File.read(File.join(__dir__, "testdata/fit_heading_golden.json")))
+
   private
 
   def build_html(markdown)
@@ -28,6 +34,74 @@ class BuildArtifactTest < Minitest::Test
       build_artifacts(md, presentation_path)
       [File.read(presentation_path), File.read(reading_mode_path)]
     end
+  end
+
+  def with_built_artifacts(markdown)
+    Dir.mktmpdir do |dir|
+      md = File.join(dir, "test.md")
+      presentation_path = File.join(dir, "presentation.html")
+      reading_mode_path = File.join(dir, "reading-mode.html")
+
+      File.write(md, markdown)
+      build_artifacts(md, presentation_path)
+      yield presentation_path, reading_mode_path
+    end
+  end
+
+  def chrome_available?
+    File.executable?(CHROME_PATH)
+  end
+
+  def rendered_dom(path, window_size:, hash: nil, virtual_time_budget: 1500)
+    skip "Google Chrome is required for rendered fit-heading tests" unless chrome_available?
+
+    width, height = window_size
+    url = "file://#{path}"
+    url = "#{url}#{hash}" if hash
+    stdout, stderr, status = Open3.capture3(
+      CHROME_PATH,
+      "--headless=new",
+      "--disable-gpu",
+      "--run-all-compositor-stages-before-draw",
+      "--virtual-time-budget=#{virtual_time_budget}",
+      "--window-size=#{width},#{height}",
+      "--dump-dom",
+      url
+    )
+
+    assert status.success?, "chrome dump failed: #{stderr}"
+    stdout
+  end
+
+  def rendered_dom_with_injected_script(path, window_size:, script:, hash: nil, virtual_time_budget: 1500)
+    Dir.mktmpdir do |dir|
+      html_path = File.join(dir, File.basename(path))
+      html = File.read(path).sub("</body>", %(<script>#{script}</script></body>))
+
+      File.write(html_path, html)
+      return rendered_dom(html_path, window_size:, hash:, virtual_time_budget:)
+    end
+  end
+
+  def fit_heading_font_size(dom)
+    match = dom.match(/class="fit-heading" style="font-size: ([0-9.]+)px;"/)
+    refute_nil match, "expected rendered DOM to include a fit-heading with inline font-size"
+
+    match[1].to_f
+  end
+
+  def active_slide_id(dom)
+    match = dom.match(/class="slide active" id="([^"]+)"/)
+    refute_nil match, "expected rendered DOM to include an active slide"
+
+    match[1]
+  end
+
+  def body_data_attribute(dom, name)
+    match = dom.match(/<body[^>]*#{name}="([^"]*)"/)
+    refute_nil match, "expected body to include #{name}"
+
+    CGI.unescapeHTML(match[1])
   end
 
   public
@@ -96,6 +170,82 @@ class BuildArtifactTest < Minitest::Test
     assert_includes html, "<li>second</li>"
   end
 
+  def test_parses_optional_slide_ticks_tags
+    slides = parse_slides(<<~MD)
+      [ticks:2x]
+      # A
+
+      ---
+
+      # B
+
+      ---
+
+      [tick:3]
+      # C
+    MD
+
+    assert_equal [2, 1, 3], slides.map { _1.fetch(:ticks) }
+    assert_equal ["# A"], slides.first.fetch(:lines)
+    assert_equal ["# C"], slides.last.fetch(:lines)
+  end
+
+  def test_advance_durations_sum_to_25_minutes
+    durations = advance_durations_ms([1, 2, 3])
+
+    assert_equal [250_000, 500_000, 750_000], durations
+    assert_equal TOTAL_PRESENTATION_MS, durations.sum
+  end
+
+  def test_built_presentation_embeds_25_minute_auto_advance_schedule
+    html = build_html(<<~MD)
+      # A
+
+      ---
+
+      [ticks:2x]
+      # B
+
+      ---
+
+      [ticks:3x]
+      # C
+    MD
+
+    durations = html.scan(/data-advance-ms="(\d+)"/).flatten.map(&:to_i)
+
+    assert_equal [250_000, 500_000, 750_000], durations
+    assert_equal TOTAL_PRESENTATION_MS, durations.sum
+  end
+
+  def test_build_reports_base_tick_seconds
+    Dir.mktmpdir do |dir|
+      md = File.join(dir, "test.md")
+      html_path = File.join(dir, "presentation.html")
+
+      File.write(md, <<~MD)
+        # A
+
+        ---
+
+        [ticks:2x]
+        # B
+
+        ---
+
+        [ticks:3x]
+        # C
+      MD
+
+      stdout, = capture_io do
+        build_artifacts(md, html_path)
+      end
+
+      assert_includes stdout, "Auto-advance tick: 250.00s"
+      assert_includes stdout, "6 weighted ticks in 25:00"
+    end
+  end
+
   def test_renders_paragraphs_and_blank_lines
     html = build_html(<<~MD)
       # Title
@@ -143,9 +293,19 @@ class BuildArtifactTest < Minitest::Test
     assert_includes html, "<title>Presentation</title>"
     assert_includes html, "Palatino Linotype"
     assert_includes html, "width: min(100vw, calc(100vh * 16 / 9));"
-    assert_includes html, "font-size: clamp(2.2rem, 4vw, 4.75rem);"
+    assert_includes html, "container-type: size;"
+    assert_includes html, "font-size: clamp(2.4rem, 5.5cqh, 6rem);"
     assert_includes html, "function fitHeading(heading)"
-    assert_includes html, "var total=1"
+    assert_includes html, "function slideInnerSize(slide)"
+    assert_includes html, "getComputedStyle(slide)"
+    assert_includes html, 'var mode = "presentation";'
+    assert_includes html, "var total = 1;"
+    assert_includes html, 'data-advance-ms="1500000"'
+    assert_includes html, 'toggleAutoAdvance()'
+    assert_includes html, 'e.key === "a" || e.key === "A"'
+    assert_includes html, 'window.history.replaceState(null, "", hash);'
+    assert_includes html, 'show(hashIndex() || 0);'
+    assert_includes html, 'body[data-auto-advance="on"] .progress {'
     assert_includes html, 'class="progress"'
   end
 
@@ -166,6 +326,119 @@ class BuildArtifactTest < Minitest::Test
     assert_equal 2, reading_html.scan(/class="slide"/).length
     assert_includes reading_html, '<h1 class="fit-heading">B</h1>'
     assert_includes reading_html, 'overflow-y: auto;'
+    assert_includes reading_html, 'aspect-ratio: 16 / 9;'
+    assert_includes reading_html, 'aspect-ratio: 4 / 3;'
+    assert_includes reading_html, 'font-size: clamp(0.95rem, 1.85cqh, 1.9rem);'
+    assert_includes reading_html, 'function slideInnerSize(slide)'
+    assert_includes reading_html, '@media print {'
+    assert_includes reading_html, 'break-after: page;'
     refute_includes reading_html, 'class="progress"'
+  end
+
+  def test_fit_heading_matches_golden_master_in_presentation_mode
+    golden = FIT_HEADING_GOLDENS.fetch("presentation_desktop")
+
+    with_built_artifacts("# [fit] The Slide Heading") do |presentation_path, _reading_mode_path|
+      dom = rendered_dom(presentation_path, window_size: golden.fetch("window_size"))
+      size = fit_heading_font_size(dom)
+
+      assert_in_delta golden.fetch("font_size"), size, golden.fetch("tolerance")
+    end
+  end
+
+  def test_presentation_mode_respects_hash_anchor_for_initial_slide
+    with_built_artifacts("# A\n\n---\n\n# B\n\n---\n\n# C") do |presentation_path, _reading_mode_path|
+      dom = rendered_dom(presentation_path, window_size: [1440, 900], hash: "#slide-1")
+
+      assert_equal "slide-1", active_slide_id(dom)
+      assert_match(/<div class="progress" id="progress" style="[^"]*width: 66\.6667%;[^"]*">/, dom)
+    end
+  end
+
+  def test_auto_advance_toggle_turns_progress_bar_blue_and_advances_slide
+    markdown = <<~MD
+      # A
+
+      ---
+
+      # B
+
+      ---
+
+      [ticks:1498x]
+      # C
+    MD
+
+    script = <<~JS
+      setTimeout(function () {
+        document.dispatchEvent(new KeyboardEvent("keydown", { key: "a", bubbles: true }));
+      }, 50);
+      setTimeout(function () {
+        document.body.setAttribute("data-test-active", document.querySelector(".slide.active").id);
+        document.body.setAttribute("data-test-auto", document.body.dataset.autoAdvance || "");
+        document.body.setAttribute("data-test-progress-color", document.getElementById("progress").style.backgroundColor);
+      }, 1250);
+    JS
+
+    with_built_artifacts(markdown) do |presentation_path, _reading_mode_path|
+      dom = rendered_dom_with_injected_script(
+        presentation_path,
+        window_size: [1440, 900],
+        script:,
+        virtual_time_budget: 1600
+      )
+
+      assert_equal "slide-1", body_data_attribute(dom, "data-test-active")
+      assert_equal "on", body_data_attribute(dom, "data-test-auto")
+      assert_equal "rgb(10, 132, 255)", body_data_attribute(dom, "data-test-progress-color")
+    end
+  end
+
+  def test_auto_advance_reaches_last_slide_and_turns_itself_off
+    markdown = <<~MD
+      # A
+
+      ---
+
+      # B
+
+      ---
+
+      [ticks:1498x]
+      # C
+    MD
+
+    script = <<~JS
+      setTimeout(function () {
+        document.dispatchEvent(new KeyboardEvent("keydown", { key: "a", bubbles: true }));
+      }, 50);
+      setTimeout(function () {
+        document.body.setAttribute("data-test-active", document.querySelector(".slide.active").id);
+        document.body.setAttribute("data-test-auto", document.body.dataset.autoAdvance || "");
+      }, 2300);
+    JS
+
+    with_built_artifacts(markdown) do |presentation_path, _reading_mode_path|
+      dom = rendered_dom_with_injected_script(
+        presentation_path,
+        window_size: [1440, 900],
+        script:,
+        virtual_time_budget: 2700
+      )
+
+      assert_equal "slide-2", body_data_attribute(dom, "data-test-active")
+      assert_equal "off", body_data_attribute(dom, "data-test-auto")
+    end
+  end
+
+  def test_fit_heading_matches_golden_master_in_mobile_reading_mode
+    golden = FIT_HEADING_GOLDENS.fetch("reading_mobile")
+
+    with_built_artifacts("# [fit] The Slide Heading") do |_presentation_path, reading_mode_path|
+      dom = rendered_dom(reading_mode_path, window_size: golden.fetch("window_size"))
+      size = fit_heading_font_size(dom)
+
+      assert_in_delta golden.fetch("font_size"), size, golden.fetch("tolerance")
+    end
   end
 end

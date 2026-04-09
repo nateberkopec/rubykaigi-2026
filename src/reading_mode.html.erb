@@ -28,11 +28,12 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 4vh;
-  padding: 4vh 0;
+  padding: 4vh 2vh;
 }
 .slide {
-  width: min(100vw, calc(100vh * 16 / 9));
-  height: 100vh;
+  width: min(100%, calc(100vh * 16 / 9));
+  aspect-ratio: 16 / 9;
+  height: auto;
   flex: none;
   margin: 0 auto;
   display: flex;
@@ -40,6 +41,8 @@ body {
   align-items: center;
   background: #fff;
   overflow: hidden;
+  padding: 2vh;
+  container-type: size;
 }
 .slide-content {
   width: 100%;
@@ -51,19 +54,19 @@ body {
   justify-content: center;
 }
 h1 {
-  font-size: clamp(2.2rem, 4vw, 4.75rem);
+  font-size: clamp(1.9rem, 4.8cqh, 5rem);
   font-weight: 700;
   margin-bottom: 0.45em;
   line-height: 1.1;
 }
 h2 {
-  font-size: clamp(1.8rem, 3vw, 3.5rem);
+  font-size: clamp(1.6rem, 3.7cqh, 3.75rem);
   font-weight: 600;
   margin-bottom: 0.4em;
   line-height: 1.15;
 }
 h3 {
-  font-size: clamp(1.4rem, 2.2vw, 2.5rem);
+  font-size: clamp(1.3rem, 2.8cqh, 2.75rem);
   font-weight: 600;
   margin-bottom: 0.35em;
   line-height: 1.2;
@@ -74,15 +77,15 @@ h3 {
   line-height: 0.9;
   text-align: center;
   text-wrap: balance;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
 }
 p {
-  font-size: clamp(1rem, 1.55vw, 2rem);
+  font-size: clamp(0.95rem, 1.85cqh, 1.9rem);
   line-height: 1.4;
   margin-bottom: 0.7em;
 }
 ul, ol {
-  font-size: clamp(1rem, 1.55vw, 2rem);
+  font-size: clamp(0.95rem, 1.85cqh, 1.9rem);
   line-height: 1.5;
   margin-left: 1.25em;
   margin-bottom: 0.7em;
@@ -104,7 +107,42 @@ a {
   color: #000;
   text-decoration: underline;
 }
+@media (max-width: 640px) {
+  .slide {
+    aspect-ratio: 4 / 3;
+    width: min(100%, calc(100vh * 4 / 3));
+  }
+}
+@page {
+  size: landscape;
+  margin: 12mm;
+}
+@media print {
+  html, body {
+    background: #fff;
+  }
+  .deck {
+    display: block;
+    padding: 0;
+    gap: 0;
+  }
+  .slide {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    margin: 0;
+    overflow: hidden;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    break-after: page;
+    page-break-after: always;
+  }
+  .slide:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}
 </style>
 </head>
-<body><div class="deck"><%= slides %></div><script>(function(){document.querySelectorAll(".slide-content").forEach(function(content){if(content.children.length===1&&content.firstElementChild.classList.contains("fit-heading")){content.classList.add("fit-layout")}});function slideContent(slide){return slide.querySelector(".slide-content")}function slideFits(slide){var content=slideContent(slide);if(!content)return true;return content.scrollWidth<=slide.clientWidth&&content.scrollHeight<=slide.clientHeight}function fitHeading(heading){var slide=heading.closest(".slide");if(!slide)return;heading.style.fontSize="";var min=16;var max=Math.max(slide.clientWidth,slide.clientHeight);while(max-min>1){var mid=(min+max)/2;heading.style.fontSize=mid+"px";if(slideFits(slide)){min=mid}else{max=mid}}heading.style.fontSize=min+"px"}function fitSlide(slide){var headings=slide.querySelectorAll(".fit-heading");headings.forEach(function(heading){heading.style.fontSize=""});headings.forEach(fitHeading)}function fitAll(){document.querySelectorAll(".slide").forEach(fitSlide)}window.addEventListener("load",fitAll);window.addEventListener("resize",fitAll);fitAll()})();</script></body>
+<body><div class="deck"><%= slides %></div><script><%= script %></script></body>
 </html>

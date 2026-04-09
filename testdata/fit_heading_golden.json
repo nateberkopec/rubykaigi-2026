@@ -1,0 +1,14 @@
+{
+  "presentation_desktop": {
+    "artifact": "presentation",
+    "window_size": [1440, 900],
+    "font_size": 318.348,
+    "tolerance": 8.0
+  },
+  "reading_mobile": {
+    "artifact": "reading",
+    "window_size": [390, 844],
+    "font_size": 111.171,
+    "tolerance": 8.0
+  }
+}

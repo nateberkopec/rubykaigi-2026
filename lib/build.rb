@@ -16,8 +16,12 @@ LISTS = {
   ul: [/\A[-*]\s/, /\A[-*]\s+/],
   ol: [/\A\d+[.)]\s/, /\A\d+[.)]\s+/]
 }.freeze
-PAGE = ERB.new(File.read(File.join(__dir__, "page.html.erb")))
-READING_MODE_PAGE = ERB.new(File.read(File.join(__dir__, "reading_mode.html.erb")))
+SLIDE_TICKS_TAG = /\A\[ticks?:\s*(\d+)(?:x)?\]\z/i
+TOTAL_PRESENTATION_MS = 25 * 60 * 1000
+TEMPLATE_DIR = File.expand_path("../src", __dir__)
+PAGE = ERB.new(File.read(File.join(TEMPLATE_DIR, "page.html.erb")))
+READING_MODE_PAGE = ERB.new(File.read(File.join(TEMPLATE_DIR, "reading_mode.html.erb")))
+SLIDES_SCRIPT = ERB.new(File.read(File.join(TEMPLATE_DIR, "slides.js.erb")))
 
 def parse_inline(text)
   html = INLINE.reduce(CGI.escapeHTML(text)) do |memo, (pattern, replacement)|
@@ -79,30 +83,71 @@ def render_slide(lines)
   render_blocks(lines.dup).filter_map { _1 }.join("\n")
 end
 
+def parse_slide(lines)
+  ticks = 1
+  lines = lines.dup
+
+  while (match = lines.first&.strip&.match(SLIDE_TICKS_TAG))
+    ticks = match[1].to_i
+    lines.shift
+  end
+
+  return if lines.all? { _1.strip.empty? }
+
+  { lines:, ticks: }
+end
+
 def parse_slides(content)
   content.split(/^\s*---\s*$/).filter_map do |slide|
     slide = slide.strip
-    slide.lines(chomp: true) unless slide.empty?
+    parse_slide(slide.lines(chomp: true)) unless slide.empty?
   end
 end
 
-def slide_html(index, lines)
-  %(<div class="slide" id="slide-#{index}"><div class="slide-content">#{render_slide(lines)}</div></div>)
+def advance_durations_ms(weights)
+  return [] if weights.empty?
+
+  total_weight = weights.sum
+  elapsed = 0
+
+  weights.map do |weight|
+    next_elapsed = (TOTAL_PRESENTATION_MS * (elapsed + weight)) / total_weight
+    duration = next_elapsed - (TOTAL_PRESENTATION_MS * elapsed) / total_weight
+    elapsed += weight
+    duration
+  end
+end
+
+def base_tick_ms(weights)
+  return 0 if weights.empty?
+
+  TOTAL_PRESENTATION_MS.to_f / weights.sum
+end
+
+def slide_html(index, slide, advance_ms)
+  lines = slide.fetch(:lines)
+  %(<div class="slide" id="slide-#{index}" data-advance-ms="#{advance_ms}"><div class="slide-content">#{render_slide(lines)}</div></div>)
 end
 
 def render_deck(input_path)
   slides = parse_slides(File.read(input_path))
-  html = slides.each_with_index.map { |lines, i| slide_html(i, lines) }.join
+  weights = slides.map { _1.fetch(:ticks) }
+  durations = advance_durations_ms(weights)
+  html = slides.each_with_index.map { |slide, i| slide_html(i, slide, durations.fetch(i)) }.join
 
-  [slides.length, html]
+  [slides.length, html, weights.sum, base_tick_ms(weights)]
+end
+
+def slides_script(mode, total)
+  SLIDES_SCRIPT.result_with_hash(mode:, total:)
 end
 
 def page_html(total, slides)
-  PAGE.result_with_hash(total:, slides:)
+  PAGE.result_with_hash(total:, slides:, script: slides_script("presentation", total))
 end
 
 def reading_mode_html(total, slides)
-  READING_MODE_PAGE.result_with_hash(total:, slides:)
+  READING_MODE_PAGE.result_with_hash(total:, slides:, script: slides_script("reading", total))
 end
 
 def write_artifact(total, output_path, html)
@@ -111,14 +156,20 @@ def write_artifact(total, output_path, html)
   puts "Built #{total} slides -> #{output_path}"
 end
 
+def write_schedule_summary(total_ticks, tick_ms)
+  puts format("Auto-advance tick: %.2fs (%d weighted ticks in 25:00)", tick_ms / 1000.0, total_ticks)
+end
+
 def build(input_path, output_path)
-  total, slides = render_deck(input_path)
+  total, slides, total_ticks, tick_ms = render_deck(input_path)
+  write_schedule_summary(total_ticks, tick_ms)
   write_artifact(total, output_path, page_html(total, slides))
 end
 
 def build_artifacts(input_path, output_path)
-  total, slides = render_deck(input_path)
+  total, slides, total_ticks, tick_ms = render_deck(input_path)
 
+  write_schedule_summary(total_ticks, tick_ms)
   write_artifact(total, output_path, page_html(total, slides))
 
   reading_mode_path = File.join(File.dirname(output_path), "reading-mode.html")

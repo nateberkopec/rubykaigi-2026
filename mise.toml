@@ -1,19 +1,22 @@
 [tools]
 ruby = "3"
 hk = "latest"
+watchexec = "latest"
 
 [tasks.build]
 description = "Build presentation.md into dist/presentation.html and dist/reading-mode.html"
-run = "ruby build.rb"
+sources = ["presentation.md", "lib/build.rb", "src/page.html.erb", "src/reading_mode.html.erb", "src/slides.js.erb"]
+outputs = ["dist/presentation.html", "dist/reading-mode.html"]
+run = "ruby lib/build.rb"
 
 [tasks.clean]
 description = "Remove dist artifacts"
 run = "rm -rf dist"
 
 [tasks.serve]
-description = "Build and open the presentation in the browser"
+description = "Build, open the presentation, and watch for changes to rebuild automatically"
 depends = ["build"]
-run = "open dist/presentation.html"
+run = "open dist/presentation.html && mise watch --skip-deps --postpone --on-busy-update=queue build"
 
 [tasks.test]
 description = "Run tests"
@@ -21,7 +24,7 @@ run = "ruby build_test.rb"
 
 [tasks.lint]
 description = "Check Ruby syntax"
-run = "ruby -wc build.rb build_test.rb"
+run = "ruby -wc lib/build.rb build_test.rb"
 
 [tasks.count]
 description = "Show slide count from presentation.md"
