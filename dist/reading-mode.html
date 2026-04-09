@@ -1008,6 +1008,7 @@ a {
   function setDescentStatus(state, text, frames) {
     state.statusText = text;
     state.statusUntilFrame = state.frameCount + (frames || 0);
+    state.domDirty = true;
   }
 
   function syncDescentDom(state) {
@@ -1128,8 +1129,14 @@ a {
 
     addDescentLog(state, "TARGET ruby-head // keep only faster patches");
     addDescentLog(state, "BASELINE " + state.currentHotBench + " // jitter " + signedValue(state.noiseFloor, 2, "%"));
+    state.domDirty = true;
+    state.chartDirty = true;
+    state.memoryChartDirty = true;
+    state.treemapDirty = true;
+    state.streamDirty = true;
+    state.costDirty = true;
+    state.checkMatrixDirty = true;
     renderDescentLogs(state);
-    syncDescentDom(state);
   }
 
   function setupDescentSlide(slide) {
@@ -1194,6 +1201,13 @@ a {
       streamHistory: [],
       costResults: [],
       checkStates: [],
+      domDirty: true,
+      chartDirty: true,
+      memoryChartDirty: true,
+      treemapDirty: true,
+      streamDirty: true,
+      costDirty: true,
+      checkMatrixDirty: true,
       activeCheckIndex: -1,
       matrixFailingIndex: null,
       matrixResetAt: 0,
@@ -1313,7 +1327,7 @@ a {
 
   function renderDescentStage(state, time) {
     var ctx = state.stageCtx;
-    var size = resizeAnimatedCanvas(state.stage, { scale: 0.55, maxDpr: 1 });
+    var size = resizeAnimatedCanvas(state.stage, { scale: 0.3, maxDpr: 1 });
     if (!ctx || !size || !state.bufferCtx) return;
 
     var width = size.width;
@@ -1325,7 +1339,7 @@ a {
     var centerY = height * 0.47;
     var scaleBase = Math.min(width, height) * 1.85;
     var extent = 15.5;
-    var step = 1.25;
+    var step = 1.4;
     var rows = [];
     var xCount = Math.floor((extent * 2) / step) + 1;
 
@@ -1510,6 +1524,7 @@ a {
     }
     state.matrixFailingIndex = null;
     state.matrixResetAt = 0;
+    state.checkMatrixDirty = true;
   }
 
   function renderDescentCheckMatrix(state) {
@@ -1529,7 +1544,7 @@ a {
 
   function renderDescentMemoryChart(state) {
     var ctx = state.memoryChartCtx;
-    var size = resizeAnimatedCanvas(state.memoryChart, { maxDpr: 1.5 });
+    var size = resizeAnimatedCanvas(state.memoryChart, { maxDpr: 1 });
     if (!ctx || !size) return;
 
     var width = size.width;
@@ -1564,7 +1579,7 @@ a {
 
   function renderDescentTreemap(state) {
     var ctx = state.stackChartCtx;
-    var size = resizeAnimatedCanvas(state.stackChart, { maxDpr: 1.5 });
+    var size = resizeAnimatedCanvas(state.stackChart, { maxDpr: 1 });
     if (!ctx || !size) return;
 
     var width = size.width;
@@ -1614,7 +1629,7 @@ a {
 
   function renderDescentStreamgraph(state) {
     var ctx = state.streamChartCtx;
-    var size = resizeAnimatedCanvas(state.streamChart, { maxDpr: 1.5 });
+    var size = resizeAnimatedCanvas(state.streamChart, { maxDpr: 1 });
     if (!ctx || !size) return;
 
     var width = size.width;
@@ -1657,7 +1672,7 @@ a {
 
   function renderDescentCostResults(state, time) {
     var ctx = state.costChartCtx;
-    var size = resizeAnimatedCanvas(state.costChart, { maxDpr: 1.5 });
+    var size = resizeAnimatedCanvas(state.costChart, { maxDpr: 1 });
     if (!ctx || !size) return;
 
     var width = size.width;
@@ -1757,12 +1772,18 @@ a {
     }
 
     if (state.resetAt) {
-      syncDescentDom(state);
+      if (state.domDirty) {
+        syncDescentDom(state);
+        state.domDirty = false;
+      }
       return;
     }
 
     if (state.matrixResetAt) {
-      syncDescentDom(state);
+      if (state.domDirty) {
+        syncDescentDom(state);
+        state.domDirty = false;
+      }
       return;
     }
 
@@ -1803,6 +1824,8 @@ a {
       state.rssMb = Math.max(540, 618 + state.rssDelta * 12 + state.keepCount * 0.8);
       state.noiseFloor = Math.max(0.18, Math.min(0.64, 0.31 + Math.cos(state.iteration / 37) * 0.09));
       state.queueDepth = Math.max(1, Math.min(9, 3 + Math.round(Math.sin(state.iteration / 19) * 3)));
+      state.domDirty = true;
+      state.treemapDirty = true;
 
       state.trail.push({ x: state.agent.x, z: state.agent.z });
       if (state.trail.length > 220) state.trail.shift();
@@ -1822,7 +1845,9 @@ a {
           rubyvm: 0.2 + Math.abs(Math.cos(state.iteration / 21 + state.bestDelta * 0.08)) * 0.24,
         });
         if (state.streamHistory.length > 72) state.streamHistory.shift();
-
+        state.chartDirty = true;
+        state.memoryChartDirty = true;
+        state.streamDirty = true;
       }
 
       if (state.iteration % 12 === 0) {
@@ -1843,6 +1868,7 @@ a {
           bornAt: time,
         });
         if (state.costResults.length > 72) state.costResults.shift();
+        state.costDirty = true;
       }
 
       if (state.currentLoss < state.globalBestLoss - 0.02) {
@@ -1878,6 +1904,8 @@ a {
               state.matrixFailingIndex = previousCheckIndex;
               state.matrixResetAt = time + 800;
               state.activeCheckIndex = -1;
+              state.domDirty = true;
+              state.checkMatrixDirty = true;
               addDescentLog(state, "VERIFY FAIL // restarting lint + test gauntlet");
               renderDescentLogs(state);
               state.matrixResetTimer = window.setTimeout(function () {
@@ -1892,6 +1920,7 @@ a {
 
         state.activeCheckIndex = (previousCheckIndex + 1 + state.checkStates.length) % state.checkStates.length;
         state.checkStates[state.activeCheckIndex] = "running";
+        state.checkMatrixDirty = true;
       }
 
       if (state.iteration % 42 === 0) {
@@ -1926,7 +1955,10 @@ a {
       }
     }
 
-    syncDescentDom(state);
+    if (state.domDirty) {
+      syncDescentDom(state);
+      state.domDirty = false;
+    }
   }
 
   function startDescentAnimation() {
@@ -1940,13 +1972,31 @@ a {
         if (!descentShouldAnimate(state)) return;
 
         stepDescentState(state, time || 0);
-        renderDescentCheckMatrix(state);
+        if (state.checkMatrixDirty) {
+          renderDescentCheckMatrix(state);
+          state.checkMatrixDirty = false;
+        }
         renderDescentStage(state, time || 0);
-        renderDescentChart(state);
-        renderDescentMemoryChart(state);
-        renderDescentTreemap(state);
-        renderDescentStreamgraph(state);
-        renderDescentCostResults(state, time || 0);
+        if (state.chartDirty) {
+          renderDescentChart(state);
+          state.chartDirty = false;
+        }
+        if (state.memoryChartDirty) {
+          renderDescentMemoryChart(state);
+          state.memoryChartDirty = false;
+        }
+        if (state.treemapDirty) {
+          renderDescentTreemap(state);
+          state.treemapDirty = false;
+        }
+        if (state.streamDirty) {
+          renderDescentStreamgraph(state);
+          state.streamDirty = false;
+        }
+        if (state.costDirty) {
+          renderDescentCostResults(state, time || 0);
+          state.costDirty = false;
+        }
       });
 
       requestAnimationFrame(frame);

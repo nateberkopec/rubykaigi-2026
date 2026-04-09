@@ -1,0 +1,4 @@
+- Try a renderer-only memory metric instead of whole Chrome process-tree RSS; the current RSS number is noisy and may include browser/helper overhead unrelated to the slide.
+- Add a screenshot-diff or visual-review guard before pushing the main stage render scale below `0.3`.
+- Explore partial stage invalidation or cached terrain/background layers so only the moving agent/trail/orbit effects redraw each frame.
+- Explore a cheaper dithering path than full-frame `getImageData`/`putImageData` every frame.

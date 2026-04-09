@@ -36,6 +36,24 @@ class BuildArtifactTest < Minitest::Test
     end
   end
 
+  def generate_slides_markdown(outline)
+    Dir.mktmpdir do |dir|
+      input_path = File.join(dir, "outline.md")
+      output_path = File.join(dir, "presentation.md")
+
+      File.write(input_path, outline)
+      stdout, stderr, status = Open3.capture3(
+        RbConfig.ruby,
+        File.join(__dir__, "lib/generate_slides.rb"),
+        input_path,
+        output_path
+      )
+
+      assert status.success?, "generate_slides failed: #{stderr}\n#{stdout}"
+      File.read(output_path)
+    end
+  end
+
   def with_built_artifacts(markdown)
     Dir.mktmpdir do |dir|
       md = File.join(dir, "test.md")
@@ -600,5 +618,56 @@ class BuildArtifactTest < Minitest::Test
 
       assert_in_delta golden.fetch("font_size"), size, golden.fetch("tolerance")
     end
+  end
+
+  def test_generate_slides_turns_blank_nested_item_into_a_multiline_slide
+    markdown = generate_slides_markdown(<<~MD)
+      - **WHAT IS AUTORESEARCH**
+          -
+              1. Modify code
+              2. Run tests
+              3. Measure code against benchmark
+              4. If improved, keep change, GOTO 1.
+    MD
+
+    assert_includes markdown, <<~MD.chomp
+      ---
+
+      # [fit] WHAT IS AUTORESEARCH
+    MD
+
+    assert_includes markdown, <<~MD.chomp
+      ---
+
+      # WHAT IS AUTORESEARCH
+
+      1. Modify code
+      2. Run tests
+      3. Measure code against benchmark
+      4. If improved, keep change, GOTO 1.
+    MD
+  end
+
+  def test_generate_slides_keeps_ancestor_headings_for_blank_nested_items
+    markdown = generate_slides_markdown(<<~MD)
+      - **PERF ENGINEERING**
+          - What requirements do we usually have?
+              -
+                  - Latency
+                  - Resource efficiency
+                  - Robustness
+    MD
+
+    assert_includes markdown, <<~MD.chomp
+      ---
+
+      # PERF ENGINEERING
+
+      ## What requirements do we usually have?
+
+      - Latency
+      - Resource efficiency
+      - Robustness
+    MD
   end
 end

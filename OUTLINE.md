@@ -1,4 +1,9 @@
-- **THE HOOK** Karpathy sets the world on fire: the coining of "autoresearch"
+- **WHAT IS AUTORESEARCH**
+    -
+        1. Modify code
+        2. Run tests
+        3. Measure code against benchmark
+        4. If improved, keep change, GOTO 1.
     - Explain the tweet
     - Explain what was accomplished
     - Developer anxiety: FOMO, job fears
@@ -42,9 +47,9 @@
     - Even performance is not single-variable
     - Looping is fundamentally about making the problem brute-forceable
     - Autoresearch design principles:
-        -
-        -
-        -
+        - Small diffs
+        - Fixed time budgets per experiment
+        - Maximize tokens: parallel, cheap, fast
 - **WHAT LLMS DONT CHANGE**
     - We can't break software (or make other parts of it slow, or exceed memory usage constraints) in pursuit of optimizing a single variable. THIS IS IS THE HARD PART.
     - We can't ship slop.
