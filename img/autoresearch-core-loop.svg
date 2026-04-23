@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Autoresearch core loop</title>
+  <desc id="desc">A loop diagram showing agent edits code, run and measure, improved decision, keep or revert, then back to the start.</desc>
+
+  <defs>
+    <style>
+      .stroke { stroke: #FFFFFF; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .box { fill: transparent; stroke: #FFFFFF; stroke-width: 10; }
+      .text { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 900 !important; fill: #FFFFFF; }
+      .label { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 900 !important; fill: #FFFFFF; }
+      .arrow { fill: #FFFFFF; }
+    </style>
+  </defs>
+
+  <!-- Main vertical spine -->
+  <rect class="box" x="560" y="90" rx="30" ry="30" width="480" height="130"/>
+  <text class="text" x="800" y="145" text-anchor="middle" font-size="44">Agent edits</text>
+  <text class="text" x="800" y="190" text-anchor="middle" font-size="44">code</text>
+
+  <path class="stroke" d="M800 235 L800 300"/>
+  <polygon class="arrow" points="786,282 814,282 800,306"/>
+
+  <rect class="box" x="560" y="320" rx="30" ry="30" width="480" height="130"/>
+  <text class="text" x="800" y="375" text-anchor="middle" font-size="44">Run +</text>
+  <text class="text" x="800" y="420" text-anchor="middle" font-size="44">measure</text>
+
+  <path class="stroke" d="M800 465 L800 535"/>
+  <polygon class="arrow" points="786,517 814,517 800,541"/>
+
+  <polygon class="box" points="800,560 980,680 800,800 620,680"/>
+  <text class="text" x="800" y="695" text-anchor="middle" font-size="42">Improved?</text>
+
+  <!-- Branches -->
+  <rect class="box" x="180" y="610" rx="30" ry="30" width="260" height="120"/>
+  <text class="text" x="310" y="682" text-anchor="middle" font-size="44">Keep</text>
+
+  <rect class="box" x="1160" y="610" rx="30" ry="30" width="260" height="120"/>
+  <text class="text" x="1290" y="682" text-anchor="middle" font-size="44">Revert</text>
+
+  <path class="stroke" d="M620 680 L470 680"/>
+  <polygon class="arrow" points="470,680 494,666 494,694"/>
+  <text class="label" x="530" y="655" text-anchor="middle" font-size="34">yes</text>
+
+  <path class="stroke" d="M980 680 L1130 680"/>
+  <polygon class="arrow" points="1130,680 1106,666 1106,694"/>
+  <text class="label" x="1070" y="655" text-anchor="middle" font-size="34">no</text>
+
+  <!-- Loop back -->
+  <path class="stroke" d="M310 610 C310 430, 440 285, 506 192"/>
+  <polygon class="arrow" points="0,0 -28,-14 -28,14" transform="translate(532 155) rotate(-54)"/>
+  <path class="stroke" d="M1290 610 C1290 430, 1160 285, 1094 192"/>
+  <polygon class="arrow" points="0,0 -28,-14 -28,14" transform="translate(1068 155) rotate(234)"/>
+</svg>

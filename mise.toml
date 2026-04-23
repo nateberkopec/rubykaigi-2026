@@ -1,32 +1,15 @@
-[tools]
-ruby = "4"
-node = "22"
-hk = "latest"
-watchexec = "latest"
+[tasks.slide-count]
+description = "Count slides in DECKSET.md"
+quiet = true
+run = '''
+test -f DECKSET.md || { echo "DECKSET.md not found" >&2; exit 1; }
+awk 'BEGIN { count = 1 } /^[[:space:]]*---[[:space:]]*$/ { count++ } END { print count }' DECKSET.md
+'''
 
-[tasks.build]
-description = "Build dist/presentation.html and dist/reading-mode.html from presentation.md"
-sources = ["presentation.md", "lib/build.rb", "src/page.html.erb", "src/reading_mode.html.erb", "src/slides.js.erb"]
-outputs = ["dist/presentation.html", "dist/reading-mode.html"]
-run = "ruby lib/build.rb"
+[tasks.present]
+description = "Open DECKSET.md in Deckset, start presenting, and auto-advance slides to fit a total time; pass minutes with: mise run present -- 25"
+run = "fish scripts/pecha-kucha.fish --total-time-mode --present"
 
-[tasks.clean]
-description = "Remove dist artifacts"
-run = "rm -rf dist"
-
-[tasks.serve]
-description = "Build, open the presentation, and watch for changes to rebuild automatically"
-depends = ["build"]
-run = "open dist/presentation.html && mise watch --skip-deps --postpone --on-busy-update=queue build"
-
-[tasks.test]
-description = "Run tests"
-run = "ruby test/build_test.rb"
-
-[tasks.lint]
-description = "Check Ruby syntax"
-run = "ruby -wc lib/build.rb test/build_test.rb"
-
-[tasks.count]
-description = "Show slide count from presentation.md"
-run = "ruby -e 'c = File.read(\"presentation.md\").split(/^\\s*---\\s*$/).count { |s| !s.strip.empty? }; puts \"#{c} slides\"'"
+[tasks.rehearse]
+description = "Open DECKSET.md in Deckset, start rehearsal mode, and auto-advance slides to fit a total time; pass minutes with: mise run rehearse -- 25"
+run = "fish scripts/pecha-kucha.fish --total-time-mode --rehearse"

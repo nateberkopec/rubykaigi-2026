@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">AI babysitting loop</title>
+  <desc id="desc">A two-node loop showing gets.chomp leading to agent edits code and looping back again.</desc>
+
+  <defs>
+    <style>
+      .stroke { stroke: #FFFFFF; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .box { fill: transparent; stroke: #FFFFFF; stroke-width: 10; }
+      .text { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 900 !important; fill: #FFFFFF; }
+      .arrow { fill: #FFFFFF; }
+    </style>
+  </defs>
+
+  <rect class="box" x="170" y="310" rx="34" ry="34" width="470" height="180"/>
+  <text class="text" x="405" y="418" text-anchor="middle" font-size="64">gets.chomp</text>
+
+  <rect class="box" x="960" y="310" rx="34" ry="34" width="470" height="180"/>
+  <text class="text" x="1195" y="395" text-anchor="middle" font-size="60">agent edits</text>
+  <text class="text" x="1195" y="460" text-anchor="middle" font-size="60">code</text>
+
+  <path class="stroke" d="M640 355 C810 200, 980 200, 960 355"/>
+  <polygon class="arrow" points="0,0 -26,-14 -26,14" transform="translate(982 328) rotate(38)"/>
+
+  <path class="stroke" d="M960 445 C790 600, 620 600, 640 445"/>
+  <polygon class="arrow" points="0,0 -26,-14 -26,14" transform="translate(618 472) rotate(218)"/>
+</svg>

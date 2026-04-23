@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">GC frequency decreases as a Ruby process ages</title>
+  <desc id="desc">A dark-mode decay chart showing frequent garbage collections early in a process lifetime and much less frequent garbage collection in mature long-lived processes.</desc>
+
+
+  <!-- Plot regions -->
+  <rect x="170" y="80" width="120" height="640" fill="#5A232A" opacity="0.65"/>
+  <rect x="1023.33" y="80" width="426.67" height="640" fill="#173553" opacity="0.70"/>
+
+  <!-- Grid -->
+  <g stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="2">
+    <line x1="170" y1="720" x2="1450" y2="720"/>
+    <line x1="170" y1="613.33" x2="1450" y2="613.33"/>
+    <line x1="170" y1="506.67" x2="1450" y2="506.67"/>
+    <line x1="170" y1="400" x2="1450" y2="400"/>
+    <line x1="170" y1="293.33" x2="1450" y2="293.33"/>
+    <line x1="170" y1="186.67" x2="1450" y2="186.67"/>
+    <line x1="170" y1="80" x2="1450" y2="80"/>
+  </g>
+
+  <!-- Axes -->
+  <g stroke="#FFFFFF" stroke-width="3">
+    <line x1="170" y1="80" x2="170" y2="720"/>
+    <line x1="170" y1="720" x2="1450" y2="720"/>
+  </g>
+
+  <!-- Tick labels -->
+  <g font-family="Helvetica, Arial, sans-serif" font-weight="700" font-size="22" fill="#DCE6F2">
+    <!-- Y -->
+    <line x1="158" y1="720" x2="170" y2="720" stroke="#FFFFFF" stroke-width="3"/>
+    <line x1="158" y1="613.33" x2="170" y2="613.33" stroke="#FFFFFF" stroke-width="3"/>
+    <line x1="158" y1="506.67" x2="170" y2="506.67" stroke="#FFFFFF" stroke-width="3"/>
+    <line x1="158" y1="400" x2="170" y2="400" stroke="#FFFFFF" stroke-width="3"/>
+    <line x1="158" y1="293.33" x2="170" y2="293.33" stroke="#FFFFFF" stroke-width="3"/>
+    <line x1="158" y1="186.67" x2="170" y2="186.67" stroke="#FFFFFF" stroke-width="3"/>
+    <line x1="158" y1="80" x2="170" y2="80" stroke="#FFFFFF" stroke-width="3"/>
+    <text x="144" y="728" text-anchor="end">0</text>
+    <text x="144" y="621.33" text-anchor="end">20</text>
+    <text x="144" y="514.67" text-anchor="end">40</text>
+    <text x="144" y="408" text-anchor="end">60</text>
+    <text x="144" y="301.33" text-anchor="end">80</text>
+    <text x="144" y="194.67" text-anchor="end">100</text>
+    <text x="144" y="88" text-anchor="end">120</text>
+
+    <!-- X -->
+    <line x1="170" y1="720" x2="170" y2="734" stroke="#FFFFFF" stroke-width="3"/>
+    <line x1="241.11" y1="720" x2="241.11" y2="734" stroke="#FFFFFF" stroke-width="3"/>
+    <line x1="596.67" y1="720" x2="596.67" y2="734" stroke="#FFFFFF" stroke-width="3"/>
+    <line x1="1023.33" y1="720" x2="1023.33" y2="734" stroke="#FFFFFF" stroke-width="3"/>
+    <line x1="1450" y1="720" x2="1450" y2="734" stroke="#FFFFFF" stroke-width="3"/>
+    <text x="170" y="770" text-anchor="middle">0</text>
+    <text x="241.11" y="770" text-anchor="middle">10</text>
+    <text x="596.67" y="770" text-anchor="middle">60</text>
+    <text x="1023.33" y="770" text-anchor="middle">120</text>
+    <text x="1450" y="770" text-anchor="middle">180</text>
+  </g>
+
+  <!-- Axis titles -->
+  <g font-family="Helvetica, Arial, sans-serif" font-weight="700" fill="#F4F8FC">
+    <text x="810" y="840" text-anchor="middle" font-size="28">Process age (minutes)</text>
+    <text x="56" y="400" transform="rotate(-90 56 400)" text-anchor="middle" font-size="28">GCs / minute</text>
+  </g>
+
+  <!-- Region labels -->
+  <g font-family="Helvetica, Arial, sans-serif" font-weight="700" text-anchor="middle">
+    <text x="230" y="646" font-size="24" fill="#FFE7E7">What Tobi saw</text>
+    <text x="230" y="676" font-size="18" fill="#FFD1D1">Cold process</text>
+    <text x="230" y="704" font-size="18" fill="#FFD1D1">First minute</text>
+
+    <text x="1236" y="130" font-size="24" fill="#E5F3FF">Where production lives</text>
+    <text x="1236" y="160" font-size="18" fill="#C7E2FF">Old process</text>
+    <text x="1236" y="188" font-size="18" fill="#C7E2FF">Mature heap</text>
+  </g>
+
+  <!-- Boundary for production zone -->
+  <line x1="1023.33" y1="80" x2="1023.33" y2="720" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="3" stroke-dasharray="10 10"/>
+
+  <!-- Monotonic decay line -->
+  <polyline
+    points="170,110 182,128 196,160 214,220 236,300 268,400 320,515 400,610 520,675 700,700 980,708 1450,710"
+    fill="none"
+    stroke="#FFFFFF"
+    stroke-width="10"
+    stroke-linecap="round"
+    stroke-linejoin="round"/>
+</svg>
