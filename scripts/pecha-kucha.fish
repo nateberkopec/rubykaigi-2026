@@ -427,11 +427,21 @@ end
 
 set interval_seconds ""
 set total_seconds ""
+set requested_total_seconds ""
+set interval_basis_slide_count "$timed_slide_count"
+
+if test "$mode" = total-time
+    set requested_total_seconds $parsed_seconds
+
+    if test "$start_mode" = pick
+        set interval_basis_slide_count "$slide_count"
+    end
+end
 
 switch $mode
     case total-time
-        set total_seconds $parsed_seconds
-        set interval_seconds (math -s 6 "$total_seconds / $timed_slide_count")
+        set interval_seconds (math -s 6 "$requested_total_seconds / $interval_basis_slide_count")
+        set total_seconds (math -s 6 "$interval_seconds * $timed_slide_count")
     case interval
         set interval_seconds $parsed_seconds
         set total_seconds (math -s 6 "$interval_seconds * $timed_slide_count")
@@ -458,6 +468,7 @@ echo "Slides: $slide_count"
 echo "Requested start slide: $requested_start_slide — $requested_start_label"
 echo "Actual timed start slide: $effective_start_slide — $effective_start_label"
 echo "Timed slides remaining: $timed_slide_count"
+echo "Interval basis slides: $interval_basis_slide_count"
 echo "Skip title slide: $skip_title_text"
 echo "Start gate in terminal: $start_gate_text"
 echo "Checkpoint file: $checkpoint_file"
@@ -471,7 +482,10 @@ end
 
 switch $mode
     case total-time
+        set requested_total_seconds_display (printf "%.2f" $requested_total_seconds)
+        set requested_total_minutes_display (printf "%.2f" (math "$requested_total_seconds / 60"))
         echo "Requested total time: $value"
+        echo "Requested full-deck duration: $requested_total_seconds_display seconds ($requested_total_minutes_display minutes)"
         echo "Computed interval: $interval_display seconds per slide"
     case interval
         echo "Interval: $interval_display seconds per slide"

@@ -284,14 +284,6 @@ Process.clock_gettime: 17294486.8 i/s
 
 ---
 
-# Ugly/Complicated
-# vs
-# Fast Tradeoff
-
-^ If a change is "ugly" or "complicated", would we merge it if it was 1% faster? What about 99%? Sometimes we're willing to trade, it's not binary
-
----
-
 # **"This is too complicated"**
 # Flog/flay loops,
 # ABC scores,
@@ -376,21 +368,12 @@ Process.clock_gettime: 17294486.8 i/s
 # review bottleneck
 # = slop
 
-[.column]
-
 > When an AI Agent can produce a working implementation in minutes, waiting hours or days for a human to review it is an impedance mismatch.
 --Kesha, Intercom
 
-[.column]
-
-![fit](img/prs-pile-up-converted.png)
-
 ---
 
-> "What can I build today that I couldn't build before?"
--- Simon Willison
-
-^ Resist the urge to anthromoprhize. Leverage the technology of a token generator, jagged intelligence
+![fit](img/prs-pile-up-converted.png)
 
 ---
 
@@ -488,11 +471,6 @@ end
 
 ---
 
-> "Give me the right gate and I will move the earth"
--- Aristotle
-
----
-
 # In a loop,
 # skills and "memory"
 # are extras, but
@@ -537,17 +515,15 @@ end
 
 [.column]
 
-# Factory loop
+# Factory loop[^1]
 
 ```ruby
-scenarios = load_scenarios  # holdout
-
-backlog.each do |spec|
-  loop do
-    code = attractor.implement(spec)
+backlog.each do |spec| # this is the factory
+  loop do # This part is kind of ralph-y
+    code = agent.implement(spec)
 
     gates = scenarios.map do |s|
-      digital_twin.run(code, s)
+      s.run(code)
     end
 
     break if gates.all?(&:pass?)
@@ -556,14 +532,6 @@ backlog.each do |spec|
   ship(code)
 end
 ```
-
-[.column]
-
-## holdout set
-End-to-end user stories kept _outside_ the codebase. The agent cannot modify them, so it can't game them.
-
-## digital twin
-Behavioral clone of a dependency (Okta, Slack, Jira). Same API, no rate limits, no prod risk.
 
 [^1]: [strongdm.com/blog/the-strongdm-software-factory](https://www.strongdm.com/blog/the-strongdm-software-factory-building-software-with-ai), [factory.strongdm.ai/techniques](https://factory.strongdm.ai/techniques), [simonwillison.net/2026/Feb/7/software-factory](https://simonwillison.net/2026/Feb/7/software-factory/)
 
@@ -589,11 +557,6 @@ Behavioral clone of a dependency (Okta, Slack, Jira). Same API, no rate limits, 
 # explain analyze on prod
 # prod console1984 (Intercom)
 # MCP proxies
-
----
-
-> When an AI Agent can produce a working implementation in minutes, waiting hours or days for a human to review it is an impedance mismatch.
---Kesha, Intercom
 
 ---
 
