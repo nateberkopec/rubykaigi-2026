@@ -1,3 +1,7 @@
+[tools]
+ffmpeg = "latest"
+hk = "latest"
+
 [tasks.slide-count]
 description = "Count slides in DECKSET.md"
 quiet = true
@@ -13,3 +17,7 @@ run = "fish scripts/pecha-kucha.fish --total-time-mode --present"
 [tasks.rehearse]
 description = "Open DECKSET.md in Deckset, start rehearsal mode, and auto-advance slides to fit a total time; pass minutes with: mise run rehearse -- 25"
 run = "fish scripts/pecha-kucha.fish --total-time-mode --rehearse"
+
+[tasks.build]
+description = "Export DECKSET.md to PDF via Deckset AppleScript automation"
+run = "fish scripts/build-pdf.fish"

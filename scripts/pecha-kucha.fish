@@ -176,6 +176,8 @@ function load_checkpoint -a checkpoint_path
 end
 
 function deckset_launch -a deck_path run_mode start_slide return_app_id
+    set deckset_start_slide (math "$start_slide - 1")
+
     begin
         echo 'on run argv'
         echo '    set deckPathText to (item 1 of argv)'
@@ -229,10 +231,12 @@ function deckset_launch -a deck_path run_mode start_slide return_app_id
         echo '        tell application id returnAppId to activate'
         echo '    end if'
         echo 'end run'
-    end | osascript - "$deck_path" "$run_mode" "$start_slide" "$return_app_id"
+    end | osascript - "$deck_path" "$run_mode" "$deckset_start_slide" "$return_app_id"
 end
 
 function deckset_set_slide -a deck_path slide_index
+    set deckset_slide_index (math "$slide_index - 1")
+
     begin
         echo 'on run argv'
         echo '    set deckPathText to (item 1 of argv)'
@@ -261,7 +265,7 @@ function deckset_set_slide -a deck_path slide_index
         echo '        end tell'
         echo '    end tell'
         echo 'end run'
-    end | osascript - "$deck_path" "$slide_index"
+    end | osascript - "$deck_path" "$deckset_slide_index"
 end
 
 set script_dir (cd (dirname (status --current-filename)); pwd)

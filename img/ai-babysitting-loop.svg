@@ -18,9 +18,9 @@
   <text class="text" x="1195" y="395" text-anchor="middle" font-size="60">agent edits</text>
   <text class="text" x="1195" y="460" text-anchor="middle" font-size="60">code</text>
 
-  <path class="stroke" d="M640 355 C810 200, 980 200, 960 355"/>
-  <polygon class="arrow" points="0,0 -26,-14 -26,14" transform="translate(982 328) rotate(38)"/>
+  <path class="stroke" d="M650 345 C810 170, 970 170, 950 345"/>
+  <polygon class="arrow" points="0,0 -26,-14 -26,14" transform="translate(970 318) rotate(44)"/>
 
-  <path class="stroke" d="M960 445 C790 600, 620 600, 640 445"/>
-  <polygon class="arrow" points="0,0 -26,-14 -26,14" transform="translate(618 472) rotate(218)"/>
+  <path class="stroke" d="M950 455 C790 630, 630 630, 650 455"/>
+  <polygon class="arrow" points="0,0 -26,-14 -26,14" transform="translate(630 482) rotate(224)"/>
 </svg>

@@ -2,3 +2,5 @@
 .pi/
 autoresearch.config.json
 tmp/
+dist/*
+!dist/.gitkeep

@@ -1,0 +1,14 @@
+amends "package://github.com/jdx/hk/releases/download/v1.43.0/hk@1.43.0#/Config.pkl"
+
+hooks {
+  ["pre-commit"] {
+    steps {
+      ["deckset"] {
+        check = "test -f DECKSET.md && mise run slide-count >/dev/null"
+      }
+      ["fish-syntax"] {
+        check = "if ls scripts/*.fish >/dev/null 2>&1; then fish -n scripts/*.fish; fi"
+      }
+    }
+  }
+}

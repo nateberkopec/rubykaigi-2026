@@ -48,6 +48,10 @@ March 13th, 2026
 
 ---
 
+![fit autoplay loop mute](img/speedshop-demo.mov)
+
+---
+
 ![inline](img/tweet.jpeg)
 
 ---
@@ -101,6 +105,14 @@ February 7 2026
 
 ---
 
+# What if we could
+# automatically
+# make Ruby
+# faster?
+
+---
+
+# **Lesson 1**
 # Automatic
 # _research_,
 # not automatic
@@ -134,15 +146,15 @@ February 7 2026
 
 ---
 
-![fit](img/striped-lock-pr.png)
-
----
-
 # what's Processor::Counter?
 # atomic integer
 # `PROCESSED = Counter.new`
 # incr/decr before Redis flush
 # 16 lines of code
+
+---
+
+![fit](img/striped-lock-pr.png)
 
 ---
 
@@ -189,6 +201,12 @@ Process.clock_gettime: 17294486.8 i/s
 # would
 # never
 # merge this
+
+---
+
+# Why generate code
+# that you
+# can't merge?
 
 ---
 
@@ -297,15 +315,7 @@ Process.clock_gettime: 17294486.8 i/s
 
 ---
 
-# Is your test
-# coverage 100%
-# of what the app does?
-
-^ Is it even possible to specify 100% of a piece of software?
-
----
-
-# **"This violates HIPAA..."**
+# **"This violates GPL..."**
 # Checks not in GitHub:
 # legal
 # compliance
@@ -314,8 +324,6 @@ Process.clock_gettime: 17294486.8 i/s
 ---
 
 ![fit](img/sidekiq-133-checks-ui.png)
-
-^ Based on the real checks from sidekiq/sidekiq#6895, then expanded into a deliberately fake “what else should GitHub check before merge?” UI.
 
 ---
 
@@ -330,9 +338,11 @@ Process.clock_gettime: 17294486.8 i/s
 
 ---
 
+# **Lesson 2**
 # Don't autoresearch
 # what you don't own
 # and cannot Architect
+## (accurately review)
 
 ---
 
@@ -362,6 +372,10 @@ Process.clock_gettime: 17294486.8 i/s
 
 ---
 
+# Unlimited generation +
+# review bottleneck
+# = slop
+
 [.column]
 
 > When an AI Agent can produce a working implementation in minutes, waiting hours or days for a human to review it is an impedance mismatch.
@@ -389,6 +403,16 @@ Process.clock_gettime: 17294486.8 i/s
 
 ---
 
+> The bitter lesson is based on the historical observations that
+> 1) AI researchers have often tried to build knowledge into their agents,
+> 2) this always helps in the short term, and is personally satisfying to the researcher, but
+> 3) in the long run it plateaus and even inhibits further progress, and
+> 4) _breakthrough progress eventually arrives by an opposing approach based on scaling computation by search and learning._
+-- Richard Sutton
+
+---
+
+# **Lesson 3**
 # Loops apply the bitter lesson
 # They scale compute
 # Through allowing search
@@ -396,200 +420,341 @@ Process.clock_gettime: 17294486.8 i/s
 
 ---
 
-# Gate, loop
-
----
-
-# Babysitting is looping
+# "Babysitting" is looping
 # With a human gate
 
 ---
 
 # "Agents" are just a loop
 
+```ruby
+messages = [user_prompt]
+
+loop do
+  reply = llm.call(messages, tools: TOOLS)
+
+  break puts(reply.text) unless reply.tool_call?
+
+  result = run_tool(reply.tool_name, reply.arguments)
+  messages << reply
+  messages << tool_result(result)
+end
+```
+
+^ Agents took the "chat" agent model and allowed the LLM to autonomously loop around tool use without waiting on user input.
+
 ---
 
 # Ralph loop
 
-```ruby
+```bash
+while :; do
+  cat PROMPT.md | claude-code
+
+  ./build_and_test || continue
+
+  git add -A
+  git commit -m "ralph: passing build"
+  git push
+  git tag "$(next_patch_tag)"
+done
 ```
 
+^ Huntley's original Ralph is, in its purest form, just `while :; do cat PROMPT.md | claude-code ; done`. In practice the prompt pins the stack (plan/specs), and the outer shell only commits/tags once build or test gates are green.
+
 ---
 
-# Autoresearch takes ralph and
-# unbounds it on a single variable
+# Autoresearch
 
 ```ruby
+best = benchmark
 
+loop do
+  change = agent.propose_optimization
+  apply(change)
+
+  score = benchmark
+
+  if score > best
+    git_commit(change.summary)
+    best = score
+  else
+    git_revert
+  end
+end
 ```
 
----
-
-> "Give me the right gate and I will move the earth" - Aristotle
+^ Autoresearch is a loop where improvements are kept as we go through the loop, but the pass/fail gate is actually a single continuous variable rather than a discrete true/false value
 
 ---
 
-# Putting things into software makes decisions explicit, less variation
+> "Give me the right gate and I will move the earth"
+-- Aristotle
 
 ---
 
-# Loops are anti-skillsmaxxing
+# In a loop,
+# skills and "memory"
+# are extras, but
+# not required
 
 ---
 
-# Puma-release example: all the things I didn't forget
+# Putting gates into
+# software makes
+# decisions explicit
+# reduces variation
 
 ---
 
-# Example: prosopite loop
+# Most of my consulting
+# is forcing teams to
+# define:
+# "What does _slow_ mean?"
 
 ---
 
-# The factory is an autoresearch loop across arbitrary numbers of axes
+## nateberkopec/puma-release
+
+1. Make sure you're on the right Puma branch, clean, synced, and green.
+2. Look at everything since the last release.
+3. Decide what kind of release this should be.
+4. Generate release notes with AI.
+5. Pick or request a codename if needed.
+6. Update version files and release docs, SECURITY.md.
+7. Create a release branch and open a release PR.
+8. Wait for that PR to be reviewed and merged.
+9. Once merged, create and push the signed final tag.
+10. Build both the MRI and JRuby gems.
+11. Push those gems to RubyGems.
+12. Wait until RubyGems actually reflects the new release.
+13. Create or repair the GitHub release draft.
+14. Upload both gem files to the GitHub release.
+15. Publish the GitHub release.
+16. Stop when the release is fully visible and complete.
 
 ---
 
-# Curate some basic context for how to approach the problem, and make sure it has the right tools (mcp, cli, etc) to accomplish its task. benchmark-ips, vernier or stackprof, etc
+[.column]
+
+# Factory loop
+
+```ruby
+scenarios = load_scenarios  # holdout
+
+backlog.each do |spec|
+  loop do
+    code = attractor.implement(spec)
+
+    gates = scenarios.map do |s|
+      digital_twin.run(code, s)
+    end
+
+    break if gates.all?(&:pass?)
+  end
+
+  ship(code)
+end
+```
+
+[.column]
+
+## holdout set
+End-to-end user stories kept _outside_ the codebase. The agent cannot modify them, so it can't game them.
+
+## digital twin
+Behavioral clone of a dependency (Okta, Slack, Jira). Same API, no rate limits, no prod risk.
+
+[^1]: [strongdm.com/blog/the-strongdm-software-factory](https://www.strongdm.com/blog/the-strongdm-software-factory-building-software-with-ai), [factory.strongdm.ai/techniques](https://factory.strongdm.ai/techniques), [simonwillison.net/2026/Feb/7/software-factory](https://simonwillison.net/2026/Feb/7/software-factory/)
+
+^ StrongDM's factory: Attractor writes code from a spec, scenarios run against Digital Twins of dependencies, and many gates must all pass. Multivariate — not one score, but a fleet of independent checks.
 
 ---
 
-# Production access: explain analyze on prod, prod console1984 (Intercom), etc
+# Curate context, prompt
+# Provide tools (MCP, CLI)
+# Loop until gates passed
+# Loop until no more backlog
 
 ---
 
-# Jagged intelligence: LLMs are not smarter than me, but they have far more attention/cycles
+# **Curate context/prompt**
+
+![inline](img/runs-board.png)
 
 ---
 
-# In the dark factory, you will not be allowed inside
+# **Provide tools**
+# Production access
+# explain analyze on prod
+# prod console1984 (Intercom)
+# MCP proxies
 
 ---
 
-# Each review cycle is cost. Toyota got faster by eliminating QA and improving the system
-
----
-
-# Sidekiq example:
-# would we merge that
-# if we didn't maintain it?
-
----
-
-# Can we build a system
-# that is verifiably correct
-# without understanding
-# what happens inside?
+> When an AI Agent can produce a working implementation in minutes, waiting hours or days for a human to review it is an impedance mismatch.
+--Kesha, Intercom
 
 ---
 
 # In the factory,
-# the software is mush,
-# the gates are the artifact
-
----
-
-# The software can be
-# endlessly rebuilt
-# refactoring has no meaning
-
-Mie shrine
+# the software is **mush**,
+# the **gates** are the artifact
 
 ---
 
 # Even if we fail,
 # we'll be building
 # better software
+# with better gates
 
 ---
 
-# StrongDM's concept
+> Code must not be written by humans
+> Code must not be reviewed by humans
+-- StrongDM's "Software Factory"[^2]
 
-https://simonwillison.net/2026/Feb/7/software-factory/
-
----
-
-# Attractor (and Fabro)
+[^2]: [simonwillison.net/2026/Feb/7/software-factory](https://simonwillison.net/2026/Feb/7/software-factory/)
 
 ---
 
-# Whenwords
+# In the dark factory,
+# you will not
+# be allowed inside
 
 ---
 
-# [Intercom](https://ideas.fin.ai/p/2x-nine-months-later)
+# Attractor / Fabro
+### "A non-interactive coding agent"
+
+![inline left](img/attractor-github.png) ![inline right](img/fabro-post.png)
 
 ---
 
-# Ramp ("Glass")
-# combines 1 MCP
-# Skills marketplace
-# Cron/Async
-
-[Tweet](https://x.com/sebgoddijn/status/2042285915435937816) and [Tweet](https://x.com/buchan_sm/status/2044524727679566156)
+![fit](img/whenwords-slide.png)
 
 ---
 
-# Risks
+![fit](img/vroom-to-speedscope.png)
 
 ---
 
-# Is merge-time the right gate?
+![fit](img/yamiochi-spec.png)
 
-What about in production at runtime via flippers?
 
-[Tomash's post](https://tomash.wrug.eu/blog/2026/04/19/new-modularity/)
+---
+![inline fill](img/intercom-prs-per-rd.png)![inline fill](img/intercom-claude-prs.png)
+![inline ](img/intercom-auto-approval.png)![inline](img/fin.png)
+
 
 ---
 
-# What can be specified?
+![inline fill](img/intercom-cost-per-pr.png)![inline fill](img/intercom-downtime.png)
+![inline ](img/intercom-quality.png)
 
-How? Property-based testing or formal verification?
+---
 
-> "Reasonable-looking algorithms can easily be incorrect. Algorithm correctness is a property that must be carefully demonstrated." - Steven Skiena
+# Risks:
+## No one knows
+## what they're doing
 
-[Leo Domura](https://leodemoura.github.io/blog/2026-2-28-when-ai-writes-the-worlds-software-who-verifies-it/)
+---
+
+# Is merge-time
+# the only time?
+
+> the decision of which code path to enter - which version of a module to run - happens at runtime, not at deploy time.
+-- Tomash, WRUG[^3]
+
+^ What about in production at runtime via flippers?
+
+[^3]: https://tomash.wrug.eu/blog/2026/04/19/new-modularity/)
+
+---
+
+# Formal methods? Property-based testing?
+
+> "Reasonable-looking algorithms can easily be incorrect. Algorithm correctness is a property that must be carefully demonstrated." - Steven Skiena via Leo Domura[^4]
+
+^ How? Property-based testing or formal verification?
+
+[^4]: https://leodemoura.github.io/blog/2026-2-28-when-ai-writes-the-worlds-software-who-verifies-it/
+
+---
+
+# Formal verification
+
+```
+def parseBody (contentLength : Nat) (buf : List UInt8) :
+    List UInt8 × List UInt8 :=
+  (buf.take contentLength, buf.drop contentLength)
+
+example (n : Nat) (buf : List UInt8) (h : n ≤ buf.length) :
+    (parseBody n buf).1.length = n := by
+  simp [parseBody, List.length_take, h, Nat.min_eq_left]
+
+example (n : Nat) (buf : List UInt8) :
+    (parseBody n buf).1 ++ (parseBody n buf).2 = buf := by
+  simpa [parseBody] using List.take_append_drop n buf
+```
+
+^ After headers are parsed, `Content-Length` tells us how many bytes belong to the body. This model proves two useful things. First, if we have at least `n` bytes buffered, the body we hand upstream has length exactly `n`. Second, body bytes plus leftover bytes reconstruct the original buffer, so we didn't drop or invent data.
+
+---
+
+# Property-based testing
+
+```ruby
+1000.times do
+  body = SecureRandom.bytes(rand(0..256))
+  req  = "POST / HTTP/1.1\r\nContent-Length: #{body.bytesize}\r\n\r\n#{body}"
+
+  parsed = parse_http(req)
+  raise unless parsed.content_length == body.bytesize
+  raise unless parsed.body == body
+end
+```
+
+^ Instead of proving the parser correct, we generate lots of random valid requests and check an invariant: the parser must return the same `Content-Length` and body we put in. This is property-based testing: define a property, then hammer it with many inputs. Much cheaper than formal proof, and very good at finding edge cases humans would never think to write by hand.
 
 ---
 
 # Scalable?
 
-> "There are two ways of constructing a software design: one way is to make it so simple that there are obviously no deficiencies, and the other is to make it so complicated that there are no obvious deficiencies." Tony Hoare, 1980 Turing Award Lecture
+> "There are two ways of constructing a software design: one way is to make it so simple that there are obviously no deficiencies, and the other is to make it so complicated that there are no obvious deficiencies." Tony Hoare, 1980 Turing Award Lecture via Peter Levine[^5]
 
-[Mutation and property testing are expensive](https://peterlavigne.com/writing/human-code-review-over-full-verification)
-
----
-
-# Not worth the time?
-
-SQLite's test suite is 590x larger than library itself
+[^5]: https://peterlavigne.com/writing/human-code-review-over-full-verification
 
 ---
 
 # Applicable to brownfield?
 
-https://sqlite.org/cpu.html
+![inline](img/sqlite-cpuusage.png)
 
 ^ It is extremely difficult to observe the behavior of an existing program in 100%/all aspects, it represents 25+ years of profiling and hard won changes which were never written down in a spec
 
 ---
 
-# Intellectual property?
+# How do you prevent
+# runaway LOC?
+## LLMs tend to "over-shoot"
 
-https://lucumr.pocoo.org/2026/3/5/theseus/
-
----
-
-# How do you prevent runaway LOC?
-
-[Mutation testing in REVERSE?](https://peterlavigne.com/writing/verifying-ai-generated-code)
+>Mutation testing is typically used to expand your test suite. However, if we assume our tests are correct, we can instead use it to restrict the code. This constrains the solution space to ensure that only the requirements are met.
+-- Peter Levine
 
 ---
 
-# Where are we gonna run all this compute?
+# Where are we gonna run
+# all this compute?
 
-code-on-incus, etc
+> The only common denominator? We're all using VMs to isolate, try, share, iterate, parallelize. So many VMs.
+-- Philip Zeyliger, "Everyone is Building a Software Factory"[^6]
 
-[The Bones of The Software Factory](https://blog.exe.dev/bones-of-the-software-factory)
+* code-on-incus?
+* miren?
+* gondolin?
+
+[^6]: https://blog.exe.dev/bones-of-the-software-factory
 
 ---
 
@@ -599,9 +764,27 @@ code-on-incus, etc
 
 ---
 
-# Is rearranging the training data enough?
+# Does byroot emerge
+# from the training data?
 
-[Is byroot really going to emerge from the training data?](https://byroot.github.io/ruby/performance/2026/04/18/faster-paths.html)
+```
+compare-ruby: ruby 4.1.0dev (2026-01-17T14:40:03Z master 00a3b71eaf) +PRISM [arm64-darwin25]
+built-ruby: ruby 4.1.0dev (2026-01-18T12:55:15Z spedup-file-join 5948e92e03) +PRISM [arm64-darwin25]
+warming up....
+
+|              |compare-ruby|built-ruby|
+|:-------------|-----------:|---------:|
+|two_strings   |      2.477M|   19.317M|
+|              |           -|     7.80x|
+|many_strings  |    547.577k|   10.298M|
+|              |           -|    18.81x|
+|array         |    515.280k|  523.291k|
+|              |           -|     1.02x|
+|mixed         |    621.840k|  635.422k|
+|              |           -|     1.02x|
+```
+
+https://byroot.github.io/ruby/performance/2026/04/18/faster-paths.html
 
 ---
 
@@ -628,7 +811,9 @@ code-on-incus, etc
 
 ---
 
-> "To truly use autoresearch effectively, you must first create the universe" - Carl Sagan
+# Apply against small,
+# mature scopes, not
+# big rescues
 
 ---
 
@@ -660,4 +845,17 @@ code-on-incus, etc
 # Try a loop:
 # ralph (discrete)
 # autoresearch (continuous)
-# factory (multivariate)
+# factory (multi-gate)
+
+---
+
+# try
+# pi and
+# pi-autoresearch
+## github.com/davebcn87/pi-autoresearch
+---
+
+# Thank you.
+# @nateberkopec
+# speedshop.co
+## github.com/nateberkopec/rubykaigi-2026
