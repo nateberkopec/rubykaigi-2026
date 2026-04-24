@@ -5,15 +5,18 @@ fit-header: #, ##
 
 ---
 
-[.column]
-
-![inline](img/tweet.jpeg)
-
-[.column]
-
 ![inline](img/tweet-screenshot.png)
 
 March 8th, 2026
+
+---
+
+![inline](img/tweet.jpeg)
+
+---
+
+>[...] Research is now entirely the domain of autonomous swarms of AI agents running across compute cluster megastructures in the skies. [...] This repo is the story of how it all began.
+-- @karpathy, March 2026.
 
 ---
 
@@ -38,21 +41,11 @@ March 13th, 2026
 
 ---
 
->[...] Research is now entirely the domain of autonomous swarms of AI agents running across compute cluster megastructures in the skies. [...] This repo is the story of how it all began.
--- @karpathy, March 2026.
-
----
-
 ![fit](img/autoresearch-core-loop.svg)
-
 
 ---
 
 ![fit autoplay loop mute](img/speedshop-demo.mov)
-
----
-
-![inline](img/tweet.jpeg)
 
 ---
 
@@ -105,18 +98,40 @@ February 7 2026
 
 ---
 
-# What if we could
-# automatically
-# make Ruby
-# faster?
-
----
-
 # **Lesson 1**
 # Automatic
 # _research_,
 # not automatic
 # _modification_
+
+---
+
+# What if we could
+# automatically
+# make Ruby apps
+# faster?
+
+
+---
+
+# I want to do
+# things with AI
+# that are not
+# possible with humans
+
+---
+
+# Three harnesses
+
+|                    | Claude Code        | Cursor          | Pi             |
+|--------------------|--------------------|-----------------|----------------|
+| **Open source**    | no                 | no              | yes            |
+| **Models**         | Claude only        | multi-provider  | any            |
+| **Built-in tools** | many + MCP         | many + MCP      | 4 (R/W/E/Bash) |
+| **Subagents**      | yes                | yes             | no             |
+| **Hooks**          | yes (26 events)    | yes (4 events)  | extend anything |
+| **System prompt**  | ~24k tokens        | ~3k tokens      | ~1k tokens     |
+| **Vibe**           | batteries-included | IDE-native      | minimal core   |
 
 ---
 
@@ -130,7 +145,7 @@ February 7 2026
 ## Implementation for the pi agent
 ## Status-line
 ## HTML and in-terminal dashboards
-## Confidence scoring
+## Automatic statistical scoring
 
 ---
 
@@ -237,31 +252,6 @@ Process.clock_gettime: 17294486.8 i/s
 
 ---
 
-# **"You didn't optimize X"**
-
-```text
--fauto-inc-dec,-fbranch-count-reg,-fcombine-stack-adjustments,-fcompare-elim,-fcprop-registers,-fdce,-fdefer-pop
--fdelayed-branch,-fdse,-fforward-propagate,-fguess-branch-probability,-fif-conversion,-fif-conversion2
--finline-functions-called-once,-fipa-modref,-fipa-profile,-fipa-pure-const,-fipa-reference,-fipa-reference-addressable
--fivopts,-fmerge-constants,-fmove-loop-invariants,-fmove-loop-stores,-fomit-frame-pointer,-freorder-blocks,-fshrink-wrap
--fshrink-wrap-separate,-fsplit-wide-types,-fssa-backprop,-fssa-phiopt,-ftree-bit-ccp,-ftree-ccp,-ftree-ch
--ftree-coalesce-vars,-ftree-copy-prop,-ftree-dce,-ftree-dominator-opts,-ftree-dse,-ftree-forwprop,-ftree-fre
--ftree-phiprop,-ftree-pta,-ftree-scev-cprop,-ftree-sink,-ftree-slsr,-ftree-sra,-ftree-ter,-funit-at-a-time
--falign-functions,-falign-jumps,-falign-labels,-falign-loops,-fcaller-saves,-fcode-hoisting,-fcrossjumping
--fcse-follow-jumps,-fcse-skip-blocks,-fdelete-null-pointer-checks,-fdevirtualize,-fdevirtualize-speculatively
--fexpensive-optimizations,-ffinite-loops,-fgcse,-fgcse-lm,-fhoist-adjacent-loads,-finline-functions
--finline-small-functions,-findirect-inlining,-fipa-bit-cp,-fipa-cp,-fipa-icf,-fipa-ra,-fipa-sra,-fipa-vrp
--fisolate-erroneous-paths-dereference,-flra-remat,-foptimize-sibling-calls,-foptimize-strlen,-fpartial-inlining
--fpeephole2,-freorder-blocks-algorithm=stc,-freorder-blocks-and-partition,-freorder-functions,-frerun-cse-after-loop
--fschedule-insns,-fschedule-insns2,-fsched-interblock,-fsched-spec,-fstore-merging,-fstrict-aliasing,-fthread-jumps
--ftree-builtin-call-dce,-ftree-loop-vectorize,-ftree-pre,-ftree-slp-vectorize,-ftree-switch-conversion,-ftree-tail-merge
--ftree-vrp,-fvect-cost-model=very-cheap,-fgcse-after-reload,-fipa-cp-clone,-floop-interchange,-floop-unroll-and-jam
--fpeel-loops,-fpredictive-commoning,-fsplit-loops,-fsplit-paths,-ftree-loop-distribution,-ftree-partial-pre
--funswitch-loops,-fvect-cost-model=dynamic,-fversion-loops-for-strides
-```
-
----
-
 # **"There is a bug"**
 # The bugbots (Cursor, etc) are
 # pretty OK
@@ -330,6 +320,13 @@ Process.clock_gettime: 17294486.8 i/s
 
 ---
 
+# Research without verification
+# is waste.
+# PRs created and not merged
+# are waste.
+
+---
+
 # **Lesson 2**
 # Don't autoresearch
 # what you don't own
@@ -364,19 +361,6 @@ Process.clock_gettime: 17294486.8 i/s
 
 ---
 
-# Unlimited generation +
-# review bottleneck
-# = slop
-
-> When an AI Agent can produce a working implementation in minutes, waiting hours or days for a human to review it is an impedance mismatch.
---Kesha, Intercom
-
----
-
-![fit](img/prs-pile-up-converted.png)
-
----
-
 > The bitter lesson is based on the historical observations that
 > 1) AI researchers have often tried to build knowledge into their agents,
 > 2) this always helps in the short term, and is personally satisfying to the researcher, but
@@ -405,6 +389,19 @@ Process.clock_gettime: 17294486.8 i/s
 
 # "Babysitting" is looping
 # With a human gate
+
+---
+
+# Unlimited generation +
+# human gates
+# = slop
+
+> When an AI Agent can produce a working implementation in minutes, waiting hours or days for a human to review it is an impedance mismatch.
+--Kesha, Intercom
+
+---
+
+![fit](img/prs-pile-up-converted.png)
 
 ---
 
@@ -478,10 +475,11 @@ end
 
 ---
 
-# Putting gates into
-# software makes
-# decisions explicit
-# reduces variation
+# **Lesson 4**
+# Turning human gates
+# into software gates
+## makes decisions explicit
+## and reduces variation
 
 ---
 
@@ -489,6 +487,15 @@ end
 # is forcing teams to
 # define:
 # "What does _slow_ mean?"
+## Converting "vibes"
+## into red/green state, "bug tickets"
+
+---
+
+# Even if we fail,
+# we'll be building
+# better software
+# with better gates
 
 ---
 
@@ -510,6 +517,18 @@ end
 14. Upload both gem files to the GitHub release.
 15. Publish the GitHub release.
 16. Stop when the release is fully visible and complete.
+
+---
+
+# Four loops
+
+|                | Agents         | Ralph         | Autoresearch      | Factory         |
+|----------------|----------------|---------------|-------------------|-----------------|
+| **Gate**       | LLM self-stops | build + tests | benchmark delta   | many checks     |
+| **Signal**     | discrete       | discrete      | continuous        | multivariate    |
+| **Artifact**      | final reply    | green commits | winning diffs     | passing PRs     |
+| **You design** | tools, prompt  | tools, prompt     | metric, benchmark | gates + specs   |
+| **Best for**   | one-shot tasks | stubborn bugs | perf tuning       | feature backlog |
 
 ---
 
@@ -539,37 +558,9 @@ end
 
 ---
 
-# Curate context, prompt
-# Provide tools (MCP, CLI)
-# Loop until gates passed
-# Loop until no more backlog
-
----
-
-# **Curate context/prompt**
-
-![inline](img/runs-board.png)
-
----
-
-# **Provide tools**
-# Production access
-# explain analyze on prod
-# prod console1984 (Intercom)
-# MCP proxies
-
----
-
 # In the factory,
 # the software is **mush**,
 # the **gates** are the artifact
-
----
-
-# Even if we fail,
-# we'll be building
-# better software
-# with better gates
 
 ---
 
@@ -584,6 +575,8 @@ end
 # In the dark factory,
 # you will not
 # be allowed inside
+## Humans are slow
+## Humans are inconsistent
 
 ---
 
@@ -678,7 +671,7 @@ example (n : Nat) (buf : List UInt8) :
 end
 ```
 
-^ Instead of proving the parser correct, we generate lots of random valid requests and check an invariant: the parser must return the same `Content-Length` and body we put in. This is property-based testing: define a property, then hammer it with many inputs. Much cheaper than formal proof, and very good at finding edge cases humans would never think to write by hand.
+^ Instead of proving the parser correct, we generate lots of random valid requests and check an invariant: the parser must return the same `Content-Length` and body we put in. This is property-based testing: define a property, then hammer it with many inputs. Property based testing and formal testing are both about proving your program correct in ALL possible cases.
 
 ---
 
@@ -694,7 +687,7 @@ end
 
 ![inline](img/sqlite-cpuusage.png)
 
-^ It is extremely difficult to observe the behavior of an existing program in 100%/all aspects, it represents 25+ years of profiling and hard won changes which were never written down in a spec
+^ It is extremely difficult to observe the behavior of an existing program in 100%/all aspects, it represents 25+ years of profiling and hard won changes which were never written down in a spec. How do you prevent the factory from deleting those changes?
 
 ---
 
@@ -705,6 +698,27 @@ end
 >Mutation testing is typically used to expand your test suite. However, if we assume our tests are correct, we can instead use it to restrict the code. This constrains the solution space to ensure that only the requirements are met.
 -- Peter Levine
 
+
+---
+
+# Mutant, inverted
+
+```ruby
+def discount(price, member)
+  return 0 if price.negative?          # LLM's extra guard
+  member ? price * 0.9 : price
+end
+
+it { expect(discount(100, true )).to eq(90)  }
+it { expect(discount(100, false)).to eq(100) }
+
+# $ mutant run --use rspec -- Billing#discount
+# alive: `price.negative?` -> `false`
+# spec doesn't require the guard -> delete it
+```
+
+^ Mutant mutates the source and reruns the spec. Normally a surviving mutant means a missing test. Invert it: if you trust the spec, a surviving mutant is code the requirements don't demand — cut it until every mutation dies.
+
 ---
 
 # Where are we gonna run
@@ -713,9 +727,9 @@ end
 > The only common denominator? We're all using VMs to isolate, try, share, iterate, parallelize. So many VMs.
 -- Philip Zeyliger, "Everyone is Building a Software Factory"[^6]
 
-* code-on-incus?
-* miren?
-* gondolin?
+* code-on-incus? by @mensfeld
+* miren? by @evanphx
+* gondolin? Armin Ronacher
 
 [^6]: https://blog.exe.dev/bones-of-the-software-factory
 
@@ -764,26 +778,30 @@ https://byroot.github.io/ruby/performance/2026/04/18/faster-paths.html
 
 ---
 
+# Conclusion:
+## Autoresearch is interesting,
+## but creates more human review work
+## Factories may be the answer,
+## but no one knows how to build them (yet)
+
+---
+
+# Auto
+# Research
 # Takeaways
 
 ---
 
-# Best for low-attention code
-# with a high-skill reviewer
+# Use it for code that you
+# understand enough to
+# review and fix yourself
 # (Be Like Stan)
 
 ---
 
 # Apply against small,
-# mature scopes, not
+# mature modules, not
 # big rescues
-
----
-
-# Research without verification
-# is waste.
-# PRs created and not merged
-# are waste.
 
 ---
 
@@ -791,6 +809,12 @@ https://byroot.github.io/ruby/performance/2026/04/18/faster-paths.html
 # you need
 # the fewest
 # gates
+
+---
+
+# More gates
+# Less review
+# More research
 
 ---
 
@@ -809,6 +833,13 @@ https://byroot.github.io/ruby/performance/2026/04/18/faster-paths.html
 # ralph (discrete)
 # autoresearch (continuous)
 # factory (multi-gate)
+
+
+---
+
+# Try building
+# a "no-code library" or
+## a "thing that makes the thing"
 
 ---
 
